@@ -25,7 +25,7 @@
     */
 
     // 加载 Bing 地图服务
-    
+    /*
     var viewer = new Cesium.Viewer('cesiumContainer', {
       imageryProvider: new Cesium.BingMapsImageryProvider({
         url: 'https://dev.virtualearth.net',
@@ -34,9 +34,27 @@
       }),
       baseLayerPicker: false
     });
+    */
+
+    // 使用 Esri ArcGIS MapServer 中的图层
+    
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+        url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
+      }),
+      baseLayerPicker: false
+    });
     
 
-    // 加载天地图地图服务
+    // 使用 NASA Black Marble imagery 的 Tile Map Services（TMS）服务
+    var layers = viewer.scene.imageryLayers;
+    var blackMarble = layers.addImageryProvider(new Cesium.TileMapServiceImageryProvider({
+      url: '//cesiumjs.org/tilesets/imagery/blackmarble',
+      maximumLevel: 8,
+      credit: 'Black Marble imagery courtesy NASA Earth Observatory'
+    }));
+    //blackMarble.alpha = 0.5;    // 0.0 is transparent, 1.0 is opaque.
+    //blackMarble.brightness = 2.0; // > 1.0 increases brightness. < 1.0 decreases.
 
 
   </script>
