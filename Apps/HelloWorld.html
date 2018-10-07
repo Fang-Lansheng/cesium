@@ -47,15 +47,18 @@
     
 
     // 使用 NASA Black Marble imagery 的 Tile Map Services（TMS）服务
+    /*
     var layers = viewer.scene.imageryLayers;
-    var blackMarble = layers.addImageryProvider(new Cesium.TileMapServiceImageryProvider({
-      url: '//cesiumjs.org/tilesets/imagery/blackmarble',
+    var blackMarble = layers.addImageryProvider(new Cesium.createTileMapServiceImageryProvider({
+      // url: '//cesiumjs.org/tilesets/imagery/blackmarble',
+      url: '../images/cesium_maptiler/Cesium_Logo_Color',
+      fileExtention: 'png',
       maximumLevel: 8,
       credit: 'Black Marble imagery courtesy NASA Earth Observatory'
     }));
     //blackMarble.alpha = 0.5;    // 0.0 is transparent, 1.0 is opaque.
     //blackMarble.brightness = 2.0; // > 1.0 increases brightness. < 1.0 decreases.
-
+    */
 
   </script>
 </body>
