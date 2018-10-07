@@ -20,7 +20,21 @@
   <div id="cesiumContainer"></div>
   <script>
     // 默认地图服务
+    /*
     var viewer = new Cesium.Viewer('cesiumContainer');
+    */
+
+    // 加载 Bing 地图服务
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+      imageryProvider: new Cesium.BingMapsImageryProvider({
+        url: 'https://dev.virtualearth.net',
+        key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+        mapStyle: Cesium.BingMapsStyle.AERIAL
+      }),
+      baseLayerPicker: false
+    });
+
+    // 加载
   </script>
 </body>
 </html>
