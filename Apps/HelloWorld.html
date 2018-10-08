@@ -22,6 +22,10 @@
     // 默认地图服务
     var viewer = new Cesium.Viewer('cesiumContainer');
     
+    // viewer.animation.container.style.visiblity = 'hidden';
+    // viewer.timeline.container.style.visiblity = 'hidden';   // 'hidden' 隐藏；'visible' 显示
+    viewer._cesiumWidget._creditContainer.style.display = 'none';
+
     // 加载 Bing 地图服务
     // var viewer = new Cesium.Viewer('cesiumContainer', {
     //   imageryProvider: new Cesium.BingMapsImageryProvider({
@@ -59,17 +63,44 @@
           -111.047063,  44.476286,
           -111.05254,   45.002073]),
         height: 0,
-        material: Cesium.Color.RED.withAlpha(0.5),
+        // material: Cesium.Color.RED.withAlpha(0.5),
+        material: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Wyoming.svg',
         outline: true,
         outlineColor: Cesium.Color.BLACK
       }
     });
+
+    wyoming.description = '\
+    <img\
+      width = "50%"\
+      style = "float: left; margin: 0 1em 1em 0;"\
+      src = "//cesiumjs.org/images/2015/02-02/Flag_of_Wyoming.svg"/>\
+    <p>\
+      Wyoming is a state in the mountain region of the Western \
+      United States.\
+    </p>\
+    <p>\
+      Wyoming is the 10th most extensive, but the least populous \
+      and the second least densely populated of the 50 United \
+      States. The western two thirds of the state is covered mostly \
+      with the mountain ranges and rangelands in the foothills of \
+      the eastern Rocky Mountains, while the eastern third of the \
+      state is high elevation prairie known as the High Plains. \
+      Cheyenne is the capital and the most populous city in Wyoming, \
+      with a population estimate of 62,448 in 2013.\
+    </p>\
+    <p>\
+      Source: \
+      <a style = "color: WHITE"\
+        target = "_blank"\
+        href = "http://en.wikipedia.org/wiki/Wyoming">Wikipedia</a>\
+    <p/>';
     // viewer.zoomTo(wyoming);
   
     // 加载多边形
     var blueBox = viewer.entities.add({
       name: 'Blue box',
-      position: Cesium.Cartesian3.fromDegrees(-114.0, 40.0, 300000.0),
+      position: Cesium.Cartesian3.fromDegrees(-114.0, 35.0, 300000.0),
       box: {
         dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
         material: Cesium.Color.BLUE
@@ -78,7 +109,7 @@
 
     var redBox = viewer.entities.add({
       name: 'Red box with black outline',
-      position: Cesium.Cartesian3.fromDegrees(-107.0, 40.0, 300000.0),
+      position: Cesium.Cartesian3.fromDegrees(-107.0, 35.0, 300000.0),
       box: {
         dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
         material: Cesium.Color.RED.withAlpha(0.5),
@@ -89,7 +120,7 @@
 
     var outlineObly = viewer.entities.add({
       name: 'Yellow box outline',
-      position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 300000.0),
+      position: Cesium.Cartesian3.fromDegrees(-100.0, 35.0, 300000.0),
       box: {
         dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
         fill: false,
@@ -98,7 +129,71 @@
       }
     });
     
-    viewer.zoomTo(viewer.entities);
+    var greenCylinder = viewer.entities.add({
+      name: 'Green cylinder with black outline',
+      position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 300000.0),
+      cylinder: {
+        length: 400000.0,
+        topRadius: 200000.0,
+        bottomRadius: 200000.0,
+        material: Cesium.Color.GREEN.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.DARK_GREEN
+      }
+    });
+
+    var redCone = viewer.entities.add({
+      name: 'Red cone',
+      position: Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 300000.0),
+      cylinder: {
+        length: 400000.0,
+        topRadius: 0.0,
+        bottomRadius: 200000.0,
+        material: Cesium.Color.RED
+      }
+    });
+    
+    // viewer.zoomTo(viewer.entities);
+
+    var scene = viewer.scene;
+    var ellipsoidGeometry = new Cesium.EllipsoidGeometry({
+      vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
+      radii: new Cesium.Cartesian3(300000.0, 200000.0, 150000.0)
+    });
+    
+    var cyanEllipsoidInstance = new Cesium.GeometryInstance({
+      geometry: ellipsoidGeometry,
+      modelMatrix: Cesium.Matrix4.multiplyByTranslation(
+        Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-95.0, 30.0)),
+        new Cesium.Cartesian3(0.0, 0.0, 150000.0)
+      ),
+      attributes: {
+        color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.CYAN)
+      }
+    });
+
+    var orangeEllipsoidInstance = new Cesium.GeometryInstance({
+      geometry: ellipsoidGeometry,
+      modelMatrix: Cesium.Matrix4.multiplyByTranslation(
+        Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-95.0, 30.0)),
+        new Cesium.Cartesian3(0.0, 0.0, 450000.0)
+      ),
+      attributes: {
+        color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.ORANGE)
+      }
+    });
+
+    scene.primitives.add(new Cesium.Primitive({
+      geometryInstances: [cyanEllipsoidInstance, orangeEllipsoidInstance],
+      appearance: new Cesium.PerInstanceColorAppearance({
+        translucent: false,
+        closed: true
+      })
+    }));
+    
+    
+
+
 
 
   </script>

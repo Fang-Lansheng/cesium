@@ -40,5 +40,6 @@ Cesium development server running locally.  Connect to http://127.0.0.1:8080/
 
 #### 参考
 > 1. [Cesium教程 | 火星科技|合肥火星科技|合肥火星科技有限公司](http://cesium.marsgis.cn/forcesium/tutorials/index.html)  
-> 2. [API Reference | cesiumjs.org](https://cesiumjs.org/refdoc/)
+> 2. [API Reference | cesiumjs.org](https://cesiumjs.org/refdoc/)  
+> 3. [Cesium教程系列汇总 - fu*k - 博客园](https://www.cnblogs.com/fuckgiser/p/5706842.html)
 
