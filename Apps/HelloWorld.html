@@ -18,13 +18,27 @@
 </head>
 <body>
   <div id="cesiumContainer"></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar"></div>
   <script>
     // 默认地图服务
-    var viewer = new Cesium.Viewer('cesiumContainer');
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+      animation: true,            // 是否显示动画小部件（左下角仪表盘）
+      baseLayerPicker: true,      // 是否显示图层选择器
+      fullscreenButton: true,     // 是否显示全屏按钮
+      geocoder: true,             // 是否显示 geocoder 小部件（右上角查询按钮）
+      homeButton: true,           // 是否显示 Home 按钮
+      infoBox: true,              // 是否显示信息框
+      sceneModePicker: true,      // 是否显示 3D/2D 选择器
+      selectionIndicator: false,  // 是否显示指示器组件
+      timeline: true,             // 是否显示时间轴
+      navigationHelpButton: true, // 是否显示右上角的帮助按钮
+      scene3DOnly: false,         // 如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
+      shadows : true,
+      shouldAnimate : true
+    });
     
-    // viewer.animation.container.style.visiblity = 'hidden';
-    // viewer.timeline.container.style.visiblity = 'hidden';   // 'hidden' 隐藏；'visible' 显示
-    viewer._cesiumWidget._creditContainer.style.display = 'none';
+    viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
 
     // 加载 Bing 地图服务
     // var viewer = new Cesium.Viewer('cesiumContainer', {
@@ -44,7 +58,12 @@
     //   baseLayerPicker: false
     // });
 
-  
+
+    // var scene = new Cesium.Scene({
+    //   canvas: canvas,
+    //   debugShowFramesPerSecond: true
+    // });
+
     // 为美国怀俄明州添加一个多边形
     var wyoming = viewer.entities.add({
       name: 'Wyoming',
@@ -155,44 +174,72 @@
     
     // viewer.zoomTo(viewer.entities);
 
-    var scene = viewer.scene;
-    var ellipsoidGeometry = new Cesium.EllipsoidGeometry({
-      vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
-      radii: new Cesium.Cartesian3(300000.0, 200000.0, 150000.0)
-    });
-    
-    var cyanEllipsoidInstance = new Cesium.GeometryInstance({
-      geometry: ellipsoidGeometry,
-      modelMatrix: Cesium.Matrix4.multiplyByTranslation(
-        Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-95.0, 30.0)),
-        new Cesium.Cartesian3(0.0, 0.0, 150000.0)
-      ),
-      attributes: {
-        color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.CYAN)
+    var entity = viewer.entities.add({
+      name: 'Milk Car',
+      position: Cesium.Cartesian3.fromDegrees(-91.0, 40, 0),
+      model: {
+        uri: './SampleData/models/CesiumMilkTruck/CesiumMilkTruck.gltf',
+        scale: 200.0
       }
     });
-
-    var orangeEllipsoidInstance = new Cesium.GeometryInstance({
-      geometry: ellipsoidGeometry,
-      modelMatrix: Cesium.Matrix4.multiplyByTranslation(
-        Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-95.0, 30.0)),
-        new Cesium.Cartesian3(0.0, 0.0, 450000.0)
-      ),
-      attributes: {
-        color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.ORANGE)
-      }
-    });
-
-    scene.primitives.add(new Cesium.Primitive({
-      geometryInstances: [cyanEllipsoidInstance, orangeEllipsoidInstance],
-      appearance: new Cesium.PerInstanceColorAppearance({
-        translucent: false,
-        closed: true
-      })
-    }));
+    viewer.trackedEntity = entity;
+    entity.description = 'A 3D model.';
     
-    
+    // function createModel(url, height) {
+    //   viewer.entities.removeAll();
 
+    //   var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
+    //   var heading = Cesium.Math.toRadians(135);
+    //   var pitch = 0;
+    //   var roll = 0;
+    //   var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    //   var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+      
+    //   var entity = viewer.entities.add({
+    //     name : url,
+    //     position : position,
+    //     orientation : orientation,
+    //     model : {
+    //       uri : url,
+    //       minimumPixelSize : 128,
+    //       maximumScale : 20000
+    //     }
+    //   });
+    //   viewer.trackedEntity = entity;
+    // }
+
+    // var options = [{
+    //   text : 'Aircraft',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/CesiumAir/Cesium_Air.gltf', 5000.0);
+    //   }
+    // }, {
+    //   text : 'Ground Vehicle',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/GroundVehicle/GroundVehicle.gltf', 0);
+    //   }
+    // }, {
+    //   text : 'Hot Air Balloon',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/CesiumBalloon/CesiumBalloon.gltf', 1000.0);
+    //   }
+    // }, {
+    //   text : 'Milk Truck',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.gltf', 0);
+    //   }
+    // }, {
+    //   text : 'Skinned Character',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/CesiumMan/Cesium_Man.gltf', 0);
+    //   }
+    // }, {
+    //   text : 'Draco Compressed Model',
+    //   onselect : function() {
+    //     createModel('./SampleData/models/DracoCompressed/CesiumMilkTruck.gltf', 0);
+    //   }
+    // }];
+    // Sandcastle.addToolbarMenu(options);
 
 
 
