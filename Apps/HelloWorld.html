@@ -20,46 +20,87 @@
   <div id="cesiumContainer"></div>
   <script>
     // 默认地图服务
-    /*
     var viewer = new Cesium.Viewer('cesiumContainer');
-    */
-
+    
     // 加载 Bing 地图服务
-    /*
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-      imageryProvider: new Cesium.BingMapsImageryProvider({
-        url: 'https://dev.virtualearth.net',
-        key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-        mapStyle: Cesium.BingMapsStyle.AERIAL
-      }),
-      baseLayerPicker: false
-    });
-    */
+    // var viewer = new Cesium.Viewer('cesiumContainer', {
+    //   imageryProvider: new Cesium.BingMapsImageryProvider({
+    //     url: 'https://dev.virtualearth.net',
+    //     key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+    //     mapStyle: Cesium.BingMapsStyle.AERIAL
+    //   }),
+    //   baseLayerPicker: false
+    // });
 
     // 使用 Esri ArcGIS MapServer 中的图层
-    
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-        url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
-      }),
-      baseLayerPicker: false
+    // var viewer = new Cesium.Viewer('cesiumContainer', {
+    //   imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+    //     url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
+    //   }),
+    //   baseLayerPicker: false
+    // });
+
+  
+    // 为美国怀俄明州添加一个多边形
+    var wyoming = viewer.entities.add({
+      name: 'Wyoming',
+      polygon: {
+        hierarchy: Cesium.Cartesian3.fromDegreesArray([
+          -109.080842,  45.002073,
+          -105.91517,   45.002073,
+          -104.058488,  44.996596,
+          -104.053011,  43.002989,
+          -104.053011,  41.003906,
+          -105.728954,  40.998429,
+          -107.919731,  41.003906,
+          -109.04798,   40.998429,
+          -111.047063,  40.998429,
+          -111.047063,  42.000709,
+          -111.047063,  44.476286,
+          -111.05254,   45.002073]),
+        height: 0,
+        material: Cesium.Color.RED.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.BLACK
+      }
+    });
+    // viewer.zoomTo(wyoming);
+  
+    // 加载多边形
+    var blueBox = viewer.entities.add({
+      name: 'Blue box',
+      position: Cesium.Cartesian3.fromDegrees(-114.0, 40.0, 300000.0),
+      box: {
+        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+        material: Cesium.Color.BLUE
+      }
+    });
+
+    var redBox = viewer.entities.add({
+      name: 'Red box with black outline',
+      position: Cesium.Cartesian3.fromDegrees(-107.0, 40.0, 300000.0),
+      box: {
+        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+        material: Cesium.Color.RED.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.BLACK
+      }
+    });
+
+    var outlineObly = viewer.entities.add({
+      name: 'Yellow box outline',
+      position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 300000.0),
+      box: {
+        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+        fill: false,
+        outline: true,
+        outlineColor: Cesium.Color.YELLOW
+      }
     });
     
+    viewer.zoomTo(viewer.entities);
 
-    // 使用 NASA Black Marble imagery 的 Tile Map Services（TMS）服务（待修改）
-    /*
-    var layers = viewer.scene.imageryLayers;
-    var blackMarble = layers.addImageryProvider(new Cesium.createTileMapServiceImageryProvider({
-      // url: '//cesiumjs.org/tilesets/imagery/blackmarble',
-      url: '../images/cesium_maptiler/Cesium_Logo_Color',
-      fileExtention: 'png',
-      maximumLevel: 8,
-      credit: 'Black Marble imagery courtesy NASA Earth Observatory'
-    }));
-    //blackMarble.alpha = 0.5;    // 0.0 is transparent, 1.0 is opaque.
-    //blackMarble.brightness = 2.0; // > 1.0 increases brightness. < 1.0 decreases.
-    */
-  
+
   </script>
 </body>
 </html>
