@@ -9,6 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Hello World!</title>
   <script src="../Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="./Sandcastle/Sandcastle-header.js"></script>
+  <script type="text/javascript" src="../ThirdParty/requirejs-2.1.20/require.js"></script>
   <style>
       @import url(../Build/Cesium/Widgets/widgets.css);
       html, body, #cesiumContainer {
@@ -16,11 +18,14 @@
       }
   </style>
 </head>
-<body>
-  <div id="cesiumContainer"></div>
+<body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+  <style>
+    @import url(./Sandcastle/templates/bucket.css);
+  </style>
+  <div id="cesiumContainer" class="fullSize"></div>
   <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar"></div>
-  <script>
+  <script id="cesium_sandcastle_script">
     // 默认地图服务
     var viewer = new Cesium.Viewer('cesiumContainer', {
       animation: true,            // 是否显示动画小部件（左下角仪表盘）
@@ -58,189 +63,188 @@
     //   baseLayerPicker: false
     // });
 
-
     // var scene = new Cesium.Scene({
     //   canvas: canvas,
     //   debugShowFramesPerSecond: true
     // });
 
     // 为美国怀俄明州添加一个多边形
-    var wyoming = viewer.entities.add({
-      name: 'Wyoming',
-      polygon: {
-        hierarchy: Cesium.Cartesian3.fromDegreesArray([
-          -109.080842,  45.002073,
-          -105.91517,   45.002073,
-          -104.058488,  44.996596,
-          -104.053011,  43.002989,
-          -104.053011,  41.003906,
-          -105.728954,  40.998429,
-          -107.919731,  41.003906,
-          -109.04798,   40.998429,
-          -111.047063,  40.998429,
-          -111.047063,  42.000709,
-          -111.047063,  44.476286,
-          -111.05254,   45.002073]),
-        height: 0,
-        // material: Cesium.Color.RED.withAlpha(0.5),
-        material: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Wyoming.svg',
-        outline: true,
-        outlineColor: Cesium.Color.BLACK
-      }
-    });
+    // var wyoming = viewer.entities.add({
+    //   name: 'Wyoming',
+    //   polygon: {
+    //     hierarchy: Cesium.Cartesian3.fromDegreesArray([
+    //       -109.080842,  45.002073,
+    //       -105.91517,   45.002073,
+    //       -104.058488,  44.996596,
+    //       -104.053011,  43.002989,
+    //       -104.053011,  41.003906,
+    //       -105.728954,  40.998429,
+    //       -107.919731,  41.003906,
+    //       -109.04798,   40.998429,
+    //       -111.047063,  40.998429,
+    //       -111.047063,  42.000709,
+    //       -111.047063,  44.476286,
+    //       -111.05254,   45.002073]),
+    //     height: 0,
+    //     // material: Cesium.Color.RED.withAlpha(0.5),
+    //     material: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Wyoming.svg',
+    //     outline: true,
+    //     outlineColor: Cesium.Color.BLACK
+    //   }
+    // });
 
-    wyoming.description = '\
-    <img\
-      width = "50%"\
-      style = "float: left; margin: 0 1em 1em 0;"\
-      src = "//cesiumjs.org/images/2015/02-02/Flag_of_Wyoming.svg"/>\
-    <p>\
-      Wyoming is a state in the mountain region of the Western \
-      United States.\
-    </p>\
-    <p>\
-      Wyoming is the 10th most extensive, but the least populous \
-      and the second least densely populated of the 50 United \
-      States. The western two thirds of the state is covered mostly \
-      with the mountain ranges and rangelands in the foothills of \
-      the eastern Rocky Mountains, while the eastern third of the \
-      state is high elevation prairie known as the High Plains. \
-      Cheyenne is the capital and the most populous city in Wyoming, \
-      with a population estimate of 62,448 in 2013.\
-    </p>\
-    <p>\
-      Source: \
-      <a style = "color: WHITE"\
-        target = "_blank"\
-        href = "http://en.wikipedia.org/wiki/Wyoming">Wikipedia</a>\
-    <p/>';
-    // viewer.zoomTo(wyoming);
+    // wyoming.description = '\
+    // <img\
+    //   width = "50%"\
+    //   style = "float: left; margin: 0 1em 1em 0;"\
+    //   src = "//cesiumjs.org/images/2015/02-02/Flag_of_Wyoming.svg"/>\
+    // <p>\
+    //   Wyoming is a state in the mountain region of the Western \
+    //   United States.\
+    // </p>\
+    // <p>\
+    //   Wyoming is the 10th most extensive, but the least populous \
+    //   and the second least densely populated of the 50 United \
+    //   States. The western two thirds of the state is covered mostly \
+    //   with the mountain ranges and rangelands in the foothills of \
+    //   the eastern Rocky Mountains, while the eastern third of the \
+    //   state is high elevation prairie known as the High Plains. \
+    //   Cheyenne is the capital and the most populous city in Wyoming, \
+    //   with a population estimate of 62,448 in 2013.\
+    // </p>\
+    // <p>\
+    //   Source: \
+    //   <a style = "color: WHITE"\
+    //     target = "_blank"\
+    //     href = "http://en.wikipedia.org/wiki/Wyoming">Wikipedia</a>\
+    // <p/>';
+    // // viewer.zoomTo(wyoming);
   
-    // 加载多边形
-    var blueBox = viewer.entities.add({
-      name: 'Blue box',
-      position: Cesium.Cartesian3.fromDegrees(-114.0, 35.0, 300000.0),
-      box: {
-        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
-        material: Cesium.Color.BLUE
-      }
-    });
+    // // 加载多边形
+    // var blueBox = viewer.entities.add({
+    //   name: 'Blue box',
+    //   position: Cesium.Cartesian3.fromDegrees(-114.0, 35.0, 300000.0),
+    //   box: {
+    //     dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+    //     material: Cesium.Color.BLUE
+    //   }
+    // });
 
-    var redBox = viewer.entities.add({
-      name: 'Red box with black outline',
-      position: Cesium.Cartesian3.fromDegrees(-107.0, 35.0, 300000.0),
-      box: {
-        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
-        material: Cesium.Color.RED.withAlpha(0.5),
-        outline: true,
-        outlineColor: Cesium.Color.BLACK
-      }
-    });
+    // var redBox = viewer.entities.add({
+    //   name: 'Red box with black outline',
+    //   position: Cesium.Cartesian3.fromDegrees(-107.0, 35.0, 300000.0),
+    //   box: {
+    //     dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+    //     material: Cesium.Color.RED.withAlpha(0.5),
+    //     outline: true,
+    //     outlineColor: Cesium.Color.BLACK
+    //   }
+    // });
 
-    var outlineObly = viewer.entities.add({
-      name: 'Yellow box outline',
-      position: Cesium.Cartesian3.fromDegrees(-100.0, 35.0, 300000.0),
-      box: {
-        dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
-        fill: false,
-        outline: true,
-        outlineColor: Cesium.Color.YELLOW
-      }
-    });
+    // var outlineObly = viewer.entities.add({
+    //   name: 'Yellow box outline',
+    //   position: Cesium.Cartesian3.fromDegrees(-100.0, 35.0, 300000.0),
+    //   box: {
+    //     dimensions: new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+    //     fill: false,
+    //     outline: true,
+    //     outlineColor: Cesium.Color.YELLOW
+    //   }
+    // });
     
-    var greenCylinder = viewer.entities.add({
-      name: 'Green cylinder with black outline',
-      position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 300000.0),
-      cylinder: {
-        length: 400000.0,
-        topRadius: 200000.0,
-        bottomRadius: 200000.0,
-        material: Cesium.Color.GREEN.withAlpha(0.5),
-        outline: true,
-        outlineColor: Cesium.Color.DARK_GREEN
-      }
-    });
+    // var greenCylinder = viewer.entities.add({
+    //   name: 'Green cylinder with black outline',
+    //   position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 300000.0),
+    //   cylinder: {
+    //     length: 400000.0,
+    //     topRadius: 200000.0,
+    //     bottomRadius: 200000.0,
+    //     material: Cesium.Color.GREEN.withAlpha(0.5),
+    //     outline: true,
+    //     outlineColor: Cesium.Color.DARK_GREEN
+    //   }
+    // });
 
-    var redCone = viewer.entities.add({
-      name: 'Red cone',
-      position: Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 300000.0),
-      cylinder: {
-        length: 400000.0,
-        topRadius: 0.0,
-        bottomRadius: 200000.0,
-        material: Cesium.Color.RED
-      }
-    });
+    // var redCone = viewer.entities.add({
+    //   name: 'Red cone',
+    //   position: Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 300000.0),
+    //   cylinder: {
+    //     length: 400000.0,
+    //     topRadius: 0.0,
+    //     bottomRadius: 200000.0,
+    //     material: Cesium.Color.RED
+    //   }
+    // });
     
     // viewer.zoomTo(viewer.entities);
 
-    var entity = viewer.entities.add({
-      name: 'Milk Car',
-      position: Cesium.Cartesian3.fromDegrees(-91.0, 40, 0),
-      model: {
-        uri: './SampleData/models/CesiumMilkTruck/CesiumMilkTruck.gltf',
-        scale: 200.0
-      }
-    });
-    viewer.trackedEntity = entity;
-    entity.description = 'A 3D model.';
+    // var entity = viewer.entities.add({
+    //   name: 'Milk Car',
+    //   position: Cesium.Cartesian3.fromDegrees(-91.0, 40, 0),
+    //   model: {
+    //     uri: './SampleData/models/CesiumMilkTruck/CesiumMilkTruck.gltf',
+    //     scale: 200.0
+    //   }
+    // });
+    // viewer.trackedEntity = entity;
+    // entity.description = 'A 3D model.';
     
-    // function createModel(url, height) {
-    //   viewer.entities.removeAll();
+    function createModel(url, height) {
+      viewer.entities.removeAll();
 
-    //   var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
-    //   var heading = Cesium.Math.toRadians(135);
-    //   var pitch = 0;
-    //   var roll = 0;
-    //   var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-    //   var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+      var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
+      var heading = Cesium.Math.toRadians(135);
+      var pitch = 0;
+      var roll = 0;
+      var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+      var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
       
-    //   var entity = viewer.entities.add({
-    //     name : url,
-    //     position : position,
-    //     orientation : orientation,
-    //     model : {
-    //       uri : url,
-    //       minimumPixelSize : 128,
-    //       maximumScale : 20000
-    //     }
-    //   });
-    //   viewer.trackedEntity = entity;
-    // }
+      var entity = viewer.entities.add({
+        name : url,
+        position : position,
+        orientation : orientation,
+        model : {
+          uri : url,
+          minimumPixelSize : 128,
+          maximumScale : 20000
+        }
+      });
+      viewer.trackedEntity = entity;
+    }
 
-    // var options = [{
-    //   text : 'Aircraft',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/CesiumAir/Cesium_Air.gltf', 5000.0);
-    //   }
-    // }, {
-    //   text : 'Ground Vehicle',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/GroundVehicle/GroundVehicle.gltf', 0);
-    //   }
-    // }, {
-    //   text : 'Hot Air Balloon',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/CesiumBalloon/CesiumBalloon.gltf', 1000.0);
-    //   }
-    // }, {
-    //   text : 'Milk Truck',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.gltf', 0);
-    //   }
-    // }, {
-    //   text : 'Skinned Character',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/CesiumMan/Cesium_Man.gltf', 0);
-    //   }
-    // }, {
-    //   text : 'Draco Compressed Model',
-    //   onselect : function() {
-    //     createModel('./SampleData/models/DracoCompressed/CesiumMilkTruck.gltf', 0);
-    //   }
-    // }];
-    // Sandcastle.addToolbarMenu(options);
-
+    var options = [{
+      text : 'Aircraft',
+      onselect : function() {
+        createModel('./SampleData/models/CesiumAir/Cesium_Air.gltf', 5000.0);
+      }
+    }, {
+      text : 'Ground Vehicle',
+      onselect : function() {
+        createModel('./SampleData/models/GroundVehicle/GroundVehicle.glb', 0);
+      }
+    }, {
+      text : 'Hot Air Ballon',
+      onselect : function() {
+        createModel('./SampleData/models/CesiumBalloon/CesiumBalloon.glb', 1000.0);
+      }
+    }, {
+      text : 'Milk Truck',
+      onselect : function() {
+        createModel('./SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.gltf', 0);
+      }
+    }, {
+      text : 'Skinned Character',
+      onselect : function() {
+        createModel('./SampleData/models/CesiumMan/Cesium_Man.gltf', 0);
+      }
+    }, {
+      text : 'Draco Compressed Model',
+      onselect : function() {
+        createModel('./SampleData/models/DracoCompressed/CesiumMilkTruck.gltf', 0);
+      }
+    }];
+    Sandcastle.addToolbarMenu(options);
+    Sandcastle.finishedLoading();
 
 
   </script>
