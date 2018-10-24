@@ -99,7 +99,52 @@
         }
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
+    // https://blog.csdn.net/qq_31709249/article/details/81303291 绘制水体
+    // 河道关键点数组
+    var riverPoint = [
+        114.3551822527823,30.5307079885495,
+        114.3552267019809,30.52923318471276,
+        114.356143272256,30.52923318492236,
+        114.3561327950136,30.53069861353263,
+        114.3556273509441,30.53079783918866,
+        114.3551822527823,30.5307079885495];
 
+    // 河道多边形
+    var riverPolygon = new Cesium.PolygonGeometry({
+        polygonHierarchy: new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(riverPoint)),
+        extrudedHeight: 0,
+        height: 0,
+        vertexFormat: Cesium.EllipsoidSurfaceAppearance.VERTEX_FORMAT
+    });
+
+    // 河流
+    var river = new Cesium.Primitive({
+        geometryInstances: new Cesium.GeometryInstance({
+            geometry: riverPolygon
+        }),
+        appearance: new Cesium.EllipsoidSurfaceAppearance({
+            aboveGround: true
+        }),
+        show: true
+    });
+
+    // 贴图
+    var riverMaterial = new Cesium.Material({
+        fabric: {
+            type: 'Water',
+            uniforms: {
+                normalMap: 'water.jpg',
+                frequency: 100.0,
+                animationSpeed: 0.01,
+                amplitude: 10.0
+            }
+        }
+    });
+    river.appearance.material = riverMaterial;
+    scene.primitives.add(river);    // 添加到场景
+
+
+    
     function BackToSchool() {
         Sandcastle.declare(BackToSchool);
         viewer.camera.flyTo({
