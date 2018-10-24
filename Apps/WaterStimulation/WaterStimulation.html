@@ -8,10 +8,12 @@
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Water Stimulation</title>
+  <!-- 在 script 标签内加入 Cesium.js，它定义了 Cesium 对象， 包含我们所需要的一切。 -->
   <script src="../../Build/Cesium/Cesium.js"></script>
   <script type="text/javascript" src="../Sandcastle/Sandcastle-header.js"></script>
   <script type="text/javascript" src="../../ThirdParty/requirejs-2.1.20/require.js"></script>
   </script>
+  <!-- 使用 Cesium Viewer 小部件 -->
   <style>
       @import url(../../Build/Cesium/Widgets/widgets.css);
       html, body, #cesiumContainer {
@@ -23,32 +25,33 @@
   <style>
     @import url(../Sandcastle/templates/bucket.css);
   </style>
+  <!-- 在 HTML 主体中，为 viewer 创建一个 div。 -->
   <div id="cesiumContainer" class="fullSize"></div>
   <!-- <div id="loadingOverlay"><h1>Loading...</h1></div> -->
   <div id="toolbar"></div>
   <script id="cesium_sandcastle_script">
-    // 默认地图服务
+    // 创建一个 viewer 实例
     var viewer = new Cesium.Viewer('cesiumContainer', {
-      animation: true,            // 是否显示动画小部件（左下角仪表盘）
-      baseLayerPicker: true,      // 是否显示图层选择器
-      fullscreenButton: true,     // 是否显示全屏按钮
-      geocoder: true,             // 是否显示 geocoder 小部件（右上角查询按钮）
-      homeButton: true,           // 是否显示 Home 按钮
-      infoBox: true,              // 是否显示信息框
-      sceneModePicker: true,      // 是否显示 3D/2D 选择器
-      selectionIndicator: false,  // 是否显示指示器组件
-      timeline: true,             // 是否显示时间轴
-      navigationHelpButton: true, // 是否显示右上角的帮助按钮
-      scene3DOnly: false,         // 如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
-      shadows : true,
-      shouldAnimate : true          
+      animation: true,              // 是否显示动画小部件（左下角仪表盘）
+      baseLayerPicker: true,        // 是否显示图层选择器
+      fullscreenButton: true,       // 是否显示全屏按钮
+      geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
+      homeButton: true,             // 是否显示 Home 按钮
+      infoBox: true,                // 是否显示信息框
+      sceneModePicker: true,        // 是否显示 3D/2D 选择器
+      selectionIndicator: false,    // 是否显示指示器组件
+      timeline: true,               // 是否显示时间轴
+      navigationHelpButton: true,   // 是否显示右上角的帮助按钮
+      scene3DOnly: false,           // 如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
+      shadows : true,               // 是否显示阴影
+      shouldAnimate : true          // 是否显示动画
     });
     
     viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
 
+    // 创建一个 scene 实例
     var scene = viewer.scene;
 
-    
     // scene.globe.depthTestAgainstTerrian = true;
     // var resetCameraFunction = function() {
     //     scene.camera.setView({
@@ -121,29 +124,49 @@
     //   lifetime: 16.0
     // }));
 
-    // // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
-    // var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-    // // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEvenType 的种类，并运行一个特定的函数，将用户操作作为参数传递
-    // // 这里，我们将传递一个参数，在鼠标移动时触发
-    // var previousPickedEntity = undefined;
-    // handler.setInputAction(function(movement) {
-    //     // 处理程序将传入鼠标移动事件，从中我们可以提取一个窗口位置，以便使用 pick()
-    //     // 如果 pick 返回一个 billboard 对象，我们知道我们在一个标记上
-    //     // 使用 Entity 样式，可以应用一个突出显示样式
-    //     var pickedPrimitive = viewer.scene.pick(movement.endPosition);
-    //     var pickedEntity = (Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
-    //     // 对上一个选择取消高亮
-    //     if (Cesium.defined(previousPickedEntity)) {
-    //         previousPickedEntity.billboard.scale = 1.0;
-    //         previousPickedEntity.billboard.color = Cesium.Color.WHITE;
-    //     }
-    //     // 高亮当前选择
-    //     if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
-    //         pickedEntity.billboard.scale = 2.0;
-    //         pickedEntity.billboard.color = Cesium.Color.ORANGERED;
-    //         previousPickedEntity = pickedEntity;
-    //     }
-    // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    var MyPlaygroud = viewer.entites.add({
+        name: '竹园田径场',
+        position: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227),
+        point: {
+            pixelSize: 50,
+            color: Cesium.Color.RED,
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 2
+        },
+        label: {
+            text: '竹园田径场',
+            font: '18pt monospace',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            outlineWidth: 2,
+            verticleOrigin: Cesium.VerticleOrigin.BOTTOM,
+            pixleOffser: new Cesium.Cartesian2(0, -9)
+        }
+    });
+    viewer.zoomTo(viewer.entites);
+
+    // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEvenType 的种类，并运行一个特定的函数，将用户操作作为参数传递
+    // 这里，我们将传递一个参数，在鼠标移动时触发
+    var previousPickedEntity = undefined;
+    handler.setInputAction(function(movement) {
+        // 处理程序将传入鼠标移动事件，从中我们可以提取一个窗口位置，以便使用 pick()
+        // 如果 pick 返回一个 billboard 对象，我们知道我们在一个标记上
+        // 使用 Entity 样式，可以应用一个突出显示样式
+        var pickedPrimitive = viewer.scene.pick(movement.endPosition);
+        var pickedEntity = (Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
+        // 对上一个选择取消高亮
+        if (Cesium.defined(previousPickedEntity)) {
+            previousPickedEntity.billboard.scale = 1.0;
+            previousPickedEntity.billboard.color = Cesium.Color.WHITE;
+        }
+        // 高亮当前选择
+        if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
+            pickedEntity.billboard.scale = 2.0;
+            pickedEntity.billboard.color = Cesium.Color.ORANGERED;
+            previousPickedEntity = pickedEntity;
+        }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
     
     // Sandcastle.addToolbarButton('到信操', function() {
