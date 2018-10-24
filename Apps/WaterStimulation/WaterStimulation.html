@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Water Stimulation</title>
+  <script src="../../Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="../Sandcastle/Sandcastle-header.js"></script>
+  <script type="text/javascript" src="../../ThirdParty/requirejs-2.1.20/require.js"></script>
+  </script>
+  <style>
+      @import url(../../Build/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+      }
+  </style>
+</head>
+<body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+  <style>
+    @import url(../Sandcastle/templates/bucket.css);
+  </style>
+  <div id="cesiumContainer" class="fullSize"></div>
+  <!-- <div id="loadingOverlay"><h1>Loading...</h1></div> -->
+  <div id="toolbar"></div>
+  <script id="cesium_sandcastle_script">
+    // 默认地图服务
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+      animation: true,            // 是否显示动画小部件（左下角仪表盘）
+      baseLayerPicker: true,      // 是否显示图层选择器
+      fullscreenButton: true,     // 是否显示全屏按钮
+      geocoder: true,             // 是否显示 geocoder 小部件（右上角查询按钮）
+      homeButton: true,           // 是否显示 Home 按钮
+      infoBox: true,              // 是否显示信息框
+      sceneModePicker: true,      // 是否显示 3D/2D 选择器
+      selectionIndicator: false,  // 是否显示指示器组件
+      timeline: true,             // 是否显示时间轴
+      navigationHelpButton: true, // 是否显示右上角的帮助按钮
+      scene3DOnly: false,         // 如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
+      shadows : true,
+      shouldAnimate : true          
+    });
+    
+    viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
+
+    var scene = viewer.scene;
+
+    
+    // scene.globe.depthTestAgainstTerrian = true;
+    // var resetCameraFunction = function() {
+    //     scene.camera.setView({
+    //         destination: new Cesium.Cartesian3(277096.634865404, 5647834.481964232, 2985563.7039122293),
+    //         orientation: {
+    //             heading: 4.731089976107251,
+    //             pitch: -0.32003481981370063
+    //         }
+    //     });
+    // };
+    // resetCameraFunction();
+
+    // // snow
+    // var snowParticleSize = scene.drawingBufferWidth / 100.0;
+    // var snowRadius = 100000.0;
+    // var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
+    // var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0, snowParticleSize * 2.0);
+    // var snowSystem;
+    
+    // var snowGravityScratch = new Cesium.Cartesian3();
+    // var snowUpdate = function(particle, dt) {
+    //     snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
+    //     Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -300.0), snowGravityScratch);
+    //     particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch, particle.velocity);
+
+    //     var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
+    //     if (distance > snowRadius) {
+    //         particle.endColor.alpha = 0.0;
+    //     }
+    //     else {
+    //         particle.endColor.alpha = snowSystem.endColor.alpha / (distance / snowRadius + 0.1);
+    //     }
+    // };
+
+    // snowSystem = new Cesium.ParticleSystem({
+    //     modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
+    //     minimumSpeed: -0.1,
+    //     maximumSpeed: 0.0,
+    //     lifetime: 15.0,
+    //     emitter: new Cesium.SphereEmitter(snowRadius),
+    //     startScale: 0.5,
+    //     endScale: 1.0,
+    //     image: '../SampleData/snowflake_particle.png',
+    //     emissionRate: 7000.0,
+    //     startColor: Cesium.Color.WHITE.withAlpha(0.0),
+    //     endColor: Cesium.Color.WHITE.withAlpha(1.0),
+    //     minimumImageSize: minimumSnowImageSize,
+    //     maximumImageSize: maximumSnowImageSize,
+    //     updateCallback: snowUpdate
+    // });
+    // scene.primitives.add(snowSystem);
+
+    // 粒子系统
+    // var particleSystem = viewer.scene.primitives.add(new Cesium.ParticleSystem({
+    //   // Particle appearance
+    //   image: './SampleData/fire.png',
+    //   width: '20',
+    //   height: '20',
+    //   startScale: '1.0',
+    //   endScale: '4.0',
+    //   // Particle behavior
+    //   life: 1.0,
+    //   speed: 5.0,
+    //   // Emitter parameters
+    //   emitter: new Cesium.CircleEmitter(0.5),
+    //   rate: 5.0,
+    //   emitterModelMatrix: computeEmitterModelMatrix(),
+    //   // Paticle system parameters
+    //   modelMatrix: computeModelMatrix(),
+    //   lifetime: 16.0
+    // }));
+
+    const 
+    
+    Sandcastle.addToolbarButton('到信操', function() {
+        CameraToPlayground();
+    })
+    function CameraToPlayground() {
+        Sandcastle.declare(CameraToPlayground);
+
+        var camera = scene.camera;
+        camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
+            complete: function() {
+                setTimeout(function() {
+                    camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(315),
+                            pitch: Cesium.Math.toRadians(-50.0)
+                        },
+                        easingFunction: Cesium.EasingFunction.LINEAR_NONE
+                    });
+                }, 300);
+            }
+        });
+    }
+
+  </script>
+</body>
+</html>
