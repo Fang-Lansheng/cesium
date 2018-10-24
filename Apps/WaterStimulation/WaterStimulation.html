@@ -27,7 +27,7 @@
   </style>
   <!-- 在 HTML 主体中，为 viewer 创建一个 div。 -->
   <div id="cesiumContainer" class="fullSize"></div>
-  <!-- <div id="loadingOverlay"><h1>Loading...</h1></div> -->
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar"></div>
   <script id="cesium_sandcastle_script">
     // 创建一个 viewer 实例
@@ -42,156 +42,207 @@
       selectionIndicator: false,    // 是否显示指示器组件
       timeline: true,               // 是否显示时间轴
       navigationHelpButton: true,   // 是否显示右上角的帮助按钮
-      scene3DOnly: false,           // 如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
+      scene3DOnly: false,           // 如果设置为true，则所有几何图形以 3D 模式绘制以节约GPU资源
       shadows : true,               // 是否显示阴影
       shouldAnimate : true          // 是否显示动画
     });
     
-    viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
-
     // 创建一个 scene 实例
     var scene = viewer.scene;
+    // 创建一个 ellipsoid 实例
+    var ellipsoid = scene.globe.ellipsoid;
 
-    // scene.globe.depthTestAgainstTerrian = true;
-    // var resetCameraFunction = function() {
-    //     scene.camera.setView({
-    //         destination: new Cesium.Cartesian3(277096.634865404, 5647834.481964232, 2985563.7039122293),
-    //         orientation: {
-    //             heading: 4.731089976107251,
-    //             pitch: -0.32003481981370063
-    //         }
-    //     });
-    // };
-    // resetCameraFunction();
+    // 设置控件
+    viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
+    scene.debugShowFramesPerSecond = true;  // 显示帧率
 
-    // // snow
-    // var snowParticleSize = scene.drawingBufferWidth / 100.0;
-    // var snowRadius = 100000.0;
-    // var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
-    // var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0, snowParticleSize * 2.0);
-    // var snowSystem;
-    
-    // var snowGravityScratch = new Cesium.Cartesian3();
-    // var snowUpdate = function(particle, dt) {
-    //     snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
-    //     Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -300.0), snowGravityScratch);
-    //     particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch, particle.velocity);
-
-    //     var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
-    //     if (distance > snowRadius) {
-    //         particle.endColor.alpha = 0.0;
-    //     }
-    //     else {
-    //         particle.endColor.alpha = snowSystem.endColor.alpha / (distance / snowRadius + 0.1);
-    //     }
-    // };
-
-    // snowSystem = new Cesium.ParticleSystem({
-    //     modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
-    //     minimumSpeed: -0.1,
-    //     maximumSpeed: 0.0,
-    //     lifetime: 15.0,
-    //     emitter: new Cesium.SphereEmitter(snowRadius),
-    //     startScale: 0.5,
-    //     endScale: 1.0,
-    //     image: '../SampleData/snowflake_particle.png',
-    //     emissionRate: 7000.0,
-    //     startColor: Cesium.Color.WHITE.withAlpha(0.0),
-    //     endColor: Cesium.Color.WHITE.withAlpha(1.0),
-    //     minimumImageSize: minimumSnowImageSize,
-    //     maximumImageSize: maximumSnowImageSize,
-    //     updateCallback: snowUpdate
-    // });
-    // scene.primitives.add(snowSystem);
-
-    // 粒子系统
-    // var particleSystem = viewer.scene.primitives.add(new Cesium.ParticleSystem({
-    //   // Particle appearance
-    //   image: './SampleData/fire.png',
-    //   width: '20',
-    //   height: '20',
-    //   startScale: '1.0',
-    //   endScale: '4.0',
-    //   // Particle behavior
-    //   life: 1.0,
-    //   speed: 5.0,
-    //   // Emitter parameters
-    //   emitter: new Cesium.CircleEmitter(0.5),
-    //   rate: 5.0,
-    //   emitterModelMatrix: computeEmitterModelMatrix(),
-    //   // Paticle system parameters
-    //   modelMatrix: computeModelMatrix(),
-    //   lifetime: 16.0
-    // }));
-
-    var MyPlaygroud = viewer.entites.add({
-        name: '竹园田径场',
-        position: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227),
-        point: {
-            pixelSize: 50,
-            color: Cesium.Color.RED,
-            outlineColor: Cesium.Color.WHITE,
-            outlineWidth: 2
-        },
-        label: {
-            text: '竹园田径场',
-            font: '18pt monospace',
-            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-            outlineWidth: 2,
-            verticleOrigin: Cesium.VerticleOrigin.BOTTOM,
-            pixleOffser: new Cesium.Cartesian2(0, -9)
+    // 初始化相机参数
+    var initialPosition = new Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000);
+    var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
+    var homeCameraView = {
+        destination: initialPosition,
+        orientation: {
+            heading: initialOrientation.heading,
+            pitch: initialOrientation.pitch,
+            roll: initialOrientation.roll
         }
-    });
-    viewer.zoomTo(viewer.entites);
-
+    };
+    // 设置初始视野
+    viewer.scene.camera.setView(homeCameraView);
+ 
     // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
-    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-    // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEvenType 的种类，并运行一个特定的函数，将用户操作作为参数传递
-    // 这里，我们将传递一个参数，在鼠标移动时触发
-    var previousPickedEntity = undefined;
+    const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEventType 的种类，并运行一个特定的函数，将用户操作作为参数传递
+    // 单击鼠标左键获得该点经、纬度
     handler.setInputAction(function(movement) {
-        // 处理程序将传入鼠标移动事件，从中我们可以提取一个窗口位置，以便使用 pick()
-        // 如果 pick 返回一个 billboard 对象，我们知道我们在一个标记上
-        // 使用 Entity 样式，可以应用一个突出显示样式
-        var pickedPrimitive = viewer.scene.pick(movement.endPosition);
-        var pickedEntity = (Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
-        // 对上一个选择取消高亮
-        if (Cesium.defined(previousPickedEntity)) {
-            previousPickedEntity.billboard.scale = 1.0;
-            previousPickedEntity.billboard.color = Cesium.Color.WHITE;
+        // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+        var cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
+        if (cartesian) {
+            var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+            var longitude = Cesium.Math.toDegrees(cartographic.longitude);  // 经度
+            var latitude = Cesium.Math.toDegrees(cartographic.latitude);    // 维度
+            console.log("经度：" + longitude + ", 纬度：" + latitude);
         }
-        // 高亮当前选择
-        if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
-            pickedEntity.billboard.scale = 2.0;
-            pickedEntity.billboard.color = Cesium.Color.ORANGERED;
-            previousPickedEntity = pickedEntity;
+        else {
+            console.log("地图外的点！");
         }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    // 单击鼠标右键获得该点三维坐标
+    handler.setInputAction(function(movement) {
+        var cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
+        if (cartesian) {
+            var height = Math.ceil(viewer.camera.positionCartographic.height);
+            console.log("X：" + cartesian.x + ", Y：" + cartesian.y + ", H：" + height);    // 此处 H 是摄影机高度
+        }
+        else {
+            console.log("地图外的点！");
+        }
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
-    
-    // Sandcastle.addToolbarButton('到信操', function() {
-    //     CameraToPlayground();
-    // })
-    // function CameraToPlayground() {
-    //     Sandcastle.declare(CameraToPlayground);
 
-    //     var camera = scene.camera;
-    //     camera.flyTo({
-    //         destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
-    //         complete: function() {
-    //             setTimeout(function() {
-    //                 camera.flyTo({
-    //                     destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
-    //                     orientation: {
-    //                         heading: Cesium.Math.toRadians(315),
-    //                         pitch: Cesium.Math.toRadians(-50.0)
-    //                     },
-    //                     easingFunction: Cesium.EasingFunction.LINEAR_NONE
-    //                 });
-    //             }, 300);
-    //         }
-    //     });
-    // }
+    function BackToSchool() {
+        Sandcastle.declare(BackToSchool);
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000),
+            orientation: {
+                heading: Cesium.Math.toRadians(0),
+                pitch: Cesium.Math.toRadians(-90),
+                roll: Cesium.Math.toRadians(0)
+            }
+        })
+    };
+
+    var resetCameraFunction = function() {
+        scene.camera.setView({
+            // destination: Cesium.Cartesian3(-2267652.2655411586, 5009272.549292408, 5000),
+            destination: Cesium.Cartesian3(Cesium.Cartesian3.x, Cesium.Cartesian3.y, 5000),
+            orientation: {
+                heading: Cesium.HeadingPitchRoll.heading,
+                pitch: Cesium.HeadingPitchRoll.pitch,
+                roll: Cesium.HeadingPitchRoll.roll
+            }
+        });
+    };
+    resetCameraFunction();
+
+    // snow
+    var snowParticleSize = scene.drawingBufferWidth / 100.0;
+    var snowRadius = 100000.0;
+    var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
+    var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0, snowParticleSize * 2.0);
+    var snowSystem;
+
+    var snowGravityScratch = new Cesium.Cartesian3();
+    var snowUpdate = function(particle, dt) {
+        snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
+        Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -300.0), snowGravityScratch);
+        particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch, particle.velocity);
+
+        var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
+        if (distance > snowRadius) {
+            particle.endColor.alpha = 0.0;
+        } else {
+            particle.endColor.alpha = snowSystem.endColor.alpha / (distance / snowRadius + 0.1);
+        }
+    };
+
+    snowSystem = new Cesium.ParticleSystem({
+        modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+        minimumSpeed : -1.0,
+        maximumSpeed : 0.0,
+        lifetime : 15.0,
+        emitter : new Cesium.SphereEmitter(snowRadius),
+        startScale : 0.5,
+        endScale : 1.0,
+        image : '../SampleData/snowflake_particle.png',
+        emissionRate : 7000.0,
+        startColor : Cesium.Color.WHITE.withAlpha(0.0),
+        endColor : Cesium.Color.WHITE.withAlpha(1.0),
+        minimumImageSize : minimumSnowImageSize,
+        maximumImageSize : maximumSnowImageSize,
+        updateCallback : snowUpdate
+    });
+    scene.primitives.add(snowSystem);
+
+    // rain
+    var rainParticleSize = scene.drawingBufferWidth / 80.0;
+    var rainRadius = 100000.0;
+    var rainImageSize = new Cesium.Cartesian2(rainParticleSize, rainParticleSize * 2.0);
+    var rainSystem;
+
+    var rainGravityScratch = new Cesium.Cartesian3();
+    var rainUpdate = function(particle, dt) {
+        rainGravityScratch = Cesium.Cartesian3.normalize(particle.position, rainGravityScratch);
+        rainGravityScratch = Cesium.Cartesian3.multiplyByScalar(rainGravityScratch, -1050.0, rainGravityScratch);
+
+        particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch, particle.position);
+
+        var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
+        if (distance > rainRadius) {
+            particle.endColor.alpha = 0.0;
+        } else {
+            particle.endColor.alpha = rainSystem.endColor.alpha / (distance / rainRadius + 0.1);
+        }
+    };
+
+    rainSystem = new Cesium.ParticleSystem({
+        modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+        speed : -1.0,
+        lifetime : 15.0,
+        emitter : new Cesium.SphereEmitter(rainRadius),
+        startScale : 1.0,
+        endScale : 0.0,
+        image : '../SampleData/circular_particle.png',
+        emissionRate : 9000.0,
+        startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
+        endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),
+        imageSize : rainImageSize,
+        updateCallback : rainUpdate
+    });
+    scene.primitives.add(rainSystem);
+
+    var options1 = [{
+        text: '选择天气',
+        onselect: function() {
+            rainSystem.show = false;
+            snowSystem.show = false;
+        }
+    }, {
+        text : 'Snow',
+        onselect : function() {
+            rainSystem.show = false;
+            snowSystem.show = true;
+
+            scene.skyAtmosphere.hueShift = -0.8;
+            scene.skyAtmosphere.saturationShift = -0.7;
+            scene.skyAtmosphere.brightnessShift = -0.33;
+
+            scene.fog.density = 0.001;
+            scene.fog.minimumBrightness = 0.8;
+        }
+    }, {
+        text : 'Rain',
+        onselect : function() {
+            
+            rainSystem.show = true;
+            snowSystem.show = false;
+
+            scene.skyAtmosphere.hueShift = -0.97;
+            scene.skyAtmosphere.saturationShift = 0.25;
+            scene.skyAtmosphere.brightnessShift = -0.4;
+
+            scene.fog.density = 0.00025;
+            scene.fog.minimumBrightness = 0.01;
+        }
+    }];
+
+
+    Sandcastle.addToolbarButton('回到学校', function() {
+        BackToSchool();
+    });
+    Sandcastle.addToolbarMenu(options1);
+    Sandcastle.finishedLoading();
+
 
   </script>
 </body>
