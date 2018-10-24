@@ -121,31 +121,56 @@
     //   lifetime: 16.0
     // }));
 
-    const 
-    
-    Sandcastle.addToolbarButton('到信操', function() {
-        CameraToPlayground();
-    })
-    function CameraToPlayground() {
-        Sandcastle.declare(CameraToPlayground);
+    // // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
+    // var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    // // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEvenType 的种类，并运行一个特定的函数，将用户操作作为参数传递
+    // // 这里，我们将传递一个参数，在鼠标移动时触发
+    // var previousPickedEntity = undefined;
+    // handler.setInputAction(function(movement) {
+    //     // 处理程序将传入鼠标移动事件，从中我们可以提取一个窗口位置，以便使用 pick()
+    //     // 如果 pick 返回一个 billboard 对象，我们知道我们在一个标记上
+    //     // 使用 Entity 样式，可以应用一个突出显示样式
+    //     var pickedPrimitive = viewer.scene.pick(movement.endPosition);
+    //     var pickedEntity = (Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
+    //     // 对上一个选择取消高亮
+    //     if (Cesium.defined(previousPickedEntity)) {
+    //         previousPickedEntity.billboard.scale = 1.0;
+    //         previousPickedEntity.billboard.color = Cesium.Color.WHITE;
+    //     }
+    //     // 高亮当前选择
+    //     if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
+    //         pickedEntity.billboard.scale = 2.0;
+    //         pickedEntity.billboard.color = Cesium.Color.ORANGERED;
+    //         previousPickedEntity = pickedEntity;
+    //     }
+    // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-        var camera = scene.camera;
-        camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
-            complete: function() {
-                setTimeout(function() {
-                    camera.flyTo({
-                        destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
-                        orientation: {
-                            heading: Cesium.Math.toRadians(315),
-                            pitch: Cesium.Math.toRadians(-50.0)
-                        },
-                        easingFunction: Cesium.EasingFunction.LINEAR_NONE
-                    });
-                }, 300);
-            }
-        });
-    }
+
+
+    
+    // Sandcastle.addToolbarButton('到信操', function() {
+    //     CameraToPlayground();
+    // })
+    // function CameraToPlayground() {
+    //     Sandcastle.declare(CameraToPlayground);
+
+    //     var camera = scene.camera;
+    //     camera.flyTo({
+    //         destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
+    //         complete: function() {
+    //             setTimeout(function() {
+    //                 camera.flyTo({
+    //                     destination: Cesium.Cartesian3.fromDegrees(114.35660846316384, 30.52925195710227,164),
+    //                     orientation: {
+    //                         heading: Cesium.Math.toRadians(315),
+    //                         pitch: Cesium.Math.toRadians(-50.0)
+    //                     },
+    //                     easingFunction: Cesium.EasingFunction.LINEAR_NONE
+    //                 });
+    //             }, 300);
+    //         }
+    //     });
+    // }
 
   </script>
 </body>
