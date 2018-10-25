@@ -19,6 +19,16 @@
       html, body, #cesiumContainer {
           width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
       }
+      #ladata_show {
+          width: 750px;
+          height: 20px;
+          position: absolute;   
+          margin-bottom: 5px;
+          right: 0px;
+          bottom: 0px;
+          z-index: 1;
+          font-size: 15px;
+      }
   </style>
 </head>
 <body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
@@ -29,6 +39,25 @@
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar"></div>
+  <div id="map">
+        <div id="ladata_show">
+            <div style="width: 150px; height: 30px; float: left;">
+                <font size="2" color="WhiteSmoke">经度：<span id="longitude_show"></span>°</font>
+            </div>
+            <div style="width: 150px; height: 30px; float: left;">
+                <font size="2" color="WhiteSmoke">纬度：<span id="latitude_show"></span>°</font>
+            </div>
+            <div style="width: 150px; height: 30px; float: left;">
+                <font size="2" color="WhiteSmoke">X：<span id="x_show"></span>m</font>
+            </div>
+            <div style="width: 150px; height: 30px; float: left;">
+                <font size="2" color="WhiteSmoke">Y：<span id="y_show"></span>m</font>
+            </div>
+            <div style="width: 150px; height: 30px; float: left;">
+                <font size="2" color="WhiteSmoke">视角高：<span id="photo_altitude"></span>m</font>
+            </div>
+        </div>
+  </div>
   <script id="cesium_sandcastle_script">
     // 创建一个 viewer 实例
     var viewer = new Cesium.Viewer('cesiumContainer', {
@@ -40,7 +69,7 @@
       infoBox: true,                // 是否显示信息框
       sceneModePicker: true,        // 是否显示 3D/2D 选择器
       selectionIndicator: false,    // 是否显示指示器组件
-      timeline: true,               // 是否显示时间轴
+      timeline: false,               // 是否显示时间轴
       navigationHelpButton: true,   // 是否显示右上角的帮助按钮
       scene3DOnly: false,           // 如果设置为true，则所有几何图形以 3D 模式绘制以节约GPU资源
       shadows : true,               // 是否显示阴影
@@ -55,7 +84,8 @@
     // 设置控件
     viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
     scene.debugShowFramesPerSecond = true;  // 显示帧率
-
+    
+    
     // 初始化相机参数
     var initialPosition = new Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
@@ -69,35 +99,56 @@
     };
     // 设置初始视野
     viewer.scene.camera.setView(homeCameraView);
- 
+    
+    // 激活基于太阳位置的光照
+    scene.globe.enableLighting = true;
+
+    // 重写 homeButton
+    viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e) {
+        e.cancel = true;
+        viewer.camera.flyTo({
+            destination: initialPosition,
+            orientation: {
+                heading: initialOrientation.heading,
+                pitch: initialOrientation.pitch,
+                roll: initialOrientation.roll
+            }
+        })
+    })
+
+    // 实时显示经纬度、坐标值及视角高
+    document.getElementById("longitude_show").innerHTML = 114.35578960;         // 经度初始值
+    document.getElementById("latitude_show").innerHTML = 30.52703616;           // 纬度初始值
+    document.getElementById("x_show").innerHTML = initialPosition.x.toFixed(6)  // X 初始值
+    document.getElementById("y_show").innerHTML = initialPosition.y.toFixed(6)  // Y 初始值
+    document.getElementById("photo_altitude").innerHTML = 5000;                 // 视角高初始值
     // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
     const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
     // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEventType 的种类，并运行一个特定的函数，将用户操作作为参数传递
-    // 单击鼠标左键获得该点经、纬度
+    // 移动鼠标获得该点经、纬度、X、Y 坐标
     handler.setInputAction(function(movement) {
         // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
-        var cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
+        var cartesian = scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
         if (cartesian) {
             var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-            var longitude = Cesium.Math.toDegrees(cartographic.longitude);  // 经度
-            var latitude = Cesium.Math.toDegrees(cartographic.latitude);    // 维度
-            console.log("经度：" + longitude + ", 纬度：" + latitude);
+            var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(8);   // 经度
+            var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(8);     // 维度
+
+            document.getElementById("longitude_show").innerHTML = longitude;            // 经度
+            document.getElementById("latitude_show").innerHTML = latitude;              // 纬度
+            document.getElementById("x_show").innerHTML = cartesian.x.toFixed(6)        // X
+            document.getElementById("y_show").innerHTML = cartesian.y.toFixed(6)        // Y
+            latitude_show.innerHTML = latitude;
         }
         else {
             console.log("地图外的点！");
         }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-    // 单击鼠标右键获得该点三维坐标
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    // 滑动鼠标滚轮获得该点摄影机高度
     handler.setInputAction(function(movement) {
-        var cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
-        if (cartesian) {
-            var height = Math.ceil(viewer.camera.positionCartographic.height);
-            console.log("X：" + cartesian.x + ", Y：" + cartesian.y + ", H：" + height);    // 此处 H 是摄影机高度
-        }
-        else {
-            console.log("地图外的点！");
-        }
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        var height = Math.ceil(viewer.camera.positionCartographic.height);
+        document.getElementById("photo_altitude").innerHTML = height;
+    }, Cesium.ScreenSpaceEventType.WHEEL);
 
     // https://blog.csdn.net/qq_31709249/article/details/81303291 绘制水体
     // 河道关键点数组
@@ -144,18 +195,30 @@
     scene.primitives.add(river);    // 添加到场景
 
 
-    
-    function BackToSchool() {
-        Sandcastle.declare(BackToSchool);
-        viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000),
-            orientation: {
-                heading: Cesium.Math.toRadians(0),
-                pitch: Cesium.Math.toRadians(-90),
-                roll: Cesium.Math.toRadians(0)
-            }
-        })
+
+    function YundangLakeKML() {
+        // Cesium 加载文件
+        var Lake = viewer.dataSources.add(Cesium.KmlDataSource.load('Yundang-Lake.kml',{
+            camera: viewer.camera,
+            canvas: viewer.canvas,
+        }));
+        Lake.then(function(dataSource) {
+            viewer.flyTo(dataSource.entities);
+        });
+        
     };
+
+    // function BackToSchool() {
+    //     Sandcastle.declare(BackToSchool);
+    //     viewer.camera.flyTo({
+    //         destination: Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000),
+    //         orientation: {
+    //             heading: Cesium.Math.toRadians(0),
+    //             pitch: Cesium.Math.toRadians(-90),
+    //             roll: Cesium.Math.toRadians(0)
+    //         }
+    //     })
+    // };
 
     var resetCameraFunction = function() {
         scene.camera.setView({
@@ -268,7 +331,6 @@
     }, {
         text : 'Rain',
         onselect : function() {
-            
             rainSystem.show = true;
             snowSystem.show = false;
 
@@ -283,12 +345,13 @@
 
 
     Sandcastle.addToolbarButton('回到学校', function() {
-        BackToSchool();
+        YundangLakeKML();
     });
     Sandcastle.addToolbarMenu(options1);
     Sandcastle.finishedLoading();
 
 
   </script>
+
 </body>
 </html>
