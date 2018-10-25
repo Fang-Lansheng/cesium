@@ -65,13 +65,14 @@
       baseLayerPicker: true,        // 是否显示图层选择器
       fullscreenButton: true,       // 是否显示全屏按钮
       geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
+      vrButton: false,              // 是否显示 VR 按钮
       homeButton: true,             // 是否显示 Home 按钮
       infoBox: true,                // 是否显示信息框
       sceneModePicker: true,        // 是否显示 3D/2D 选择器
       selectionIndicator: false,    // 是否显示指示器组件
-      timeline: false,               // 是否显示时间轴
-      navigationHelpButton: true,   // 是否显示右上角的帮助按钮
-      scene3DOnly: false,           // 如果设置为true，则所有几何图形以 3D 模式绘制以节约GPU资源
+      timeline: false,              // 是否显示时间轴
+      navigationHelpButton: false,  // 是否显示右上角的帮助按钮
+      scene3DOnly: true,            // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
       shadows : true,               // 是否显示阴影
       shouldAnimate : true          // 是否显示动画
     });
@@ -84,7 +85,6 @@
     // 设置控件
     viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
     scene.debugShowFramesPerSecond = true;  // 显示帧率
-    
     
     // 初始化相机参数
     var initialPosition = new Cesium.Cartesian3.fromDegrees(114.29045969, 30.56173526, 40000);
@@ -100,8 +100,15 @@
     // 设置初始视野
     viewer.scene.camera.setView(homeCameraView);
     
-    // 激活基于太阳位置的光照
-    scene.globe.enableLighting = true;
+
+
+    // load STK World Terrain
+    viewer.terrainProvider = Cesium.createWorldTerrain({
+        requestWaterMask : true,        // 动态水纹
+        requestVertexNormals: true      // 光效
+    });
+    // 确保在地形后面的物体被正确地遮挡，只有最前端的对象可见
+    viewer.scene.globe.depthTestAgainstTerrain = true;
 
     // 重写 homeButton
     viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e) {
@@ -193,11 +200,6 @@
     });
     river.appearance.material = riverMaterial;
     scene.primitives.add(river);    // 添加到场景
-
-    // 动态水纹
-    viewer.terrainProvider = Cesium.createWorldTerrain({
-        requestWaterMask : true
-    });
 
     function YundangLakeKML() {
         // Cesium 加载文件
@@ -347,8 +349,11 @@
     }];
 
 
-    Sandcastle.addToolbarButton('回到学校', function() {
-        YundangLakeKML();
+    // Sandcastle.addToolbarButton('回到学校', function() {
+    //     YundangLakeKML();
+    // });
+    Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = true, function(checked) {
+        scene.globe.enableLighting = checked;
     });
     Sandcastle.addToolbarMenu(options1);
     Sandcastle.finishedLoading();
