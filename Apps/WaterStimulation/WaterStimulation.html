@@ -87,7 +87,7 @@
     
     
     // 初始化相机参数
-    var initialPosition = new Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 5000);
+    var initialPosition = new Cesium.Cartesian3.fromDegrees(114.29045969, 30.56173526, 40000);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
     var homeCameraView = {
         destination: initialPosition,
@@ -117,11 +117,11 @@
     })
 
     // 实时显示经纬度、坐标值及视角高
-    document.getElementById("longitude_show").innerHTML = 114.35578960;         // 经度初始值
-    document.getElementById("latitude_show").innerHTML = 30.52703616;           // 纬度初始值
+    document.getElementById("longitude_show").innerHTML = 114.29045969;         // 经度初始值
+    document.getElementById("latitude_show").innerHTML = 30.56173526;           // 纬度初始值
     document.getElementById("x_show").innerHTML = initialPosition.x.toFixed(6)  // X 初始值
     document.getElementById("y_show").innerHTML = initialPosition.y.toFixed(6)  // Y 初始值
-    document.getElementById("photo_altitude").innerHTML = 5000;                 // 视角高初始值
+    document.getElementById("photo_altitude").innerHTML = 40000;                 // 视角高初始值
     // 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
     const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
     // ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEventType 的种类，并运行一个特定的函数，将用户操作作为参数传递
@@ -194,7 +194,10 @@
     river.appearance.material = riverMaterial;
     scene.primitives.add(river);    // 添加到场景
 
-
+    // 动态水纹
+    viewer.terrainProvider = Cesium.createWorldTerrain({
+        requestWaterMask : true
+    });
 
     function YundangLakeKML() {
         // Cesium 加载文件
