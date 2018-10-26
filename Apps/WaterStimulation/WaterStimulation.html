@@ -85,7 +85,8 @@
     // 设置控件
     viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
     scene.debugShowFramesPerSecond = true;  // 显示帧率
-    
+    // viewer.extend(Cesium.viewerCesiumInspectorMixin);
+
     // 初始化相机参数
     var initialPosition = new Cesium.Cartesian3.fromDegrees(114.29045969, 30.56173526, 40000);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
