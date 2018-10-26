@@ -20,7 +20,7 @@
           width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
       }
       #ladata_show {
-          width: 750px;
+          width: 780px;
           height: 20px;
           position: absolute;   
           margin-bottom: 5px;
@@ -156,6 +156,17 @@
         var height = Math.ceil(viewer.camera.positionCartographic.height);
         document.getElementById("photo_altitude").innerHTML = height;
     }, Cesium.ScreenSpaceEventType.WHEEL);
+
+
+    // 加载实体和为实体添加样式
+    var kmlOptions = {
+        camera: scene.camera,
+        canvas: scene.canvas,
+        clampToGround: true
+    };
+    // Load geocache points of interest from a KML file
+    var geocachePromise = Cesium.KmlDataSource.load('../SampleData/sampleGeocacheLocations')
+
 
     // https://blog.csdn.net/qq_31709249/article/details/81303291 绘制水体
     // 河道关键点数组
