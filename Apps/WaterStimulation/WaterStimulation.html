@@ -72,7 +72,7 @@
       selectionIndicator: false,    // 是否显示指示器组件
       timeline: false,              // 是否显示时间轴
       navigationHelpButton: false,  // 是否显示右上角的帮助按钮
-      scene3DOnly: true,            // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
+      scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
       shadows : true,               // 是否显示阴影
       shouldAnimate : true          // 是否显示动画
     });
@@ -352,7 +352,7 @@
     // Sandcastle.addToolbarButton('回到学校', function() {
     //     YundangLakeKML();
     // });
-    Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = true, function(checked) {
+    Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = false, function(checked) {
         scene.globe.enableLighting = checked;
     });
     Sandcastle.addToolbarMenu(options1);
