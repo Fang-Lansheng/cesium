@@ -42,7 +42,7 @@
       shadows : true,
       shouldAnimate : true
     });
-    
+    var scene = viewer.scene;
     viewer._cesiumWidget._creditContainer.style.display = 'none'; // 隐藏 logo 信息
 
     // 加载 Bing 地图服务
@@ -62,11 +62,34 @@
     //   }),
     //   baseLayerPicker: false
     // });
-
-    // var scene = new Cesium.Scene({
-    //   canvas: canvas,
-    //   debugShowFramesPerSecond: true
-    // });
+    
+    var circleInstance = new Cesium.GeometryInstance( {
+      geometry : new Cesium.CircleGeometry( {
+          center : Cesium.Cartesian3.fromDegrees( -95.0, 43.0 ),
+          radius : 250000.0,
+          vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+      } ),
+      attributes : {
+          color : Cesium.ColorGeometryInstanceAttribute.fromColor( new Cesium.Color( 1.0, 0.0, 0.0, 0.5 ) ),
+          show : new Cesium.ShowGeometryInstanceAttribute( true ) //显示或者隐藏
+      },
+      id : 'circle'
+    } );
+    var primitive = new Cesium.Primitive( {
+      geometryInstances : circleInstance,
+      appearance : new Cesium.PerInstanceColorAppearance( {
+          translucent : false,
+          closed : true
+      } )
+    } );
+    scene.primitives.add( primitive );
+    //定期修改颜色
+    setInterval(function(){
+        var attributes = primitive.getGeometryInstanceAttributes( 'circle' );//获取某个实例的属性集
+        attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue( Cesium.Color.fromRandom( {
+            alpha : 1.0
+        } ) );
+    }, 2000 );
 
     // 为美国怀俄明州添加一个多边形
     var wyoming = viewer.entities.add({
@@ -119,8 +142,10 @@
         href = "http://en.wikipedia.org/wiki/Wyoming">Wikipedia</a>\
     <p/>';
     // viewer.zoomTo(wyoming);
+    console.log(wyoming.polygon.outline);
   
     // 加载多边形
+    // 通过 Entity API 来绘制空间数据
     var blueBox = viewer.entities.add({
       name: 'Blue box',
       position: Cesium.Cartesian3.fromDegrees(-114.0, 35.0, 300000.0),
@@ -178,39 +203,28 @@
     
     // viewer.zoomTo(viewer.entities);
 
-    // var entity = viewer.entities.add({
-    //   name: 'Milk Car',
-    //   position: Cesium.Cartesian3.fromDegrees(-91.0, 40, 0),
-    //   model: {
-    //     uri: './SampleData/models/CesiumMilkTruck/CesiumMilkTruck.gltf',
-    //     scale: 200.0
-    //   }
-    // });
-    // viewer.trackedEntity = entity;
-    // entity.description = 'A 3D model.';
+    // var instances = [];
+    // for (var longitude = -180.0; longitude < 180.0; longitude += 5.0) {
+    //   for (var latitude = -90.0; latitude < 90.0; latitude += 5.0) {
+    //     instances.push(new Cesium.GeometryInstance({
+    //       geometry: new Cesium.RectangleGeometry({
+    //         rectangle: Cesium.Rectangle.fromDegrees(longitude, latitude, longitude + 5.0, latitude + 5.0)
+    //       })
+    //       // attributes: {
+    //       //   color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.BLUE)
+    //       // }
+    //     }));
+    //   };
+    // };
 
-    // 粒子系统
-    // var particleSystem = viewer.scene.primitives.add(new Cesium.ParticleSystem({
-    //   // Particle appearance
-    //   image: './SampleData/fire.png',
-    //   width: '20',
-    //   height: '20',
-    //   startScale: '1.0',
-    //   endScale: '4.0',
-    //   // Particle behavior
-    //   life: 1.0,
-    //   speed: 5.0,
-    //   // Emitter parameters
-    //   emitter: new Cesium.CircleEmitter(0.5),
-    //   rate: 5.0,
-    //   emitterModelMatrix: computeEmitterModelMatrix(),
-    //   // Paticle system parameters
-    //   modelMatrix: computeModelMatrix(),
-    //   lifetime: 16.0
+    // scene.primitives.add(new Cesium.Primitive({
+    //   geomertyInstances: instances,   // 合并
+    //   appearance: new Cesium.PerInstanceColorAppearance()
     // }));
     
     function createModel(url, height) {
       // viewer.entities.removeAll();
+      viewer.entities.removeById('model');
 
       var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
       var heading = Cesium.Math.toRadians(135);
@@ -220,6 +234,7 @@
       var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
       
       var entity = viewer.entities.add({
+        id: 'model',
         name : url,
         position : position,
         orientation : orientation,

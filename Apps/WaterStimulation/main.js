@@ -1,19 +1,19 @@
 // 创建一个 viewer 实例
 var viewer = new Cesium.Viewer('cesiumContainer', {
-animation: true,              // 是否显示动画小部件（左下角仪表盘）
-baseLayerPicker: true,        // 是否显示图层选择器
-fullscreenButton: true,       // 是否显示全屏按钮
-geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
-vrButton: false,              // 是否显示 VR 按钮
-homeButton: true,             // 是否显示 Home 按钮
-infoBox: true,                // 是否显示信息框
-sceneModePicker: true,        // 是否显示 3D/2D 选择器
-selectionIndicator: false,    // 是否显示指示器组件
-timeline: false,              // 是否显示时间轴
-navigationHelpButton: false,  // 是否显示右上角的帮助按钮
-scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
-shadows : true,               // 是否显示阴影
-shouldAnimate : true          // 是否显示动画
+    animation: true,              // 是否显示动画小部件（左下角仪表盘）
+    baseLayerPicker: true,        // 是否显示图层选择器
+    fullscreenButton: true,       // 是否显示全屏按钮
+    geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
+    vrButton: false,              // 是否显示 VR 按钮
+    homeButton: true,             // 是否显示 Home 按钮
+    infoBox: true,                // 是否显示信息框
+    sceneModePicker: true,        // 是否显示 3D/2D 选择器
+    selectionIndicator: false,    // 是否显示指示器组件
+    timeline: false,              // 是否显示时间轴
+    navigationHelpButton: false,  // 是否显示右上角的帮助按钮
+    scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
+    shadows : true,               // 是否显示阴影
+    shouldAnimate : true          // 是否显示动画
 });
 
 // 创建一个 scene 实例
@@ -40,15 +40,15 @@ var homeCameraView = {
 // 设置初始视野
 viewer.scene.camera.setView(homeCameraView);
 
+// load STK World Terrain
+viewer.terrainProvider = Cesium.createWorldTerrain({
+    requestWaterMask : true,        // 动态水纹
+    requestVertexNormals: true      // 光效
+});
+// 确保在地形后面的物体被正确地遮挡，只有最前端的对象可见
+viewer.scene.globe.depthTestAgainstTerrain = true;
 
 
-// // load STK World Terrain
-// viewer.terrainProvider = Cesium.createWorldTerrain({
-//     requestWaterMask : true,        // 动态水纹
-//     requestVertexNormals: true      // 光效
-// });
-// // 确保在地形后面的物体被正确地遮挡，只有最前端的对象可见
-// viewer.scene.globe.depthTestAgainstTerrain = true;
 
 
 // 重写 homeButton
@@ -301,7 +301,7 @@ var options1 = [{
 }];
 
 
-// Sandcastle.addToolbarButton('回到学校', function() {
+// Sandcastle.addToolbarButton('  ', function() {
 //     YundangLakeKML();
 // });
 Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = false, function(checked) {

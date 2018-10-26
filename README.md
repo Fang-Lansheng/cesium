@@ -44,4 +44,5 @@ Cesium development server running locally.  Connect to http://127.0.0.1:8080/
 > 2. [Cesium教程 | 火星科技|合肥火星科技|合肥火星科技有限公司](http://cesium.marsgis.cn/forcesium/tutorials/index.html)
 > 3. [Cesium教程系列汇总 - fu*k - 博客园](https://www.cnblogs.com/fuckgiser/p/5706842.html)  
 > 4. [cesium中文网 | 学习cesiumjs 的好地方--伐罗密](http://cesium.xin/wordpress/)
+> 5. [绿色记忆:Cesium学习笔记](https://blog.gmem.cc/cesium-study-note)
 
