@@ -55,31 +55,29 @@ viewer.terrainProvider = Cesium.createWorldTerrain({
 viewer.scene.globe.depthTestAgainstTerrain = true;
 
 // 绘制管道
-function computeCircle(radius) {
-    var positions = [];
-    for (var i = 0; i < 360; i++) {
-        var radians = Cesium.Math.toRadians(i); // 将角度转换为弧度
-        positions.push(new Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
-    };
-    return positions;
-}
+// function computeCircle(radius) {
+//     var positions = [];
+//     for (var i = 0; i < 360; i++) {
+//         var radians = Cesium.Math.toRadians(i); // 将角度转换为弧度
+//         positions.push(new Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
+//     };
+//     return positions;
+// }
 
-var redTube = viewer.entities.add({
-    name: 'Red tube with rounded corners',
-    polylineVolume: {
-        positions: Cesium.Cartesian3.fromDegreesArray([ -85.0, 32.0,
-                                                        -85.0, 36.0,
-                                                        -89.0, 36.0 ]),
-        shape: computeCircle(60000.0),
-        material: Cesium.Color.WHITE,
-        // outline: true,
-        // outlineWidth: 0.1
-        // fill: false
-    }
-});
-viewer.zoomTo(viewer.entities);
-
-
+// var redTube = viewer.entities.add({
+//     name: 'Red tube with rounded corners',
+//     polylineVolume: {
+//         positions: Cesium.Cartesian3.fromDegreesArray([ -85.0, 32.0,
+//                                                         -85.0, 36.0,
+//                                                         -89.0, 36.0 ]),
+//         shape: computeCircle(60000.0),
+//         material: Cesium.Color.WHITE,
+//         // outline: true,
+//         // outlineWidth: 0.1
+//         // fill: false
+//     }
+// });
+// viewer.zoomTo(viewer.entities);
 
 
 // 重写 homeButton
