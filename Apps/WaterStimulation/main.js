@@ -79,7 +79,6 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 // });
 // viewer.zoomTo(viewer.entities);
 
-
 // 重写 homeButton
 viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e) {
     e.cancel = true;

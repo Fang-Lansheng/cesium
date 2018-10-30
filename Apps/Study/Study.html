@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>Water Stimulation</title>
+  <title>模拟</title>
   <!-- 在 script 标签内加入 Cesium.js，它定义了 Cesium 对象， 包含我们所需要的一切。 -->
   <script src="../../Build/Cesium/Cesium.js"></script>
   <script type="text/javascript" src="../Sandcastle/Sandcastle-header.js"></script>
@@ -39,25 +39,6 @@
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar"></div>
-  <div id="map">
-        <div id="ladata_show">
-            <div style="width: 150px; height: 30px; float: left;">
-                <font size="2" color="WhiteSmoke">经度：<span id="longitude_show"></span>°</font>
-            </div>
-            <div style="width: 150px; height: 30px; float: left;">
-                <font size="2" color="WhiteSmoke">纬度：<span id="latitude_show"></span>°</font>
-            </div>
-            <div style="width: 150px; height: 30px; float: left;">
-                <font size="2" color="WhiteSmoke">X：<span id="x_show"></span>m</font>
-            </div>
-            <div style="width: 150px; height: 30px; float: left;">
-                <font size="2" color="WhiteSmoke">Y：<span id="y_show"></span>m</font>
-            </div>
-            <div style="width: 150px; height: 30px; float: left;">
-                <font size="2" color="WhiteSmoke">视角高：<span id="photo_altitude"></span>m</font>
-            </div>
-        </div>
-  </div>
-  <script id="cesium_sandcastle_script", src="main.js"></script>                    
+  <script id="cesium_sandcastle_script", src="Study.js"></script>                    
 </body>
 </html>

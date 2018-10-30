@@ -45,4 +45,5 @@ Cesium development server running locally.  Connect to http://127.0.0.1:8080/
 > 3. [Cesium教程系列汇总 - fu*k - 博客园](https://www.cnblogs.com/fuckgiser/p/5706842.html)  
 > 4. [cesium中文网 | 学习cesiumjs 的好地方--伐罗密](http://cesium.xin/wordpress/)
 > 5. [绿色记忆:Cesium学习笔记](https://blog.gmem.cc/cesium-study-note)
+> 6. [Cesium环境搭建 + 参考资料](https://blog.csdn.net/qq_18144905/article/details/80769981?utm_source=blogxgwz7)
 
