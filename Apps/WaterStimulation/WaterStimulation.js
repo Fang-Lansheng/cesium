@@ -14,12 +14,12 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,          // 是否显示动画
-    // imageryProvider: new Cesium.BingMapsImageryProvider({
-    // url: 'https://dev.virtualearth.net',
-    // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-    // mapStyle: Cesium.BingMapsStyle.AERIAL
-    // }),
-    // baseLayerPicker: false
+    imageryProvider: new Cesium.BingMapsImageryProvider({
+    url: 'https://dev.virtualearth.net',
+    key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+    mapStyle: Cesium.BingMapsStyle.AERIAL
+    }),
+    baseLayerPicker: false
 });
 
 // 创建一个 scene 实例
