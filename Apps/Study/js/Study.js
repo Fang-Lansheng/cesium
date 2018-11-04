@@ -366,25 +366,42 @@ function WuhanRiverKML() {
     clampToGround: true
   }
   viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉市水系_polyline.kml', kmlOptions)).then(function(dataSource) {
-    viewer.dataSources.add(dataSource);
-  
-    var geocacheEntities = dataSource.entities.values;
-  
-    for (var i = 0; i < geocacheEntities.length; i++) {
-      var entity = geocacheEntities[i];
-      if (Cesium.defined(entity.billboard)) {
-        entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
-        entity.label = undefined;
-        entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
-        var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
-        var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
-        var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
-        var description = '<table class="cesium-infoBox-defaultTable cesium-infoBox-defaultTable-lighter"><tbody>';
-        description += '<tr><th>' + 'Latitude' + '</th><td>' + latitude + '</td></tr>';
-        description += '</tbody></table>';
-        entity.description = description;
+    var entities = dataSource.entities.values;  // 获取所有对象
+    var colorHash = {};
+    for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
+      var entity = entities[i];                 
+      var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
+      var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
+      if (!color) {
+        color = Cesium.Color.fromRandom({
+          alpha: 1.0
+        });
+        colorHash[name] = color;
       }
+      entity.polygon.material = color;          // 设置 polygon 对象的填充颜色
+      entity.polygon.outline = false;           // polygon 边线显示与否
+      entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
     }
+    // var geocacheEntities = dataSource.entities.values;
+  
+    // for (var i = 0; i < geocacheEntities.length; i++) {
+    //   var entity = geocacheEntities[i];
+    //   entity.supportsMaterialsforEntitiesOnTerrain() = true;
+    //   entity.supportsPolylinesOnTerrain() = true;
+    //   if (Cesium.defined(entity.billboard)) {
+    //     entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+    //     entity.label = undefined;
+    //     entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
+    //     var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
+    //     var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
+    //     var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
+    //     var description = '<table class="cesium-infoBox-defaultTable cesium-infoBox-defaultTable-lighter"><tbody>';
+    //     description += '<tr><th>' + 'Latitude' + '</th><td>' + latitude + '</td></tr>';
+    //     description += '<tr><th>' + 'Longitude' + '</th><td>' + longitude + '</td></tr>';
+    //     description += '</tbody></table>';
+    //     entity.description = description;
+    //   }
+    // }
   })
 
 
