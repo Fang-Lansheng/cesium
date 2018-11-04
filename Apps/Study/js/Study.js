@@ -365,7 +365,7 @@ function WuhanRiverKML() {
     canvas: viewer.scene.canvas,
     clampToGround: true
   }
-  viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉市水系_polyline.kml', kmlOptions)).then(function(dataSource) {
+  viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉水系_region.kml', kmlOptions)).then(function(dataSource) {
     var entities = dataSource.entities.values;  // 获取所有对象
     var colorHash = {};
     for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
