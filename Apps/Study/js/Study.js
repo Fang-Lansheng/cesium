@@ -14,12 +14,12 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
   scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
   shadows : true,               // 是否显示阴影
   shouldAnimate : true,         // 是否显示动画
-  imageryProvider: new Cesium.BingMapsImageryProvider({
-  url: 'https://dev.virtualearth.net',
-  key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-  mapStyle: Cesium.BingMapsStyle.AERIAL
-  }),
-  baseLayerPicker: false,
+  // imageryProvider: new Cesium.BingMapsImageryProvider({
+  // url: 'https://dev.virtualearth.net',
+  // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+  // mapStyle: Cesium.BingMapsStyle.AERIAL
+  // }),
+  // baseLayerPicker: false,
   // 加载地形系统
   // terrainProvider : Cesium.createWorldTerrain({
   //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -40,7 +40,7 @@ viewer._cesiumWidget._creditContainer.style.display = 'none';
 // 显示帧率
 scene.debugShowFramesPerSecond = true;  
 // 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
-this.viewer.scene.globe.depthTestAgainstTerrain = true; 
+viewer.scene.globe.depthTestAgainstTerrain = true; 
 
 // 初始化相机参数
 var initialPosition = new Cesium.Cartesian3.fromDegrees(114.29045969, 30.56173526, 40000);
@@ -249,6 +249,46 @@ function createModel(url, id,  height) {
   <h1>教室模型</h1>\
   <p>这是一个教室模型！</p>'
 }
+
+// // snow
+// var snowParticleSize = scene.drawingBufferWidth / 100.0;
+// var snowRadius = 100000.0;
+// var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
+// var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0, snowParticleSize * 2.0);
+// var snowSystem;
+
+// var snowGravityScratch = new Cesium.Cartesian3();
+// var snowUpdate = function(particle, dt) {
+//     snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
+//     Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -300.0), snowGravityScratch);
+//     particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch, particle.velocity);
+
+//     var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
+//     if (distance > snowRadius) {
+//         particle.endColor.alpha = 0.0;
+//     } else {
+//         particle.endColor.alpha = snowSystem.endColor.alpha / (distance / snowRadius + 0.1);
+//     }
+// };
+
+// snowSystem = new Cesium.ParticleSystem({
+//     modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+//     minimumSpeed : -1.0,
+//     maximumSpeed : 0.0,
+//     lifetime : 15.0,
+//     emitter : new Cesium.SphereEmitter(snowRadius),
+//     startScale : 0.5,
+//     endScale : 1.0,
+//     image : '../SampleData/snowflake_particle.png',
+//     emissionRate : 7000.0,
+//     startColor : Cesium.Color.WHITE.withAlpha(0.0),
+//     endColor : Cesium.Color.WHITE.withAlpha(1.0),
+//     minimumImageSize : minimumSnowImageSize,
+//     maximumImageSize : maximumSnowImageSize,
+//     updateCallback : snowUpdate
+// });
+// scene.primitives.add(snowSystem);
+
 // rain
 var rainParticleSize = scene.drawingBufferWidth / 80.0;
 var rainRadius = 100000.0;
@@ -257,56 +297,157 @@ var rainSystem;
 
 var rainGravityScratch = new Cesium.Cartesian3();
 var rainUpdate = function(particle, dt) {
-    rainGravityScratch = Cesium.Cartesian3.normalize(particle.position, rainGravityScratch);
-    rainGravityScratch = Cesium.Cartesian3.multiplyByScalar(rainGravityScratch, -1050.0, rainGravityScratch);
+  rainGravityScratch = Cesium.Cartesian3.normalize(particle.position, rainGravityScratch);
+  rainGravityScratch = Cesium.Cartesian3.multiplyByScalar(rainGravityScratch, -1050.0, rainGravityScratch);
 
-    particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch, particle.position);
+  particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch, particle.position);
 
-    var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
-    if (distance > rainRadius) {
-        particle.endColor.alpha = 0.0;
-    } else {
-        particle.endColor.alpha = rainSystem.endColor.alpha / (distance / rainRadius + 0.1);
-    }
+  var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
+  if (distance > rainRadius) {
+      particle.endColor.alpha = 0.0;
+  } else {
+      particle.endColor.alpha = rainSystem.endColor.alpha / (distance / rainRadius + 0.1);
+  }
 };
 
 rainSystem = new Cesium.ParticleSystem({
-    modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
-    speed : -1.0,
-    lifetime : 15.0,
-    emitter : new Cesium.SphereEmitter(rainRadius),
-    startScale : 1.0,
-    endScale : 0.0,
-    image : '../SampleData/circular_particle.png',
-    emissionRate : 9000.0,
-    startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
-    endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),
-    imageSize : rainImageSize,
-    updateCallback : rainUpdate
+  modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+  speed : -1.0,
+  lifetime : 15.0,
+  emitter : new Cesium.SphereEmitter(rainRadius),
+  startScale : 1.0,
+  endScale : 0.1,
+  image : '../SampleData/circular_particle.png',
+  emissionRate : 9000.0,
+  startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
+  endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),
+  imageSize : rainImageSize,
+  updateCallback : rainUpdate
 });
 scene.primitives.add(rainSystem); 
 
-function ClearWeather() {
-  rainSystem.show = false;
-  alert('已关闭天气');
-}
-function Raining() {
+// rainSystem.show = false;
+// snowSystem.show = false;
+
+// function ClearWeather() {
+//   rainSystem.show = false;
+//   snowSystem.show = false;
+//   // alert('已关闭天气');
+// }
+
+// function Raining() {
+//   scene.skyAtmosphere.hueShift = -0.97;
+//   scene.skyAtmosphere.saturationShift = 0.25;
+//   scene.skyAtmosphere.brightnessShift = -0.4;
+
+//   scene.fog.density = 0.00025;
+//   scene.fog.minimumBrightness = 0.01;
+
+//   rainSystem.show = true;
+// }
+
+// function Snowing() {
+//   rainSystem.show = false;
+//   snowSystem.show = true;
+
+//   scene.skyAtmosphere.hueShift = -0.8;
+//   scene.skyAtmosphere.saturationShift = -0.7;
+//   scene.skyAtmosphere.brightnessShift = -0.33;
+
+//   scene.fog.density = 0.001;
+//   scene.fog.minimumBrightness = 0.8;
+// }
+
+function WuhanRiverKML() {
+  // Cesium 加载文件
+  var kmlOptions = {
+    camera: viewer.scene.camera,
+    canvas: viewer.scene.canvas,
+    clampToGround: true
+  }
+  viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉市水系_polyline.kml', kmlOptions)).then(function(dataSource) {
+    viewer.dataSources.add(dataSource);
+  
+    var geocacheEntities = dataSource.entities.values;
+  
+    for (var i = 0; i < geocacheEntities.length; i++) {
+      var entity = geocacheEntities[i];
+      if (Cesium.defined(entity.billboard)) {
+        entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+        entity.label = undefined;
+        entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
+        var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
+        var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
+        var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
+        var description = '<table class="cesium-infoBox-defaultTable cesium-infoBox-defaultTable-lighter"><tbody>';
+        description += '<tr><th>' + 'Latitude' + '</th><td>' + latitude + '</td></tr>';
+        description += '</tbody></table>';
+        entity.description = description;
+      }
+    }
+  })
+
+
+  // var Rivers = viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉市水系_polyline.kml',{
+  //   camera: scene.camera,
+  //   canvas: scene.canvas,
+  //   // fill: Cesium.Color.PINK.withAlpha(0.5),
+  //   clampToGround: true   // 开启贴地
+  // }));
+  // Rivers.then(function(dataSource) {
+  //   var entities = dataSource.entities.values;  // 获取所有对象
+  //   var colorHash = {};
+  //   for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
+  //     var entity = entities[i];                 
+  //     var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
+  //     var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
+  //     if (!color) {
+  //       color = Cesium.Color.fromRandom({
+  //         alpha: 1.0
+  //       });
+  //       colorHash[name] = color;
+  //     }
+  //     entity.polygon.material = color;          // 设置 polygon 对象的填充颜色
+  //     entity.polygon.outline = false;           // polygon 边线显示与否
+  //     entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
+  //   }
+  //   // var RiversMaterial = new Cesium.Material({
+  //   //   fabric: {
+  //   //     type: 'Water',
+  //   //     uniforms: {
+  //   //       normalMap: './source/water.jpg',
+  //   //       frequency: 100.0,
+  //   //       animationSpeed: 0.01,
+  //   //       amplitude: 10.0
+  //   //     }
+  //   //   }
+  //   // });
+  //   // dataSource.entities.values.polygon.material = RiversMaterial;
+  //   viewer.zoomTo(Rivers);
+  //   // viewer.flyTo(dataSource.entities);
+  // });
+};
+
+Sandcastle.addToggleButton('降雨', rainSystem.show = false, function(checked) {
+  rainSystem.show = checked;
+  
   scene.skyAtmosphere.hueShift = -0.97;
   scene.skyAtmosphere.saturationShift = 0.25;
   scene.skyAtmosphere.brightnessShift = -0.4;
-
   scene.fog.density = 0.00025;
   scene.fog.minimumBrightness = 0.01;
-
-  rainSystem.show = true;
-}
+});
+Sandcastle.addToolbarButton('加载水系图层', function() {
+  WuhanRiverKML();
+});
 
 // Sandcastle.addToolbarButton('加载教室模型', function() {
 //   createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
 // });
 // Sandcastle.addToolbarButton('清除模型', function() {
 //   viewer.entities.removeById('classroom');
-// })
+// });
+
 Sandcastle.finishedLoading();
 
 

@@ -329,9 +329,9 @@ var options1 = [{
 }];
 
 
-// Sandcastle.addToolbarButton('  ', function() {
-//     YundangLakeKML();
-// });
+Sandcastle.addToolbarButton('  ', function() {
+    YundangLakeKML();
+});
 Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = false, function(checked) {
     scene.globe.enableLighting = checked;
 });
