@@ -14,12 +14,12 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
   scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
   shadows : true,               // 是否显示阴影
   shouldAnimate : true,         // 是否显示动画
-  // imageryProvider: new Cesium.BingMapsImageryProvider({
-  // url: 'https://dev.virtualearth.net',
-  // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-  // mapStyle: Cesium.BingMapsStyle.AERIAL
-  // }),
-  // baseLayerPicker: false,
+  imageryProvider: new Cesium.BingMapsImageryProvider({
+  url: 'https://dev.virtualearth.net',
+  key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+  mapStyle: Cesium.BingMapsStyle.AERIAL
+  }),
+  baseLayerPicker: false,
   // 加载地形系统
   // terrainProvider : Cesium.createWorldTerrain({
   //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -103,14 +103,18 @@ handler.setInputAction(function(movement) {
 }, Cesium.ScreenSpaceEventType.WHEEL);
 
 
+/**小车移动
+ * 参考：
+ * https://blog.csdn.net/HobHunter/article/details/74940280
+ */
 // 小车旋转角度
 var radian = Cesium.Math.toRadians(3.0);  // Math.Radians(degrees) 将角度转换为弧度
 // 小车的速度
-var speed = 60;
+var carSpeed = 5;
 // 速度矢量
 var speedVector = new Cesium.Cartesian3();  // Cesium.Cartesian3(x, y, z)  3D 笛卡尔坐标点
 // 起始位置
-var position = Cesium.Cartesian3.fromDegrees(114.3570, 30.52601643, 0);  //  从以度为单位的经度和纬度值返回Cartesian3位置
+var carPosition = Cesium.Cartesian3.fromDegrees(114.3570, 30.52601643, 0);  //  从以度为单位的经度和纬度值返回Cartesian3位置
 // 设置小车方向
 var hpr = new Cesium.HeadingPitchRoll(-45, 0, 0);
 var fixedFrameTransforms = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west'); // 生成一个函数，该函数计算从以提供的原点为中心的参考帧到提供的椭球的固定参考帧的4x4变换矩阵
@@ -118,7 +122,7 @@ var fixedFrameTransforms = Cesium.Transforms.localFrameToFixedFrameGenerator('no
 // 添加小车模型
 var carPrimitive = scene.primitives.add(Cesium.Model.fromGltf({
   url: '../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
-  modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(position, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
+  modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
   minimumPixelSize: 128
 }));
 
@@ -137,9 +141,13 @@ var flag = {
 * keycode 38 = Up Arrow
 * keycode 39 = Right Arrow
 * keycode 40 = Down Arrow
+* keycode 87 = W
+* keycode 65 = A
+* keycode 83 = S
+* keycode 68 = D
 */
 function setFlagStatus(key, value) {
-  switch (key.KeyCode) {
+  switch (key.keyCode) {
     case 37:    // ←
       flag.moveLeft = value;
       break;
@@ -182,6 +190,21 @@ document.addEventListener('keyup', (e)=>{
   // console.log(String.fromCharCode(window.event ? e.keyCode : e.which));
 });
 
+// 移动小车
+function moveCar(isUp) {
+  // 计算速度矩阵
+  if (isUp) {
+    speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, carSpeed, speedVector)
+  }
+  else {
+    speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, -carSpeed, speedVector)
+  }
+  // 根据速度计算出下一个位置的坐标
+  carPosition = Cesium.Matrix4.multiplyByPoint(carPrimitive.modelMatrix, speedVector, carPosition);
+  // 小车移动
+  Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, carPrimitive.modelMatrix);
+}
+
 // 监听帧
 viewer.clock.onTick.addEventListener((clock)=>{
   if (flag.moveUp) {
@@ -195,28 +218,15 @@ viewer.clock.onTick.addEventListener((clock)=>{
   }
   if (flag.moveDown) {
     if (flag.moveLeft) {
-      hpr.heading -= radian;
+      hpr.heading += radian;
     };
     if (flag.moveRight) {
-      hpr.heading += radian;
+      hpr.heading -= radian;
     };
     moveCar(false);
   }
 });
-// 移动小车
-function moveCar(isUp) {
-  // 计算速度矩阵
-  if (isUp) {
-    speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed, speedVector)
-  }
-  else {
-    speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, -speed, speedVector)
-  }
-  // 根据速度计算出下一个位置的坐标
-  position = Cesium.Matrix4.multiplyByPoint(carPrimitive.modelMatrix, speedVector, position);
-  // 小车移动
-  Cesium.Transforms.headingPitchRollToFixedFrame(position, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, carPrimitive.modelMatrix);
-}
+
 
 // 函数：加载模型
 function createModel(url, id,  height) {
@@ -382,26 +392,6 @@ function WuhanRiverKML() {
       entity.polygon.outline = false;           // polygon 边线显示与否
       entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
     }
-    // var geocacheEntities = dataSource.entities.values;
-  
-    // for (var i = 0; i < geocacheEntities.length; i++) {
-    //   var entity = geocacheEntities[i];
-    //   entity.supportsMaterialsforEntitiesOnTerrain() = true;
-    //   entity.supportsPolylinesOnTerrain() = true;
-    //   if (Cesium.defined(entity.billboard)) {
-    //     entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
-    //     entity.label = undefined;
-    //     entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
-    //     var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
-    //     var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
-    //     var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
-    //     var description = '<table class="cesium-infoBox-defaultTable cesium-infoBox-defaultTable-lighter"><tbody>';
-    //     description += '<tr><th>' + 'Latitude' + '</th><td>' + latitude + '</td></tr>';
-    //     description += '<tr><th>' + 'Longitude' + '</th><td>' + longitude + '</td></tr>';
-    //     description += '</tbody></table>';
-    //     entity.description = description;
-    //   }
-    // }
   })
 
 
@@ -458,12 +448,12 @@ Sandcastle.addToolbarButton('加载水系图层', function() {
   WuhanRiverKML();
 });
 
-// Sandcastle.addToolbarButton('加载教室模型', function() {
-//   createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
-// });
-// Sandcastle.addToolbarButton('清除模型', function() {
-//   viewer.entities.removeById('classroom');
-// });
+Sandcastle.addToolbarButton('加载教室模型', function() {
+  createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
+});
+Sandcastle.addToolbarButton('清除模型', function() {
+  viewer.entities.removeById('classroom');
+});
 
 Sandcastle.finishedLoading();
 
