@@ -14,12 +14,12 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
   scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
   shadows : true,               // 是否显示阴影
   shouldAnimate : true,         // 是否显示动画
-  imageryProvider: new Cesium.BingMapsImageryProvider({
-  url: 'https://dev.virtualearth.net',
-  key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-  mapStyle: Cesium.BingMapsStyle.AERIAL
-  }),
-  baseLayerPicker: false,
+  // imageryProvider: new Cesium.BingMapsImageryProvider({
+  // url: 'https://dev.virtualearth.net',
+  // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+  // mapStyle: Cesium.BingMapsStyle.AERIAL
+  // }),
+  // baseLayerPicker: false,
   // 加载地形系统
   // terrainProvider : Cesium.createWorldTerrain({
   //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -108,7 +108,7 @@ handler.setInputAction(function(movement) {
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 // 滑动鼠标滚轮获得该点摄影机高度
 handler.setInputAction(function(movement) {
-    var height = Math.ceil(viewer.camera.positionCartographic.height);
+    let height = Math.ceil(viewer.camera.positionCartographic.height);
     document.getElementById("photo_altitude").innerHTML = height;
 }, Cesium.ScreenSpaceEventType.WHEEL);
 
@@ -345,115 +345,30 @@ rainSystem = new Cesium.ParticleSystem({
   updateCallback : rainUpdate
 });
 scene.primitives.add(rainSystem); 
-
-// rainSystem.show = false;
-// snowSystem.show = false;
-
-// function ClearWeather() {
-//   rainSystem.show = false;
-//   snowSystem.show = false;
-//   // alert('已关闭天气');
-// }
-
-// function Raining() {
-//   scene.skyAtmosphere.hueShift = -0.97;
-//   scene.skyAtmosphere.saturationShift = 0.25;
-//   scene.skyAtmosphere.brightnessShift = -0.4;
-
-//   scene.fog.density = 0.00025;
-//   scene.fog.minimumBrightness = 0.01;
-
-//   rainSystem.show = true;
-// }
-
-// function Snowing() {
-//   rainSystem.show = false;
-//   snowSystem.show = true;
-
-//   scene.skyAtmosphere.hueShift = -0.8;
-//   scene.skyAtmosphere.saturationShift = -0.7;
-//   scene.skyAtmosphere.brightnessShift = -0.33;
-
-//   scene.fog.density = 0.001;
-//   scene.fog.minimumBrightness = 0.8;
-// }
+scene.primitives.lowerToBottom(rainSystem);
 
 function WuhanRiverKML() {
-  // Cesium 加载文件
-  // var kmlOptions = {
-  //   camera: viewer.scene.camera,
-  //   canvas: viewer.scene.canvas,
-  //   clampToGround: true
-  // };
-  // viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉水系_region.kml', kmlOptions)).then(function(dataSource) {
-  //   var entities = dataSource.entities.values;  // 获取所有对象
-  //   var colorHash = {};
-  //   for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
-  //     var entity = entities[i];                 
-  //     var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
-  //     var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
-  //     if (!color) {
-  //       color = Cesium.Color.fromRandom({
-  //         alpha: 1.0
-  //       });
-  //       colorHash[name] = color;
-  //     }
-  //     entity.polygon.material = Cesium.Color.WHITE;          // 设置 polygon 对象的填充颜色
-  //     entity.polygon.outline = false;           // polygon 边线显示与否
-  //     entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
-  //   }
-  // })
-
-
-  var Rivers = Cesium.KmlDataSource.load('./source/武汉水系_region.kml',{
+  var Rivers = viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉水系_region.kml',{
     camera: scene.camera, // 相机选项
     canvas: scene.canvas, // 画布选项
     clampToGround: true   // 开启贴地
-  });
+  }));
   Rivers.then(function(dataSource) {
-    viewer.dataSources.add(dataSource);
-    var riverEntities = dataSource.entities.values;  // 获取所有对象
-    var colorHash = {};
-    for (let i = 0; i < riverEntities.length; i++) { // 逐一循环遍历
-      var entity = riverEntities[i];                 
-      // if (Cesium.defined(entity.billboard)) {
-      //   entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
-      //   entity.label = undefined;
-      //   entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
-      //   var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
-      //   var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
-      //   var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
-      // }
-      var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
-      var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
-      if (!color) {
-        color = Cesium.Color.fromRandom({
-          alpha: 1.0
-        });
-        colorHash[name] = color;
+    let riverEntities = dataSource.entities.values;  // 获取所有对象，一个 entity 的阵列
+    for (let i = 0; i < riverEntities.length; i++) {
+      let entity = riverEntities[i];
+      if (entity.polygon || entity.polyline) {
+        viewer.entities.add(entity);
+        entity.polygon.fill = undefined;
+        entity.polygon.material = Cesium.Color.BLUE.withAlpha(0.1);
+        entity.polygon.outlineColor = Cesium.Color.RED;
       }
-      entity.polygon.material = Cesium.Color.FORESTGREEN;          // 设置 polygon 对象的填充颜色
-      // entity.polygon.outline = false;           // polygon 边线显示与否
-      entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
     }
-    // var RiversMaterial = new Cesium.Material({
-    //   fabric: {
-    //     type: 'Water',
-    //     uniforms: {
-    //       normalMap: './source/water.jpg',
-    //       frequency: 100.0,
-    //       animationSpeed: 0.01,
-    //       amplitude: 10.0
-    //     }
-    //   }
-    // });
-    // dataSource.entities.values.polygon.material = RiversMaterial;
-    viewer.zoomTo(Rivers);
-    // viewer.flyTo(dataSource.entities);
+    viewer.flyTo(dataSource.entities);
   });
 };
 
-Sandcastle.addToggleButton('降雨', rainSystem.show = false, function(checked) {
+Sandcastle.addToggleButton('🌧', rainSystem.show = false, function(checked) {
   rainSystem.show = checked;
   
   scene.skyAtmosphere.hueShift = -0.97;
@@ -466,12 +381,12 @@ Sandcastle.addToolbarButton('加载水系图层', function() {
   WuhanRiverKML();
 });
 
-Sandcastle.addToolbarButton('加载教室模型', function() {
-  createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
-});
-Sandcastle.addToolbarButton('清除模型', function() {
-  viewer.entities.removeById('classroom');
-});
+// Sandcastle.addToolbarButton('加载教室模型', function() {
+//   createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
+// });
+// Sandcastle.addToolbarButton('清除模型', function() {
+//   viewer.entities.removeById('classroom');
+// });
 
 Sandcastle.finishedLoading();
 

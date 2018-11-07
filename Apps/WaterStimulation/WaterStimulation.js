@@ -47,12 +47,12 @@ var homeCameraView = {
 viewer.scene.camera.setView(homeCameraView);
 
 // load STK World Terrain
-viewer.terrainProvider = Cesium.createWorldTerrain({
-    requestWaterMask : true,        // 动态水纹
-    requestVertexNormals: true      // 光效
-});
+// viewer.terrainProvider = Cesium.createWorldTerrain({
+//     requestWaterMask : true,        // 动态水纹
+//     requestVertexNormals: true      // 光效
+// });
 // 确保在地形后面的物体被正确地遮挡，只有最前端的对象可见
-viewer.scene.globe.depthTestAgainstTerrain = true;
+// viewer.scene.globe.depthTestAgainstTerrain = true;
 
 // 绘制管道
 // function computeCircle(radius) {
