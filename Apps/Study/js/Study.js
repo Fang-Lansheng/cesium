@@ -28,6 +28,16 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
   // })
 });
 
+// 添加天地图注记
+viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+  url: 'http://t0.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles',
+  layer: 'tdtImgAnnoLayer',
+  style: 'default',
+  format: 'image/jpeg',
+  tileMatrixSetID: 'GoogleMapsCompatible',
+  show: false
+}));
+
 // 创建一个 scene 实例
 var scene = viewer.scene;
 // 创建一个 ellipsoid 实例
@@ -370,38 +380,12 @@ scene.primitives.add(rainSystem);
 
 function WuhanRiverKML() {
   // Cesium 加载文件
-  var kmlOptions = {
-    camera: viewer.scene.camera,
-    canvas: viewer.scene.canvas,
-    clampToGround: true
-  }
-  viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉水系_region.kml', kmlOptions)).then(function(dataSource) {
-    var entities = dataSource.entities.values;  // 获取所有对象
-    var colorHash = {};
-    for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
-      var entity = entities[i];                 
-      var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
-      var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
-      if (!color) {
-        color = Cesium.Color.fromRandom({
-          alpha: 1.0
-        });
-        colorHash[name] = color;
-      }
-      entity.polygon.material = color;          // 设置 polygon 对象的填充颜色
-      entity.polygon.outline = false;           // polygon 边线显示与否
-      entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
-    }
-  })
-
-
-  // var Rivers = viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉市水系_polyline.kml',{
-  //   camera: scene.camera,
-  //   canvas: scene.canvas,
-  //   // fill: Cesium.Color.PINK.withAlpha(0.5),
-  //   clampToGround: true   // 开启贴地
-  // }));
-  // Rivers.then(function(dataSource) {
+  // var kmlOptions = {
+  //   camera: viewer.scene.camera,
+  //   canvas: viewer.scene.canvas,
+  //   clampToGround: true
+  // };
+  // viewer.dataSources.add(Cesium.KmlDataSource.load('./source/武汉水系_region.kml', kmlOptions)).then(function(dataSource) {
   //   var entities = dataSource.entities.values;  // 获取所有对象
   //   var colorHash = {};
   //   for (var i = 0; i < entities.length; i++) { // 逐一循环遍历
@@ -414,25 +398,59 @@ function WuhanRiverKML() {
   //       });
   //       colorHash[name] = color;
   //     }
-  //     entity.polygon.material = color;          // 设置 polygon 对象的填充颜色
+  //     entity.polygon.material = Cesium.Color.WHITE;          // 设置 polygon 对象的填充颜色
   //     entity.polygon.outline = false;           // polygon 边线显示与否
   //     entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
   //   }
-  //   // var RiversMaterial = new Cesium.Material({
-  //   //   fabric: {
-  //   //     type: 'Water',
-  //   //     uniforms: {
-  //   //       normalMap: './source/water.jpg',
-  //   //       frequency: 100.0,
-  //   //       animationSpeed: 0.01,
-  //   //       amplitude: 10.0
-  //   //     }
-  //   //   }
-  //   // });
-  //   // dataSource.entities.values.polygon.material = RiversMaterial;
-  //   viewer.zoomTo(Rivers);
-  //   // viewer.flyTo(dataSource.entities);
-  // });
+  // })
+
+
+  var Rivers = Cesium.KmlDataSource.load('./source/武汉水系_region.kml',{
+    camera: scene.camera, // 相机选项
+    canvas: scene.canvas, // 画布选项
+    clampToGround: true   // 开启贴地
+  });
+  Rivers.then(function(dataSource) {
+    viewer.dataSources.add(dataSource);
+    var riverEntities = dataSource.entities.values;  // 获取所有对象
+    var colorHash = {};
+    for (let i = 0; i < riverEntities.length; i++) { // 逐一循环遍历
+      var entity = riverEntities[i];                 
+      // if (Cesium.defined(entity.billboard)) {
+      //   entity.billboard.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+      //   entity.label = undefined;
+      //   entity.billboard.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(10.0, 20000.0);
+      //   var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
+      //   var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
+      //   var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
+      // }
+      var name = entity.properties.GB1999;      // 取出 GB1999 属性内容
+      var color = colorHash[name];              // 如果 GB1999 属性相同，则赋予用一个颜色
+      if (!color) {
+        color = Cesium.Color.fromRandom({
+          alpha: 1.0
+        });
+        colorHash[name] = color;
+      }
+      entity.polygon.material = Cesium.Color.FORESTGREEN;          // 设置 polygon 对象的填充颜色
+      // entity.polygon.outline = false;           // polygon 边线显示与否
+      entity.polygon.extrudedHeight = entity.properties.POPU * 1000;    // 根据 POPU 属性设置 polygon 的高度
+    }
+    // var RiversMaterial = new Cesium.Material({
+    //   fabric: {
+    //     type: 'Water',
+    //     uniforms: {
+    //       normalMap: './source/water.jpg',
+    //       frequency: 100.0,
+    //       animationSpeed: 0.01,
+    //       amplitude: 10.0
+    //     }
+    //   }
+    // });
+    // dataSource.entities.values.polygon.material = RiversMaterial;
+    viewer.zoomTo(Rivers);
+    // viewer.flyTo(dataSource.entities);
+  });
 };
 
 Sandcastle.addToggleButton('降雨', rainSystem.show = false, function(checked) {
