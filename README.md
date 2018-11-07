@@ -142,7 +142,7 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
   // baseLayerPicker: false,    // 是否显示图层显示器
   // imageryProvider: new Cesium.BingMapsImageryProvider({
   // url: 'https://dev.virtualearth.net',
-  // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+  // key: 'YourBingMapKey',
   // mapStyle: Cesium.BingMapsStyle.AERIAL
   // }),
   // 加载地形系统
