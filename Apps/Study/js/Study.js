@@ -277,6 +277,17 @@ function WuhanRiverKML() {
     canvas: scene.canvas, // 画布选项
     clampToGround: true   // 开启贴地
   }));
+  var riverMaterial = new Cesium.Material({
+    fabric: {
+      type: 'Water',
+      uniforms: {
+        normalMap: './source/water.jpg',
+        frequency: 100.0,
+        animationSpeed: 0.01,
+        amplitude: 10.0
+      }
+    }
+  });
   Rivers.then(function(dataSource) {
     let riverEntities = dataSource.entities.values;  // 获取所有对象，一个 entity 的阵列
     for (let i = 0; i < riverEntities.length; i++) {
@@ -286,11 +297,33 @@ function WuhanRiverKML() {
         entity.polygon.fill = undefined;
         entity.polygon.material = Cesium.Color.BLUE.withAlpha(0.1);
         entity.polygon.outlineColor = Cesium.Color.RED;
+
+        // // primitive
+        // var riverPolygon = new Cesium.PolygonGeometry({
+        //   polygonHierarchy: entity.polygon.hierarchy,
+        //   extrudedHeight: 0,
+        //   height: 0,
+        //   vertexFormat: Cesium.EllipsoidSurfaceAppearance.VERTEX_FORMAT
+        // });
+        // // 
+        // var riverPrimitive = new Cesium.primitives({
+        //   geometryInstances: new Cesium.GeometryInstance({
+        //     geometry: riverPolygon
+        //   }),
+        //   appearance: new Cesium.EllipsoidSurfaceAppearance({
+        //     aboveGround: true
+        //   }),
+        //   show: true
+        // });
+
+        // riverPrimitive.appearance.material = riverMaterial;
+        // scene.primitives.add(riverPrimitive);
       }
     }
-    viewer.flyTo(dataSource.entities);
+    // viewer.flyTo(dataSource.entities);
   });
 };
+WuhanRiverKML();
 
 /**
  * 参考：
@@ -387,7 +420,7 @@ snowPostProcessStage.enabled = false;
 function clearWeather() {
   var length = scene.primitives.length;
   if (length > 1) {
-    for (var i = 1; i < length; i++) {
+    for (var i = 2; i < length; i++) {
       var p = scene.primitives.get(i);
       scene.primitives.remove(p);
     }
@@ -550,10 +583,6 @@ var weatherOptions = [{
   }
 }]
 Sandcastle.addToolbarMenu(weatherOptions);
-
-Sandcastle.addToolbarButton('加载水系图层', function() {
-  WuhanRiverKML();
-});
 
 // Sandcastle.addToolbarButton('加载教室模型', function() {
 //   createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
