@@ -1,7 +1,7 @@
 `2018年10月30日` `Cesium 学习笔记` `JavaScript`
 > 我在Github上的 Cesium 项目：https://github.com/Fang-Lansheng/Cesium
 
-[toc]
+[TOC]
 # 一、Cesium 简介
 
 **官方地址：**  
@@ -39,7 +39,7 @@ Cesium 是一款面向三维地球和地图的，世界级的 JavaScript 开源�
 - 基于时态的数据可视化
 - 多种场景模式（3D，2.5D以及2D场景）的支持，真正的二三维一体化
 - 1.35版推出3D Tiles规范，支持海量模型数据（倾斜，BIM，点云等）
-          
+  ​        
 
 
 
@@ -219,25 +219,49 @@ Sandcastle.finishedLoading();
 Cesium 其实是一个封装好的 WebGL 库，当然这里面就牵扯到好几套坐标问题：
 屏幕坐标、三维空间坐标、投影坐标。而且坐标转换肯定是我们在开发任何地理信息系统中经常会碰到的问题，也比较复杂，简单总结了几种转换方式：
 
+- pick：屏幕坐标
+- cartesian：世界坐标（三维坐标）
+- cartographic：地理坐标（弧度）
+- point：经纬度坐标
+
 ### 3.4.1 坐标系
 ```javascript
 new Cesium.Cartesian2(x, y)     // 表示一个二维笛卡尔坐标系，也就是直角坐标系（屏幕坐标系）
 new Cesium.Cartesian3(x, y, z)  // 表示一个三维笛卡尔坐标系，也是直角坐标系（就是真实世界的坐标系）
 ```
 
-### 3.4.2 二维屏幕坐标系到三位坐标系的转换
+### 3.4.2 二维屏幕坐标系到三维坐标系的转换
+
 ```javascript
-var pick1= scene.globe.pick(viewer.camera.getPickRay(pt1), scene) // 其中 pt1 为一个二维屏幕坐标。
+var pick = new Cesium.Cartesian2(window.innerWidth, window,innerHeight);	// 屏幕坐标
+var cartesian= scene.globe.pick(viewer.camera.getPickRay(pick), scene) // 世界坐标
+```
+
+注：在2D下上述方法不适用，改为
+
+```javascript
+var pick = new Cesium.Cartesian2(0, 0);	// 屏幕坐标
+var cartesian = viewer.camera.pickEllipsoid(pick, viewer.scene.globe.ellipsoid);	// 世界坐标
 ```
 
 ### 3.4.3 三维坐标到地理坐标的转换
+
 ```javascript
-var geoPt1 = scene.globe.ellipsoid.cartesianToCartographic(pick1) // 其中 pick1 是一个 Cesium.Cartesian3 对象。
+var cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian) 
+// 其中 cartesian 是一个 Cesium.Cartesian3 对象。
+```
+
+或：
+
+```javascript
+var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
 ```
 
 ### 3.4.4 地理坐标到经纬度坐标的转换
+
 ```javascript
-var point1 = [geoPt1.longitude / Math.PI * 180, geoPt1.latitude / Math.PI * 180]; //其中 geoPt1 是一个地理坐标。
+var point = [cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180]; 
+//其中 cartographic 是一个地理坐标。
 ```
 
 ### 3.4.5 经纬度坐标转地理坐标（弧度）
@@ -251,7 +275,14 @@ var coord_wgs84 = Cesium.Cartographic.fromDegrees(lng, lat, alt);   // 单位：
 var cartesian = Cesium.Cartesian3.fromDegree(point);
 ```
 
-### 3.4.7 计算两个三维坐标系之间的距离
+### 3.4.7 三维坐标转屏幕坐标
+
+```javascript
+var pick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, cartesian)
+```
+
+### 3.4.8 计算两个三维坐标系之间的距离
+
 ```javascript
 // pick1、pick3都是三维坐标系
 var d = Cesium.Cartesian3.distance(
