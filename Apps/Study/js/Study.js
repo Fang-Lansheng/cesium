@@ -348,11 +348,6 @@ Rivers.then(function(dataSource) {
 // WuhanRiverKML();
 
 
-/**
- * 参考：
- * https://www.cnblogs.com/fuckgiser/p/5975274.html
- * http://www.cnblogs.com/webgl-angela/p/9846990.html
- */
 function LoadShaderFile(filename, onLoadShader) {
 // 导入文件
   var request = new XMLHttpRequest();
