@@ -445,15 +445,76 @@ function clearWeather() {
   }
 }
 
+function setParticleSystemPosition() {
+  let longitude = 180 * scene.camera.positionCartographic.longitude / Cesium.Math.PI;
+  let latitude = 180 * scene.camera.positionCartographic.latitude / Cesium.Math.PI;
+  let height = 5000;
+  let cameraPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+  return cameraPosition;
+}
+
+function showRainShader() {
+  let height = Math.ceil(viewer.camera.positionCartographic.height);
+  if (height >= 0 && height < 150000) {
+    rainPostProcessStage.enabled = true;
+    snowPostProcessStage.enabled = false;
+
+    scene.skyAtmosphere.hueShift = -0.8;
+    scene.skyAtmosphere.saturationShift = -0.7;
+    scene.skyAtmosphere.brightnessShift = -0.33;
+    scene.fog.density = 0.001;
+    scene.fog.minimumBrightness = 0.8;
+  }
+  else {
+    rainPostProcessStage.enabled = false;
+    snowPostProcessStage.enabled = false;
+
+    scene.skyAtmosphere.hueShift = 0.0;
+    scene.skyAtmosphere.saturationShift = 0.0;
+    scene.skyAtmosphere.brightnessShift = 0.0;
+    scene.fog.density = 2.0e-4;
+    scene.fog.minimumBrightness = 0.1;
+  }
+}
+
+function showSnowShader() {
+  let height = Math.ceil(viewer.camera.positionCartographic.height);
+  if (height >= 0 && height < 150000) {
+    rainPostProcessStage.enabled = false;
+    snowPostProcessStage.enabled = true;
+
+    scene.skyAtmosphere.hueShift = -0.8;
+    scene.skyAtmosphere.saturationShift = -0.7;
+    scene.skyAtmosphere.brightnessShift = -0.33;
+    scene.fog.density = 0.001;
+    scene.fog.minimumBrightness = 0.8;
+  }
+  else {
+    rainPostProcessStage.enabled = false;
+    snowPostProcessStage.enabled = false;
+
+    scene.skyAtmosphere.hueShift = 0.0;
+    scene.skyAtmosphere.saturationShift = 0.0;
+    scene.skyAtmosphere.brightnessShift = 0.0;
+    scene.fog.density = 2.0e-4;
+    scene.fog.minimumBrightness = 0.1;
+  }
+}
+
 var weatherOptions = [{
   text: '选择天气',
   onselect: function() {
     // 移除所有天气效果
-    // scene.primitives.remove(rainSystem) = true;
-    // scene.primitives.remove(snowSystem) = true;
+
     clearWeather();
     rainPostProcessStage.enabled = false;
     snowPostProcessStage.enabled = false;
+    let handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+      rainPostProcessStage.enabled = false;
+      snowPostProcessStage.enabled = false;
+    }, Cesium.ScreenSpaceEventType.WHEEL);
+
     // 修改大气指数为默认值
     scene.skyAtmosphere.hueShift = 0.0;
     scene.skyAtmosphere.saturationShift = 0.0;
@@ -464,12 +525,15 @@ var weatherOptions = [{
 }, {
   text: '🌧 - Particle System',
   onselect: function() {
-    // scene.primitives.remove(rainSystem) = true;
-    // scene.primitives.remove(snowSystem) = true;
     clearWeather();
     rainPostProcessStage.enabled = false;
     snowPostProcessStage.enabled = false;
-
+    let handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+      rainPostProcessStage.enabled = false;
+      snowPostProcessStage.enabled = false;
+    }, Cesium.ScreenSpaceEventType.WHEEL)
+    
     // rain
     var rainParticleSize = scene.drawingBufferWidth / 80.0;
     var rainRadius = 100000.0;
@@ -492,12 +556,13 @@ var weatherOptions = [{
     };
 
     rainSystem = new Cesium.ParticleSystem({
-      modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+      // modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position), // 将粒子系统从模型转换为世界坐标
+      modelMatrix: new Cesium.Matrix4.fromTranslation(setParticleSystemPosition()),
       speed : -1.0,
       lifetime : 15.0,
       emitter : new Cesium.SphereEmitter(rainRadius),
       startScale : 1.0,
-      endScale : 0.1,
+      endScale : 0.0,
       image : '../SampleData/circular_particle.png',
       emissionRate : 9000.0,
       startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
@@ -517,26 +582,24 @@ var weatherOptions = [{
 }, {
   text: '🌧 - Shader',
   onselect: function() {
-    // scene.primitives.remove(rainSystem) = true;
-    // scene.primitives.remove(snowSystem) = true;
     clearWeather();
-    rainPostProcessStage.enabled = true;
-    snowPostProcessStage.enabled = false;
-
-    scene.skyAtmosphere.hueShift = -0.8;
-    scene.skyAtmosphere.saturationShift = -0.7;
-    scene.skyAtmosphere.brightnessShift = -0.33;
-    scene.fog.density = 0.001;
-    scene.fog.minimumBrightness = 0.8;
+    showRainShader();
+    let handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+      showRainShader();
+    }, Cesium.ScreenSpaceEventType.WHEEL);
   }
 }, {
   text: '❄ - Particle System',
   onselect: function() {
-    // scene.primitives.remove(rainSystem) = true;
-    // scene.primitives.remove(snowSystem) = true;
     clearWeather();
     rainPostProcessStage.enabled = false;
     snowPostProcessStage.enabled = false;
+    let handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+      rainPostProcessStage.enabled = false;
+      snowPostProcessStage.enabled = false;
+    }, Cesium.ScreenSpaceEventType.WHEEL)
 
     // snow
     var snowParticleSize = scene.drawingBufferWidth / 100.0;
@@ -587,17 +650,12 @@ var weatherOptions = [{
 }, {
   text: '❄ - Shader',
   onselect: function() {
-    // scene.primitives.remove(rainSystem) = true;
-    // scene.primitives.remove(snowSystem) = true;
     clearWeather();
-    rainPostProcessStage.enabled = false;
-    snowPostProcessStage.enabled = true;
-
-    scene.skyAtmosphere.hueShift = -0.8;
-    scene.skyAtmosphere.saturationShift = -0.7;
-    scene.skyAtmosphere.brightnessShift = -0.33;
-    scene.fog.density = 0.001;
-    scene.fog.minimumBrightness = 0.8;
+    showSnowShader();
+    let handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+      showSnowShader();
+    }, Cesium.ScreenSpaceEventType.WHEEL);
   }
 }]
 Sandcastle.addToolbarMenu(weatherOptions);
