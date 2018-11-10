@@ -623,7 +623,7 @@ var weatherOptions = [{
     };
 
     snowSystem = new Cesium.ParticleSystem({
-        modelMatrix : new Cesium.Matrix4.fromTranslation(scene.camera.position),
+        modelMatrix : new Cesium.Matrix4.fromTranslation(setParticleSystemPosition()),
         minimumSpeed : -1.0,
         maximumSpeed : 0.0,
         lifetime : 15.0,
