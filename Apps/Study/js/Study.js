@@ -136,31 +136,24 @@ handler.setInputAction(function(movement) {
 }, Cesium.ScreenSpaceEventType.WHEEL);
 
 var elevation = document.getElementById("elevation");
-function showElevation() {
-  if (scene.terrainProvider.hasWaterMask) {
+var changed = scene.terrainProvider.hasWaterMask;
+function showElevation(e) {
+  if (!e) {
     elevation.style.display = 'block';
     console.log('显示高程');
+    changed = !e;
   }
   else {
     elevation.style.display = 'none';
     console.log('不显示高程');
+    changed = !e;
   }
-};
-showElevation()
+}
+showElevation(!changed);
 scene.terrainProviderChanged.addEventListener(function() {
-  // elevation.style.display = 'block';
-  console.log("changed!");
-  // console.log(scene.terrainProvider.hasWaterMask);
-  let changed = scene.terrainProvider.hasWaterMask;
-  if (!changed) {
-    elevation.style.display = 'block';
-    console.log('显示高程');
-  }
-  else if (changed == true) {
-    elevation.style.display = 'none';
-    console.log('不显示高程');
-  }
-})
+  console.log("terrainProviderChanged!");
+  showElevation(changed);
+});
 
 /**小车移动
  * 参考：
