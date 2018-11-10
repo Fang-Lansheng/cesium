@@ -1,6 +1,6 @@
 // 创建一个 viewer 实例
 var viewer = new Cesium.Viewer("cesiumContainer", {
-  animation: true,              // 是否显示动画小部件（左下角仪表盘）
+  animation: false,             // 是否显示动画小部件（左下角仪表盘）
   baseLayerPicker: true,        // 是否显示图层选择器
   fullscreenButton: true,       // 是否显示全屏按钮
   geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
@@ -134,6 +134,33 @@ handler.setInputAction(function(movement) {
       alert("You've lost!");
     }
 }, Cesium.ScreenSpaceEventType.WHEEL);
+
+var elevation = document.getElementById("elevation");
+function showElevation() {
+  if (scene.terrainProvider.hasWaterMask) {
+    elevation.style.display = 'block';
+    console.log('显示高程');
+  }
+  else {
+    elevation.style.display = 'none';
+    console.log('不显示高程');
+  }
+};
+showElevation()
+scene.terrainProviderChanged.addEventListener(function() {
+  // elevation.style.display = 'block';
+  console.log("changed!");
+  // console.log(scene.terrainProvider.hasWaterMask);
+  let changed = scene.terrainProvider.hasWaterMask;
+  if (!changed) {
+    elevation.style.display = 'block';
+    console.log('显示高程');
+  }
+  else if (changed == true) {
+    elevation.style.display = 'none';
+    console.log('不显示高程');
+  }
+})
 
 /**小车移动
  * 参考：

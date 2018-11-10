@@ -23,13 +23,14 @@
     }
     #ladata_show {
       width: 600px;
-      height: 50px;
+      height: 60px;
       position: absolute;   
       margin-bottom: 5px;
-      left: 200px;
+      left: 15px;
       bottom: 0px;
       z-index: 1;
       font-size: 15px;
+      text-shadow: black 0.2em 0.2em 0.2em;
     }
   </style>
 </head>
@@ -41,36 +42,25 @@
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar"></div>
-  <!-- <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-primary" onclick="ClearWeather()">
-      <input type="checkbox"> 清除天气
-    </label>
-    <label class="btn btn-primary" onclick="Raining()">
-      <input type="checkbox"> 降雨
-    </label>
-    <label class="btn btn-primary" onclick="Snowing()">
-      <input type="checkbox"> 降雪
-    </label>
-  </div> -->
   <div id="map">
     <div id="ladata_show">
-      <div style="float: left;">
-        <font size="2" color="WhiteSmoke">视角高：<span id="photo_altitude"></span>m</font>
-      </div><br/>
-      <div style="width: 110px; height: 30px; float: left;">
-        <font size="2" color="WhiteSmoke">
+      <div style="height: 25px">
+        <font size="3" color="WhiteSmoke">视角高：<span id="photo_altitude"></span>m</font>
+      </div>
+      <div style="width: 120px; height: 30px; float: left;">
+        <font size="3" color="WhiteSmoke">
           <span id="longitude"></span>
           <span id="longitude_show"></span>°
         </font>
       </div>
-      <div style="width: 100px; height: 30px; float: left;">
-        <font size="2" color="WhiteSmoke">
+      <div style="width: 120px; height: 30px; float: left;">
+        <font size="3" color="WhiteSmoke">
           <span id="latitude"></span>
           <span id="latitude_show"></span>°
         </font>
       </div>
       <div id="elevation" style="width: 200px; height: 30px; float: left;">
-        <font size="2" color="WhiteSmoke">海拔：<span id="altitude_show"></span>m</font>
+        <font size="3" color="WhiteSmoke">海拔：<span id="altitude_show"></span>m</font>
       </div>
     </div>
   </div>
