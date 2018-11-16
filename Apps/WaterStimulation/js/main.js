@@ -130,8 +130,6 @@ function initCesium() {
     else {
       console.log("地图外的点！");
     }
-    // var ray = viewer.camera.getPickRay(movement.position);
-    // var 
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   // 滑动鼠标滚轮获得该点摄影机高度
   handler.setInputAction(function(movement) {
@@ -182,7 +180,10 @@ function initCesium() {
   var carPrimitive = Cesium.Model.fromGltf({
     url: '../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
     modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
-    minimumPixelSize: 128
+    minimumPixelSize: 128,
+    maximumScale: 100.0,
+    // distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 200000.0),
+    // allowPicking: true
   });
   scene.primitives.add(carPrimitive);
 
@@ -543,10 +544,10 @@ function initCesium() {
         particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch, particle.position);
         // 随着 distance 的改变，粒子显示效果发生变化
         var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);  // 摄像机距离到 particle position 的距离
-        if (distance > 2 * rainRadius) {
+        if (distance > rainRadius) {
             particle.endColor.alpha = 0.0;
         } else {
-            particle.endColor.alpha = rainSystem.endColor.alpha / ((2 * distance) / rainRadius + 0.1);
+            particle.endColor.alpha = rainSystem.endColor.alpha / (distance / rainRadius + 0.1);
         }
       };
 
@@ -600,13 +601,13 @@ function initCesium() {
       var snowParticleSize = scene.drawingBufferWidth / 100.0;
       var snowRadius = 100000.0;
       var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
-      var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0, snowParticleSize * 2.0);
+      var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
       var snowSystem;
 
       var snowGravityScratch = new Cesium.Cartesian3();
       var snowUpdate = function(particle, dt) {
           snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
-          Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -300.0), snowGravityScratch);
+          Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math.randomBetween(-30.0, -100.0), snowGravityScratch);
           particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch, particle.velocity);
 
           var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
@@ -625,7 +626,7 @@ function initCesium() {
           emitter : new Cesium.SphereEmitter(snowRadius),
           startScale : 0.5,
           endScale : 1.0,
-          image : '../SampleData/snowflake_particle.png',
+          image : '../SampleData/circular_particle.png',
           emissionRate : 7000.0,
           startColor : Cesium.Color.WHITE.withAlpha(0.0),
           endColor : Cesium.Color.WHITE.withAlpha(1.0),
