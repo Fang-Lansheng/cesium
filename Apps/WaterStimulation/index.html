@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>模拟</title>
+  <!-- 在 script 标签内加入 Cesium.js，它定义了 Cesium 对象， 包含我们所需要的一切。 -->
+  <script src="../../Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="../Sandcastle/Sandcastle-header.js"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="../../ThirdParty/requirejs-2.1.20/require.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/bootstrap.min.js"></script>
+  <script src='./js/cannon.min.js'></script>
+  <!-- 使用 Cesium Viewer 小部件 -->
+  <style>
+    @import url(../../Build/Cesium/Widgets/widgets.css);
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+    }
+    #ladata_show {
+      width: 600px;
+      bottom: 60px;
+      position: absolute;   
+      margin-bottom: 5px;
+      left: 15px;
+      bottom: 0px;
+      z-index: 1;
+      font-size: 15px;
+      text-shadow: black 0.2em 0.2em 0.2em;
+    }
+  </style>
+</head>
+<body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+  <style>
+    @import url(../Sandcastle/templates/bucket.css);
+  </style>
+  <!-- 在 HTML 主体中，为 viewer 创建一个 div。 -->
+  <div id="cesiumContainer" class="fullSize"></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar"></div>
+  <div id="map">
+    <div id="ladata_show">
+      <div style="height: 25px">
+        <font size="3" color="WhiteSmoke">视角高：<span id="photo_altitude"></span>m</font>
+      </div>
+      <div style="width: 120px; height: 30px; float: left;">
+        <font size="3" color="WhiteSmoke">
+          <span id="longitude"></span>
+          <span id="longitude_show"></span>°
+        </font>
+      </div>
+      <div style="width: 120px; height: 30px; float: left;">
+        <font size="3" color="WhiteSmoke">
+          <span id="latitude"></span>
+          <span id="latitude_show"></span>°
+        </font>
+      </div>
+      <div id="elevation" style="width: 200px; height: 30px; float: left;">
+        <font size="3" color="WhiteSmoke">海拔：<span id="altitude_show"></span>m</font>
+      </div>
+    </div>
+  </div>
+  <script id="cesium_sandcastle_script", src="./js/main.js"></script>                    
+</body>
+</html>
