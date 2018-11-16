@@ -21,12 +21,12 @@ function initCesium() {
     scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
-    imageryProvider: new Cesium.BingMapsImageryProvider({
-    url: 'https://dev.virtualearth.net',
-    key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-    mapStyle: Cesium.BingMapsStyle.AERIAL
-    }),
-    baseLayerPicker: false,
+    // imageryProvider: new Cesium.BingMapsImageryProvider({
+    // url: 'https://dev.virtualearth.net',
+    // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+    // mapStyle: Cesium.BingMapsStyle.AERIAL
+    // }),
+    // baseLayerPicker: false,
     // // 加载地形系统
     // terrainProvider : Cesium.createWorldTerrain({
     //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -287,50 +287,17 @@ function initCesium() {
     }
   });
 
-
-  // 函数：加载模型
-  function createModel(url, id,  height) {
-    viewer.entities.removeAll();
-    // viewer.entities.removeById(id);
-
-    var position = Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, height);
-    // var heading = Cesium.Math.toRadians(135);
-    var heading = 0;
-    var pitch = 0;
-    var roll = 0;
-    var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-    var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-    
-    var entity = viewer.entities.add({
-      id: id,
-      name : id,
-      position : position,
-      orientation : orientation,
-      model : {
-        uri : url,
-        minimumPixelSize : 128,
-        maximumScale : 20000
-      }
-    });
-    viewer.trackedEntity = entity;
-    // viewer.zoomTo(viewer.entities);
-
-    entity.description = '\
-    <h1>教室模型</h1>\
-    <p>这是一个教室模型！</p>'
-  }
-
-  var riverMaterial = new Cesium.Material({
-    fabric: {
-      type: 'Water',
-      uniforms: {
-        normalMap: './source/water.jpg',
-        frequency: 100.0,
-        animationSpeed: 0.01,
-        amplitude: 10.0
-      }
-    }
-  });
+  // var riverMaterial = new Cesium.Material({
+  //   fabric: {
+  //     type: 'Water',
+  //     uniforms: {
+  //       normalMap: './source/water.jpg',
+  //       frequency: 100.0,
+  //       animationSpeed: 0.01,
+  //       amplitude: 10.0
+  //     }
+  //   }
+  // });
   var Rivers = viewer.dataSources.add(Cesium.KmlDataSource.load('./source/wuhan_river_system.kml',{
     camera: scene.camera, // 相机选项
     canvas: scene.canvas, // 画布选项
@@ -370,10 +337,6 @@ function initCesium() {
     dataSource.entities.removeAll();
     // viewer.flyTo(dataSource.entities);
   });
-  // function WuhanRiverKML() {
-  // };
-  // WuhanRiverKML();
-
 
   function LoadShaderFile(filename, onLoadShader) {
   // 导入文件
@@ -472,10 +435,14 @@ function initCesium() {
     }
   }
 
+  /**
+   * 函数 setParticleSystemPosition()
+   * 确定粒子系统发射位置，由当前摄像机的空间位置决定
+   */
   function setParticleSystemPosition() {
     let longitude = 180 * scene.camera.positionCartographic.longitude / Cesium.Math.PI;
     let latitude = 180 * scene.camera.positionCartographic.latitude / Cesium.Math.PI;
-    let height = 5000;
+    let height = 2500;
     let cameraPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
     return cameraPosition;
   }
@@ -486,11 +453,11 @@ function initCesium() {
       rainPostProcessStage.enabled = true;
       snowPostProcessStage.enabled = false;
 
-      scene.skyAtmosphere.hueShift = -0.8;
-      scene.skyAtmosphere.saturationShift = -0.7;
-      scene.skyAtmosphere.brightnessShift = -0.33;
-      scene.fog.density = 0.001;
-      scene.fog.minimumBrightness = 0.8;
+      scene.skyAtmosphere.hueShift = -0.97;       // 色调
+      scene.skyAtmosphere.saturationShift = 0.25; // 饱和度
+      scene.skyAtmosphere.brightnessShift = -0.4; // 亮度 （默认为 0，-1.0 是完全黑暗）
+      scene.fog.density = 0.00025;
+      scene.fog.minimumBrightness = 0.01;
     }
     else {
       rainPostProcessStage.enabled = false;
@@ -510,11 +477,11 @@ function initCesium() {
       rainPostProcessStage.enabled = false;
       snowPostProcessStage.enabled = true;
 
-      scene.skyAtmosphere.hueShift = -0.8;
-      scene.skyAtmosphere.saturationShift = -0.7;
-      scene.skyAtmosphere.brightnessShift = -0.33;
-      scene.fog.density = 0.001;
-      scene.fog.minimumBrightness = 0.8;
+      scene.skyAtmosphere.hueShift = -0.97;
+      scene.skyAtmosphere.saturationShift = 0.25;
+      scene.skyAtmosphere.brightnessShift = -0.4;
+      scene.fog.density = 0.00025;
+      scene.fog.minimumBrightness = 0.01;
     }
     else {
       rainPostProcessStage.enabled = false;
@@ -563,42 +530,43 @@ function initCesium() {
       
       // rain
       var rainParticleSize = scene.drawingBufferWidth / 80.0;
-      var rainRadius = 100000.0;
+      var rainRadius = 100000.0;  // 粒子系统范围
       var rainImageSize = new Cesium.Cartesian2(rainParticleSize, rainParticleSize * 2.0);
       var rainSystem;
 
       var rainGravityScratch = new Cesium.Cartesian3();
-      var rainUpdate = function(particle, dt) {
-        rainGravityScratch = Cesium.Cartesian3.normalize(particle.position, rainGravityScratch);
+      // 粒子移动、排列和可视化的实现
+      var rainUpdate = function(particle, dt) {   // particle 为粒子系统f发射出的粒子
+        rainGravityScratch = Cesium.Cartesian3.normalize(particle.position, rainGravityScratch);  
         rainGravityScratch = Cesium.Cartesian3.multiplyByScalar(rainGravityScratch, -1050.0, rainGravityScratch);
 
         particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch, particle.position);
-
-        var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);
-        if (distance > rainRadius) {
+        // 随着 distance 的改变，粒子显示效果发生变化
+        var distance = Cesium.Cartesian3.distance(scene.camera.position, particle.position);  // 摄像机距离到 particle position 的距离
+        if (distance > 2 * rainRadius) {
             particle.endColor.alpha = 0.0;
         } else {
-            particle.endColor.alpha = rainSystem.endColor.alpha / (distance / rainRadius + 0.1);
+            particle.endColor.alpha = rainSystem.endColor.alpha / ((2 * distance) / rainRadius + 0.1);
         }
       };
 
       rainSystem = new Cesium.ParticleSystem({
-        // modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position), // 将粒子系统从模型转换为世界坐标
+        // modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position), // 4×4 变换矩阵，将粒子系统从模型转换为世界坐标
         modelMatrix: new Cesium.Matrix4.fromTranslation(setParticleSystemPosition()),
-        speed : -1.0,
-        lifetime : 15.0,
-        emitter : new Cesium.SphereEmitter(rainRadius),
-        startScale : 1.0,
-        endScale : 0.0,
-        image : '../SampleData/circular_particle.png',
-        emissionRate : 9000.0,
-        startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),
-        endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),
-        imageSize : rainImageSize,
-        updateCallback : rainUpdate
+        speed : -1.0,                                         // 设置后会覆盖 minimumSpeed 和 maximumSpeed 
+        lifetime : 25.0,                                      // 单位秒
+        emitter : new Cesium.SphereEmitter(rainRadius),       // 粒子发射器
+        startScale : 1.0,                                     // 粒子寿命开始时图像的初始比例
+        endScale : 0.0,                                       // 粒子寿命结束时图像的比例
+        image : '../SampleData/circular_particle.png',        // 图像的地址
+        emissionRate : 10000.0,                               // 每秒发射的粒子数
+        startColor :new Cesium.Color(0.27, 0.5, 0.70, 0.0),   // 粒子寿命开始时的颜色（R,G,B,透明度）
+        endColor : new Cesium.Color(0.27, 0.5, 0.70, 0.98),   // 粒子寿命结束时的颜色
+        imageSize : rainImageSize,                            // 图像尺寸，设置后会覆盖 minimumImageSize 和 maximumImageSize
+        updateCallback : rainUpdate                           // 一系列强制回调。回调传递一个粒子和上次的差异
       });
       scene.primitives.add(rainSystem); 
-      rainSystem.show = true;
+      rainSystem.show = true;   // display the particle system
 
       scene.skyAtmosphere.hueShift = -0.97;
       scene.skyAtmosphere.saturationShift = 0.25;
@@ -685,56 +653,12 @@ function initCesium() {
       }, Cesium.ScreenSpaceEventType.WHEEL);
     }
   }]
-  // Sandcastle.addToolbarMenu(weatherOptions);
+  Sandcastle.addToolbarMenu(weatherOptions);
 
-  Sandcastle.addToolbarButton('加载教室模型', function() {
-    createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
-  });
-  Sandcastle.addToolbarButton('清除模型', function() {
-    viewer.entities.removeById('classroom');
+  Sandcastle.addToggleButton('使用太阳光源', scene.globe.enableLighting = false, function(checked) {
+    scene.globe.enableLighting = checked;
   });
   Sandcastle.finishedLoading();
 }
 
 initCesium();
-
-function initCannonJS() {
-  // Setup our world
-  var world = new CANNON.World();
-  world.gravity.set(0, 0, -9.82);   // m/s²
-
-  // Create a sphere
-  var radius = 1; // m
-  var sphereBody = new CANNON.Body({
-    mass: 5,  // kg
-    position: new CANNON.Vec3(0, 0, 10),    // m
-    shape: new CANNON.Sphere(radius)
-  });
-
-  world.addBody(sphereBody);
-
-  // Create a plane
-  var groundBody = new CANNON.Body({
-    mass: 0   // mass == 0 makes the body static
-  });
-  var groundShape = new CANNON.Plane();
-  groundBody.addShape(groundShape);
-  world.addBody(groundBody);
-
-  var fixedTimeStep = 1.0 / 60.0;   // sceonds
-  var maxSubSteps = 3;
-
-  // Start the stimulation loop
-  var lastTime;
-  (function simloop(time){
-    requestAnimationFrame(simloop);
-    if (lastTime != undefined) {
-      var dt = (time - lastTime) / 1000;
-      world.step(fixedTimeStep, dt, maxSubSteps);
-    }
-    console.log("Sphere z position: " + sphereBody.position.z);
-    lastTime = time;
-  })();
-}
-
-initCannonJS();
