@@ -184,7 +184,8 @@ function initCesium() {
 
   // 添加小车模型
   var carPrimitive = Cesium.Model.fromGltf({
-    url: '../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+    // url: '../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+    url: 'Source/Cesium_Man.gltf',
     modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
     minimumPixelSize: 128
   });
@@ -369,8 +370,20 @@ function initCesium() {
   //   createModel('../SampleDate/models/CesiumMan/Cesium_Man.glb', 'Cesium Man');
   // })
 
+  // var entity = {
+  //   model: {
+  //     uri: '../SampleDate/models/CesiumMan/Cesium_Man.gltf'
+  //   }
+  // };
+  // handler.setInputAction(function(movement) {
+  //   let cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
+  //   entity.position = cartesian;
+  //   viewer.entities.add(entity);
+  // }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
   Sandcastle.addToolbarButton('清除模型', function() {
-    viewer.entities.removeById('classroom');
+    // viewer.entities.removeById('classroom');
+    viewer.entities,removeAll();
   });
   Sandcastle.finishedLoading();
 }
