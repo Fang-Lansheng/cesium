@@ -21,12 +21,12 @@ function initCesium() {
     scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
-    // imageryProvider: new Cesium.BingMapsImageryProvider({
-    // url: 'https://dev.virtualearth.net',
-    // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-    // mapStyle: Cesium.BingMapsStyle.AERIAL
-    // }),
-    // baseLayerPicker: false,
+    imageryProvider: new Cesium.BingMapsImageryProvider({
+    url: 'https://dev.virtualearth.net',
+    key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+    mapStyle: Cesium.BingMapsStyle.AERIAL
+    }),
+    baseLayerPicker: false,
     // // 加载地形系统
     // terrainProvider : Cesium.createWorldTerrain({
     //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -151,12 +151,12 @@ function initCesium() {
   function showElevation(e) {
     if (!e) {
       elevation.style.display = 'block';
-      console.log('显示高程');
+      // console.log('显示高程');
       changed = !e;
     }
     else {
       elevation.style.display = 'none';
-      console.log('不显示高程');
+      // console.log('不显示高程');
       changed = !e;
     }
   }
@@ -291,40 +291,84 @@ function initCesium() {
     }
   });
 
+  // // 函数：确定位置
+  // function setPosition(entity) {
+  //   let modelPosition = new Cesium.Cartesian3;
+  //   handler.setInputAction(function(movement) {
+  //     let cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
+  //     if (cartesian) {
+  //       modelPosition = cartesian;
+  //       console.log('确定位置' + modelPosition);
+  //     }
+  //     else {
+  //       alert('地图外的点！请重新选择');
+  //       setPosition();
+  //     }
+  //   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+  //   entity.position = modelPosition;
+  //   viewer.entities.add(entity);
+  //   viewer.trackedEntity = entity;
+  // }
+  
 
   // 函数：加载模型
-  function createModel(url, id,  height) {
-    viewer.entities.removeAll();
-    // viewer.entities.removeById(id);
+  function createModel(modelURI, modelID) {
+    // viewer.entities.removeAll();
+    // // viewer.entities.removeById(id);
 
-    var position = Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, height);
+    // var entity = {
+    //   id: modelID,
+    //   name: modelID,
+    //   model: {
+    //     uri: modelURI,
+    //     minimumPixelSize: 128,
+    //     maximumScale: 100
+    //   }
+    // };
+    // setPosition(entity);
+
+    // handler.setInputAction(function(movement) {
+    //   let cartesian = scene.camera.pickEllipsoid(movement.position, ellipsoid);
+    //   if (cartesian) {
+    //     entity.position = cartesian;
+    //     console.log(entity.id);
+    //   }
+    //   else {
+    //     alert('地图外的点！\n请重绘模型');
+    //   }
+    // }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     // var heading = Cesium.Math.toRadians(135);
-    var heading = 0;
-    var pitch = 0;
-    var roll = 0;
-    var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-    var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+    // var heading = 0;
+    // var pitch = 0;
+    // var roll = 0;
+    // var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    // var orientation = Cesium.Transforms.headingPitchRollQuaternion(modelPosition, hpr);
     
-    var entity = viewer.entities.add({
-      id: id,
-      name : id,
-      position : position,
-      orientation : orientation,
-      model : {
-        uri : url,
-        minimumPixelSize : 128,
-        maximumScale : 20000
-      }
-    });
-    viewer.trackedEntity = entity;
+    // var entity = viewer.entities.add({
+    //   id: id,
+    //   name : id,
+    //   position : modelPosition,
+    //   orientation : orientation,
+    //   model : {
+    //     uri : url,
+    //     minimumPixelSize : 128,
+    //     maximumScale : 20000
+    //   }
+    // });
+    // entity.description = '<p>A model.</p>'
+    // viewer.entities.add(entity);
+    // viewer.trackedEntity = entity;
     // viewer.zoomTo(viewer.entities);
-
-    entity.description = '<p>A model.</p>'
   }
 
-  Sandcastle.addToolbarButton('加载教室模型', function() {
-    createModel('../SampleData/models/classroom_dae.gltf', 'classroom', 0);
-  });
+  // Sandcastle.addToolbarButton('加载教室模型', function() {
+  //   createModel('../SampleData/models/classroom_dae.gltf', 'classroom');
+  // });
+  // Sandcastle.addToolbarButton('加载人物模型', function() {
+  //   createModel('../SampleDate/models/CesiumMan/Cesium_Man.glb', 'Cesium Man');
+  // })
+
   Sandcastle.addToolbarButton('清除模型', function() {
     viewer.entities.removeById('classroom');
   });
@@ -367,7 +411,7 @@ initCesium();
 //       var dt = (time - lastTime) / 1000;
 //       world.step(fixedTimeStep, dt, maxSubSteps);
 //     }
-//     console.log("Sphere z position: " + sphereBody.position.z);
+//     // console.log("Sphere z position: " + sphereBody.position.z);
 //     lastTime = time;
 //   })();
 // }
