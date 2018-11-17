@@ -21,12 +21,12 @@ function initCesium() {
     scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
-    // imageryProvider: new Cesium.BingMapsImageryProvider({
-    // url: 'https://dev.virtualearth.net',
-    // key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-    // mapStyle: Cesium.BingMapsStyle.AERIAL
-    // }),
-    // baseLayerPicker: false,
+    imageryProvider: new Cesium.BingMapsImageryProvider({
+    url: 'https://dev.virtualearth.net',
+    key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+    mapStyle: Cesium.BingMapsStyle.AERIAL
+    }),
+    baseLayerPicker: false,
     // // 加载地形系统
     // terrainProvider : Cesium.createWorldTerrain({
     //   // url: 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles', // 默认立体地表
@@ -130,6 +130,11 @@ function initCesium() {
     else {
       console.log("地图外的点！");
     }
+    let c_height = Math.ceil(viewer.camera.positionCartographic.height);
+    document.getElementById("photo_altitude").innerHTML = c_height;
+    if (c_height > 99999999999) {
+      alert("You've lost!");
+    }
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   // 滑动鼠标滚轮获得该点摄影机高度
   handler.setInputAction(function(movement) {
@@ -139,6 +144,13 @@ function initCesium() {
         alert("You've lost!");
       }
   }, Cesium.ScreenSpaceEventType.WHEEL);
+  // handler.setInputAction(function(movement) {
+  //   let height = Math.ceil(viewer.camera.positionCartographic.height);
+  //   document.getElementById("photo_altitude").innerHTML = height;
+  //   if (height > 99999999999) {
+  //     alert("You've lost!");
+  //   }
+  // }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK);
 
   var elevation = document.getElementById("elevation");
   var changed = scene.terrainProvider.hasWaterMask;
