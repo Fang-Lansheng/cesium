@@ -62,16 +62,16 @@ function initCesium() {
   // 初始化相机参数
   var initialPosition = new Cesium.Cartesian3.fromDegrees(114.29045969, 30.56173526, 40000);
   var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
-  var homeCameraView = {
-      destination: initialPosition,
-      orientation: {
-          heading: initialOrientation.heading,
-          pitch: initialOrientation.pitch,
-          roll: initialOrientation.roll
-      }
-  };
-  // 设置初始视野
-  viewer.scene.camera.setView(homeCameraView);
+  // var homeCameraView = {
+  //     destination: initialPosition,
+  //     orientation: {
+  //         heading: initialOrientation.heading,
+  //         pitch: initialOrientation.pitch,
+  //         roll: initialOrientation.roll
+  //     }
+  // };
+  // // 设置初始视野
+  // viewer.scene.camera.setView(homeCameraView);
   // 重写 homeButton
   viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e) {
     e.cancel = true;
@@ -166,30 +166,46 @@ function initCesium() {
     showElevation(changed);
   });
 
-  /**小车移动
+  /**移动
    * 参考：
    * https://blog.csdn.net/HobHunter/article/details/74940280
+   * https://github.com/CyanHabao/CesiumCesium_man
    */
-  // 小车旋转角度
+  // 旋转角度
   var radian = Cesium.Math.toRadians(2.0);  // Math.Radians(degrees) 将角度转换为弧度
   // 小车的速度
-  var carSpeed = 5;
+  var manSpeed = 0.1;
   // 速度矢量
   var speedVector = new Cesium.Cartesian3();  // Cesium.Cartesian3(x, y, z)  3D 笛卡尔坐标点
   // 起始位置
-  var carPosition = Cesium.Cartesian3.fromDegrees(114.3570, 30.52601643, 0);  //  从以度为单位的经度和纬度值返回Cartesian3位置
-  // 设置小车方向
+  // var manPosition = Cesium.Cartesian3.fromDegrees(114.3570, 30.52601643, 0);  //  从以度为单位的经度和纬度值返回Cartesian3位置
+  var manPosition = Cesium.Cartesian3.fromDegrees(-75.5977, 40.0384, 100);
+  // 设置方向
   var hpr = new Cesium.HeadingPitchRoll(-45, 0, 0);
-  var fixedFrameTransforms = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west'); // 生成一个函数，该函数计算从以提供的原点为中心的参考帧到提供的椭球的固定参考帧的4x4变换矩阵
+  var fixedFrameTransforms = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west'); 
+  // 生成一个函数，该函数计算从以提供的原点为中心的参考帧到提供的椭球的固定参考帧的4x4变换矩阵
 
   // 添加小车模型
-  var carPrimitive = Cesium.Model.fromGltf({
+  var manPrimitive = Cesium.Model.fromGltf({
     // url: '../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
     url: 'Source/Cesium_Man.gltf',
-    modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
-    minimumPixelSize: 128
+    modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
+    minimumPixelSize: 1
   });
-  scene.primitives.add(carPrimitive);
+  scene.primitives.add(manPrimitive);
+  manPrimitive.readyPromise.then(function(model) {
+    var entity = viewer.entities.add({
+      id: 'Cesium Man',
+      model: model
+    });
+    viewer.trackedEntity = entity;
+  })
+
+  var debugModelMatrixPrimitive = scene.primitives.add(new Cesium.DebugModelMatrixPrimitive({
+    modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms),
+    length: 300.0,
+    width: 10
+  }));
 
   // 监听键盘按键
   // 小车状态标志
@@ -255,33 +271,34 @@ function initCesium() {
     // console.log(String.fromCharCode(window.event ? e.keyCode : e.which));
   });
 
-  // 移动小车
+  // 移动人物
   function moveCar(isUp) {
     // 计算速度矩阵
     if (isUp) {
-      speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, carSpeed, speedVector)
+      speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, manSpeed, speedVector)
     }
     else {
-      speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, -carSpeed, speedVector)
+      speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, -manSpeed, speedVector)
     }
     // 根据速度计算出下一个位置的坐标
-    carPosition = Cesium.Matrix4.multiplyByPoint(carPrimitive.modelMatrix, speedVector, carPosition);
-    // 小车移动
-    Cesium.Transforms.headingPitchRollToFixedFrame(carPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, carPrimitive.modelMatrix);
+    manPosition = Cesium.Matrix4.multiplyByPoint(manPrimitive.modelMatrix, speedVector, manPosition);
+    // 移动
+    Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, manPrimitive.modelMatrix);
+    Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, debugModelMatrixPrimitive.modelMatrix);
   }
 
   // 监听帧
   viewer.clock.onTick.addEventListener((clock)=>{
-    if (flag.moveUp) {
-      if (flag.moveLeft) {
+    if (flag.moveUp) {              // 前进
+      if (flag.moveLeft) {          // 左转
         hpr.heading -= radian;
       };
-      if (flag.moveRight) {
+      if (flag.moveRight) {         // 右转
         hpr.heading += radian;
       };
       moveCar(true);
     }
-    if (flag.moveDown) {
+    if (flag.moveDown) {            // 后退
       if (flag.moveLeft) {
         hpr.heading += radian;
       };
@@ -290,7 +307,40 @@ function initCesium() {
       };
       moveCar(false);
     }
+    if ((flag.moveLeft)&&(!flag.moveRight)&&(!flag.moveUp)&&(!flag.moveDown)) {    // 左转
+      hpr.heading -= radian;
+      Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, manPrimitive.modelMatrix);
+      Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, debugModelMatrixPrimitive.modelMatrix);
+    }
+    if ((flag.moveRight)&&(!flag.moveLeft)&&(!flag.moveUp)&&(!flag.moveDown)) {    // 右转
+      hpr.heading += radian;
+      Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, manPrimitive.modelMatrix);
+      Cesium.Transforms.headingPitchRollToFixedFrame(manPosition, hpr, Cesium.Ellipsoid.WGS84, fixedFrameTransforms, debugModelMatrixPrimitive.modelMatrix);
+    }
+    if ((!flag.moveLeft)&&(!flag.moveRight)&&(!flag.moveUp)&&(!flag.moveDown)) {   // 静止时
+      manPrimitive.readyPromise.then(function(model) {
+        model.activeAnimations.addAll({
+          speedup: 1.0,
+          loop: Cesium.ModelAnimationLoop.REPEAT
+        })
+      })
+    }
+    if ((flag.moveLeft)||(flag.moveRight)||(flag.moveUp)||(flag.moveDown)) {     // 在移动或转动时
+      manPrimitive.readyPromise.then(function(model) {
+        model.activeAnimations.add({
+          name: 'animation_0',
+        })
+      })
+    }
+
   });
+
+  var tileset = new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(6074)
+  });
+
+  viewer.scene.primitives.add(tileset);
+  viewer.zoomTo(tileset);
 
   // // 函数：确定位置
   // function setPosition(entity) {
