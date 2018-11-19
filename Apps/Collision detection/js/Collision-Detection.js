@@ -166,6 +166,25 @@ function initCesium() {
     showElevation(changed);
   });
 
+  // MeshVisualizer = Cesium.MeshVisualizer;
+  // Mesh = Cesium.Mesh;
+  // MeshMaterial = Cesium.MeshMaterial;
+  // FramebufferTexture = Cesium.FramebufferTexture;
+  // GeometryUtils = Cesium.GeometryUtils;
+  // LOD = Cesium.LOD;
+  // ReferenceMesh = Cesium.ReferenceMesh;
+
+  // var meshModelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(initialPosition)
+  // var meshVisualizer = new MeshVisualizer({
+  //   modelMatrix: meshModelMatrix,
+  //   referenceAxisParameter: {
+  //     length: 10000
+  //   },
+  //   up: { z: 1 }
+  // })
+  // viewer.scene.primitives.add(meshVisualizer);
+  // meshVisualizer.showReference = true;
+
   /**移动
    * 参考：
    * https://blog.csdn.net/HobHunter/article/details/74940280
