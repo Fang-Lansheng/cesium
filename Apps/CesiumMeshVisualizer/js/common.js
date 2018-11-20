@@ -3,7 +3,7 @@ var appConfig = {
 }
 window.CESIUM_BASE_URL = appConfig.BaseURL + "Build/Cesium/";
 //准备
-var homePosition = [109.88, 38.18, 300000];//初始位置
+var homePosition = [114.29, 30.56, 300000];//初始位置
 var viewer = null;
 var home = Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], homePosition[2]);
 
@@ -17,11 +17,24 @@ function init() {
         timeline: false,
         creditContainer: "creditContainer",
     });
-    if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {//移动设备上禁掉以下几个选项，可以相对更加流畅
+    // 添加天地图注记
+    viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+        url: 'http://t0.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles',
+        layer: 'tdtImgAnnoLayer',
+        style: 'default',
+        format: 'image/jpeg',
+        tileMatrixSetID: 'GoogleMapsCompatible',
+        show: false
+    }));
+    // 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
+    viewer.scene.globe.depthTestAgainstTerrain = true; 
+    //移动设备上禁掉以下几个选项，可以相对更加流畅
+    if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
         viewer.scene.fog.enable = false;
         viewer.scene.skyAtmosphere.show = false;
         viewer.scene.fxaa = false;
     }
+    // 重设 homeButton
     viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function (evt) {
         look(homePosition[0], homePosition[1], homePosition[2]);
         evt.cancel = true;
