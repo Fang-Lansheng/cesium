@@ -166,24 +166,27 @@ function initCesium() {
     showElevation(changed);
   });
 
-  // MeshVisualizer = Cesium.MeshVisualizer;
-  // Mesh = Cesium.Mesh;
-  // MeshMaterial = Cesium.MeshMaterial;
-  // FramebufferTexture = Cesium.FramebufferTexture;
-  // GeometryUtils = Cesium.GeometryUtils;
-  // LOD = Cesium.LOD;
-  // ReferenceMesh = Cesium.ReferenceMesh;
+  // var MeshVisualizer = Cesium.MeshVisualizer;
+  // var Mesh = Cesium.Mesh;
+  // var MeshMaterial = Cesium.MeshMaterial;
+  // var FramebufferTexture = Cesium.FramebufferTexture;
+  // var GeometryUtils = Cesium.GeometryUtils;
+  // var ReferenceMesh = Cesium.ReferenceMesh;
+  // var LOD = Cesium.LOD;
 
   // var meshModelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(initialPosition)
   // var meshVisualizer = new MeshVisualizer({
   //   modelMatrix: meshModelMatrix,
   //   referenceAxisParameter: {
-  //     length: 10000
+  //     length: 100,
+  //     width: 0.5,
+  //     headLength: 2,
+  //     headWidth: 1.0
   //   },
   //   up: { z: 1 }
   // })
   // viewer.scene.primitives.add(meshVisualizer);
-  // meshVisualizer.showReference = true;
+  // meshVisualizer.showReference = true;  // 显示坐标轴
 
   /**移动
    * 参考：
