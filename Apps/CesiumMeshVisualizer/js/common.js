@@ -27,7 +27,7 @@ function init() {
         show: false
     }));
     // 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
-    viewer.scene.globe.depthTestAgainstTerrain = true; 
+    // viewer.scene.globe.depthTestAgainstTerrain = true; 
     //移动设备上禁掉以下几个选项，可以相对更加流畅
     if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
         viewer.scene.fog.enable = false;
