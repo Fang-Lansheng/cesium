@@ -101,14 +101,14 @@ Ammo().then(function() {
 	// 键盘事件
 	var actions = {};
 	var keyActions = {
-		'KeyW': 'acceleration',
-		'KeyS': 'braking',
-		'KeyA': 'left',
-		'KeyD': 'right',
-		'ArrowUp': 'acceleration',
-		'ArrowDown': 'braking',
-		'ArrowLeft': 'left',
-		'ArrowRight': 'right'
+		'KeyW': 'acceleration',			// W
+		'KeyA': 'left',							// A
+		'KeyS': 'braking',					// S
+		'KeyD': 'right',						// D
+		'ArrowUp': 'acceleration',	// ↑
+		'ArrowDown': 'braking',			// ↓
+		'ArrowLeft': 'left',				// ←
+		'ArrowRight': 'right'				// →
 	};
 
 	// 函数
@@ -157,63 +157,110 @@ Ammo().then(function() {
 		}
 	}
 
-	// 创建立方体盒子
+	// 函数：创建立方体盒子
 	function createBox(pos, quat, w, l, h, mass, friction) {
-	var material = createMaterial();	//= mass > 0 ? materialDynamic : materialStatic;
-	var shape = Cesium.BoxGeometry.fromDimensions({
-		dimensions: new Cesium.Cartesian3(w, l, h),
-		vertexFormat: new Cesium.VertexFormat({
-				position: true,
-				normal: true
-		})
-	});
+		var material = createMaterial();	//= mass > 0 ? materialDynamic : materialStatic;
+		var shape = Cesium.BoxGeometry.fromDimensions({
+			dimensions: new Cesium.Cartesian3(w, l, h),
+			vertexFormat: new Cesium.VertexFormat({
+					position: true,
+					normal: true
+			})
+		});
 
-	var geometry = new Ammo.btBoxShape(new Ammo.btVector3(w * 0.5, l * 0.5, h * 0.5));
+		var geometry = new Ammo.btBoxShape(new Ammo.btVector3(w * 0.5, l * 0.5, h * 0.5));
 
-	if (!mass) mass = 0;
-	if (!friction) friction = 1;
+		if (!mass) mass = 0;
+		if (!friction) friction = 1;
 
-	var mesh = new Mesh(shape, material);
-	Cesium.Cartesian3.clone(pos, mesh.position);
-	mesh.quaternion = new Cesium.Quaternion(quat.x, quat.y, quat.z, quat.w);
-	meshVisualizer.add(mesh);
+		var mesh = new Mesh(shape, material);
+		Cesium.Cartesian3.clone(pos, mesh.position);
+		mesh.quaternion = new Cesium.Quaternion(quat.x, quat.y, quat.z, quat.w);
+		meshVisualizer.add(mesh);
 
-	var transform = new Ammo.btTransform();
-	transform.setIdentity();
-	transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-	transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-	var motionState = new Ammo.btDefaultMotionState(transform);
+		var transform = new Ammo.btTransform();
+		transform.setIdentity();
+		transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+		transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+		var motionState = new Ammo.btDefaultMotionState(transform);
 
-	var localInertia = new Ammo.btVector3(0, 0, 0);
-	geometry.calculateLocalInertia(mass, localInertia);
+		var localInertia = new Ammo.btVector3(0, 0, 0);
+		geometry.calculateLocalInertia(mass, localInertia);
 
-	var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia);
-	var body = new Ammo.btRigidBody(rbInfo);
+		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia);
+		var body = new Ammo.btRigidBody(rbInfo);
 
-	body.setFriction(friction);
-	//body.setRestitution(.9);
-	//body.setDamping(0.2, 0.2);
+		body.setFriction(friction);
+		//body.setRestitution(.9);
+		//body.setDamping(0.2, 0.2);
 
-	physicWorld.addRigidBody(body);
+		physicWorld.addRigidBody(body);
 
-	if (mass > 0) {
-		body.setActivationState(DISABLE_DEACTIVATION);
-		// Sync physics and graphics
-		function sync(dt) {
-			var ms = body.getMotionState();
-			if (ms) {
-					ms.getWorldTransform(TRANSFORM_AUX);
-					var p = TRANSFORM_AUX.getOrigin();
-					var q = TRANSFORM_AUX.getRotation();
-					mesh.position.set(p.x(), p.y(), p.z());
-					mesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
-					mesh.modelMatrixNeedsUpdate = true;
+		if (mass > 0) {
+			body.setActivationState(DISABLE_DEACTIVATION);
+			// Sync physics and graphics
+			function sync(dt) {
+				var ms = body.getMotionState();
+				if (ms) {
+						ms.getWorldTransform(TRANSFORM_AUX);
+						var p = TRANSFORM_AUX.getOrigin();
+						var q = TRANSFORM_AUX.getRotation();
+						mesh.position.set(p.x(), p.y(), p.z());
+						mesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+						mesh.modelMatrixNeedsUpdate = true;
+				}
 			}
-		}
 
-		syncList.push(sync);
+			syncList.push(sync);
+		}
 	}
-}
+	// 函数：创建球体
+	function createSphere(pos, radius, mass, friction) {
+		var sphere = new Mesh(new Cesium.SphereGeometry({
+			radius: radius,
+			stackPartitions: 20,
+			slicePartitions: 20,
+			vertexFormat: Cesium.VertexFormat.POSITION_AND_NORMAL
+		}), createMaterial());
+
+		var shape = new Ammo.btSphereShape(radius);
+		shape.setMargin(0.05);
+
+		if (!mass) mass = 0;
+		if (!friction) friction = 1;
+	
+		sphere.position = pos;
+		var localInertia = new Ammo.btVector3(0, 0, 0);
+		shape.calculateLocalInertia(mass, localInertia);
+		
+		var transform = new Ammo.btTransform();
+		transform.setIdentity();
+		transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+		var motionState = new Ammo.btDefaultMotionState(transform);
+		
+		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+		var body = new Ammo.btRigidBody(rbInfo);
+		body.setFriction(friction);
+
+		meshVisualizer.add(sphere);
+		physicWorld.addRigidBody(body);
+	
+		if (mass > 0) {
+			body.setActivationState(DISABLE_DEACTIVATION);
+			// Sync physics and graphics
+			function sync(dt) {
+				var ms = body.getMotionState();
+				if (ms) {
+						ms.getWorldTransform(TRANSFORM_AUX);
+						var p = TRANSFORM_AUX.getOrigin();
+						sphere.position.set(p.x(), p.y(), p.z());
+						sphere.modelMatrixNeedsUpdate = true;
+				}
+			}
+	
+			syncList.push(sync);
+		}
+	}
 
 	// 创建小车车轮
 	function createWheelMesh(radius, width) {
@@ -264,23 +311,23 @@ Ammo().then(function() {
 
 	// 创建小车
 	function createVehicle(pos, quat) {
-		// 小车常量
+		// 小车参数
 		var chassisWidth = 1.8;						// 车架宽度
 		var chassisHeight = 0.6;					// 车架高度
 		var chassisLength = 4;						// 车架长度
-		var massVehicle = 800;						// 汽车质量
+		var massVehicle = 1200;						// 汽车质量
 
-		var wheelAxisPositionBack = -1;		// 
-		var wheelRadiusBack = 0.4;
-		var wheelWidthBack = 0.3;
-		var wheelHalfTrackBack = 1;
-		var wheelAxisHeightBack = 0.3;
+		var wheelAxisPositionBack = -1.3;	// 后轮位置 
+		var wheelAxisHeightBack = 0.3;		// 后轮轴高度
+		var wheelHalfTrackBack = 1;				// 后两轮间距
+		var wheelRadiusBack = 0.4;				// 后轮半径
+		var wheelWidthBack = 0.5;					// 后轮宽度
 
-		var wheelAxisFrontPosition = 1.7;
-		var wheelHalfTrackFront = 1;
-		var wheelAxisHeightFront = 0.3;
-		var wheelRadiusFront = 0.35;
-		var wheelWidthFront = 0.2;
+		var wheelAxisPositionFront = 1.4;	// 前轮位置
+		var wheelAxisHeightFront = 0.3;		// 前轮轴高度
+		var wheelHalfTrackFront = 1;			// 前两轮间距
+		var wheelRadiusFront = 0.4;			  // 前轮半径
+		var wheelWidthFront = 0.4;				// 后轮宽度
 
 		var friction = 1000;							// 摩擦力
 		var suspensionStiffness = 20.0;		// 悬架刚度
@@ -319,10 +366,10 @@ Ammo().then(function() {
 		physicWorld.addAction(vehicle);
 
 		// 车轮
-		var FRONT_LEFT = 0;
-		var FRONT_RIGHT = 1;
-		var BACK_LEFT = 2;
-		var BACK_RIGHT = 3;
+		var FRONT_LEFT = 0;			//		┌┬┐ ←前
+		var FRONT_RIGHT = 1;		//		0┼1
+		var BACK_LEFT = 2;			// 		2┼3
+		var BACK_RIGHT = 3;			//		└┴┘ ←后
 		var wheelMeshes = [];
 		var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
 		var wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
@@ -346,8 +393,8 @@ Ammo().then(function() {
 			wheelMeshes[index] = createWheelMesh(radius, width);
 		}
 
-		addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
-		addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
+		addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisPositionFront), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
+		addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisPositionFront), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
 		addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
 		addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
 
@@ -428,20 +475,25 @@ Ammo().then(function() {
 
 	// 创建场景中的实体（方块 + 小车）
 	function createObjects() {
-		createBox(new Cesium.Cartesian3(0, -0.5, 0), ZERO_QUATERNION, 75, 1, 75, 0, 2);
+		createBox(new Cesium.Cartesian3(0, -0.5, 0), ZERO_QUATERNION, 200, 1, 200, 0, 0.2);	// 平台
+		createBox(new Cesium.Cartesian3(100, 0, 0), ZERO_QUATERNION, 1, 10, 200, 0, 0.2);		// 墙
+		createBox(new Cesium.Cartesian3(-100, 0, 0), ZERO_QUATERNION, 1, 10, 200, 0, 0.2);	// 墙
+		createBox(new Cesium.Cartesian3(0, 0, 100), ZERO_QUATERNION, 200, 10, 1, 0, 0.2);		// 墙
+		createBox(new Cesium.Cartesian3(0, 0, -100), ZERO_QUATERNION, 200, 10, 1, 0, 0.2);	// 墙
 		var quaternion = new Cesium.Quaternion(0, 0, 0, 1);
 		Cesium.Quaternion.fromAxisAngle(new Cesium.Cartesian3(1, 0, 0), -Math.PI / 18, quaternion);
-		createBox(new Cesium.Cartesian3(0, -1.5, 0), quaternion, 8, 4, 10, 0);
+		createBox(new Cesium.Cartesian3(0, -1.5, 0), quaternion, 8, 4, 10, 0);							// 斜台
 
 		var size = 0.75;
-		var nw = 8;
-		var nh = 6;
+		var nw = 8;		// 一行八个
+		var nh = 6;		// 一共六行
 		for (let j = 0; j < nw; j++) {
 			for (let i = 0; i < nh; i++) {
 				createBox(new Cesium.Cartesian3(size * j - (size * (nw - 1)) / 2, size * i, 10), ZERO_QUATERNION, size, size, size, 10);
 			}
 		}
 		createVehicle(new Cesium.Cartesian3(0, 4, -20), ZERO_QUATERNION);
+		createSphere(new Cesium.Cartesian3(0, 1.5, 20), 2, 10, 0.1);
 	}
 
 	var start = false;
@@ -468,6 +520,7 @@ Ammo().then(function() {
 			start = false;
 		}
 	}, 1000 * 3);
+
 });
 
 // // 创建立方体

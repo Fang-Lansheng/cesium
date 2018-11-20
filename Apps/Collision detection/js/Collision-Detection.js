@@ -363,6 +363,12 @@ function initCesium() {
 
   viewer.scene.primitives.add(tileset);
   viewer.zoomTo(tileset);
+  handler.setInputAction(function(movement) {
+    var pick = scene.pick(movement.endPosition);
+    if (Cesium.defined(pick) && Cesium.defined(pick.node) && Cesium.defined(pick.mesh)) {
+      console.log('node: ' + pick.node.name + '. mesh: ' + pick.mesh.name);
+    }
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
   // // 函数：确定位置
   // function setPosition(entity) {
