@@ -15,7 +15,7 @@ function init() {
 	viewer = new Cesium.Viewer("cesiumContainer", {
 		animation: false,
 		timeline: false,
-		creditContainer: "creditContainer",
+		creditContainer: "creditContainer"
 	});
 	// 添加天地图注记
 	viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
