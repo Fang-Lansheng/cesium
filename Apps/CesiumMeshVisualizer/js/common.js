@@ -44,8 +44,14 @@ function init() {
 		tileMatrixSetID: 'GoogleMapsCompatible',
 		show: false
 	}));
-	// 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
-	// viewer.scene.globe.depthTestAgainstTerrain = true; 
+
+	// 创建一个 scene 实例
+	var scene = viewer.scene;
+	// 创建一个 ellipsoid 实例
+	var ellipsoid = scene.globe.ellipsoid;
+	// 创建一个 clock 实例
+	var clock = viewer.clock;
+
 	//移动设备上禁掉以下几个选项，可以相对更加流畅
 	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
 		viewer.scene.fog.enable = false;
@@ -68,6 +74,7 @@ function init() {
 	// viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
 	// viewer.extend(Cesium.viewerCesiumInspectorMixin);
 	// viewer.cesiumInspector.container.style.display = "none";	// 
+	// viewer.scene.globe.depthTestAgainstTerrain = true; 			// 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
 	viewer.scene.debugShowFramesPerSecond = true;							// 显示帧率
 	document.addEventListener('keydown', function (event) {		// 监测键盘事件
 		var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -85,6 +92,85 @@ function init() {
 			}
 		}
 	});
+
+	  // 实时显示经纬度、坐标值及视角高
+		document.getElementById("longitude").innerHTML = '东经';             
+		document.getElementById("longitude_show").innerHTML = homePosition[0];   // 经度初始值
+		document.getElementById("latitude").innerHTML = '北纬';             
+		document.getElementById("latitude_show").innerHTML = homePosition[1];     // 纬度初始值
+		document.getElementById("altitude_show").innerHTML = 0;           				// 海拔初始值
+		document.getElementById("photo_altitude").innerHTML = homePosition[2];    // 视角高初始值
+		// 使用 ScreenSpaceEvenHandler，一组在用户输入操作上触发指定功能的处理程序
+		const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+		// ScreenSpaceEventHandler.setInputAction() 监听操作类型 ScreenSpaceEventType 的种类，并运行一个特定的函数，将用户操作作为参数传递
+		// 移动鼠标获得该点经、纬度、X、Y 坐标
+		handler.setInputAction(function(movement) {
+			// 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+			// var ray = viewer.camera.getPickRay(movement.endPosition);
+			// var cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+			var cartesian = scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+			if (cartesian) {
+				var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+				// var cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+				var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4); // 经度
+				var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);   // 维度
+				var height = viewer.scene.globe.getHeight(cartographic);                  // 海拔
+				height = Number(height).toFixed(2);
+				if (longitude >= 0) {
+					document.getElementById("longitude").innerHTML = '东经';
+					document.getElementById("longitude_show").innerHTML = longitude;        // 经度
+				}
+				else {
+					document.getElementById("longitude").innerHTML = '西经';
+					document.getElementById("longitude_show").innerHTML = -longitude;       // 经度
+				}
+				if (latitude >= 0) {
+					document.getElementById("latitude").innerHTML = '北纬';
+					document.getElementById("latitude_show").innerHTML = latitude;          // 纬度
+				}
+				else {
+					document.getElementById("latitude").innerHTML = '南纬';
+					document.getElementById("latitude_show").innerHTML = -latitude;         // 纬度
+				}
+				document.getElementById("altitude_show").innerHTML = height;
+			}
+			else {
+				console.log("地图外的点！");
+			}
+			let c_height = Math.ceil(viewer.camera.positionCartographic.height);
+			document.getElementById("photo_altitude").innerHTML = c_height;
+			if (c_height > 99999999999) {
+				alert("You've lost!");
+			}
+		}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+		// 滑动鼠标滚轮获得该点摄影机高度
+		handler.setInputAction(function(movement) {
+				let height = Math.ceil(viewer.camera.positionCartographic.height);
+				document.getElementById("photo_altitude").innerHTML = height;
+				if (height > 99999999999) {
+					alert("You've lost!");
+				}
+		}, Cesium.ScreenSpaceEventType.WHEEL);
+	
+		var elevation = document.getElementById("elevation");
+		var changed = scene.terrainProvider.hasWaterMask;
+		function showElevation(e) {
+			if (!e) {
+				elevation.style.display = 'block';
+				// console.log('显示高程');
+				changed = !e;
+			}
+			else {
+				elevation.style.display = 'none';
+				// console.log('不显示高程');
+				changed = !e;
+			}
+		}
+		showElevation(!changed);
+		scene.terrainProviderChanged.addEventListener(function() {
+			console.log("terrainProviderChanged!");
+			showElevation(changed);
+		});
 }
 //汉化帮助按钮
 function navigationHelpButtonLang() {

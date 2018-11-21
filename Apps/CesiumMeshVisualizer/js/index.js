@@ -401,7 +401,9 @@ Ammo().then(function() {
 		// 同步键盘事件+图像+物理
 		function sync(dt) {
 			var speed = vehicle.getCurrentSpeedKmHour();
-			console.log((speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1) + 'km/h');
+			speedmeter = (speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1) + 'km/h';
+			document.getElementById("speed_show").innerHTML = speedmeter;
+			console.log(speedmeter);
 
 			breakingForce = 0;
 			engineForce = 0;
