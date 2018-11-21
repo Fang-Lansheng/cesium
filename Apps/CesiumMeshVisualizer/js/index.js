@@ -286,7 +286,7 @@ Ammo().then(function() {
 
 		var transform = new Ammo.btTransform();
 		transform.setIdentity();
-		transform.setOrigin(new Ammo.btVector3(pos.x, pos..y, pos.z));
+		transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
 		var motionState = new Ammo.btDefaultMotionState(transform);
 
 		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, deskShape, localInertia);
