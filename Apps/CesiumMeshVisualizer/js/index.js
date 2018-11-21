@@ -214,6 +214,7 @@ Ammo().then(function() {
 			syncList.push(sync);
 		}
 	}
+
 	// 函数：创建球体
 	function createSphere(pos, radius, mass, friction) {
 		var sphere = new Mesh(new Cesium.SphereGeometry({
@@ -258,6 +259,53 @@ Ammo().then(function() {
 				}
 			}
 	
+			syncList.push(sync);
+		}
+	}
+
+	// 函数：创建桌子
+	function createDesk(pos, mass, friction) {
+		var aabb = Cesium.AxisAlignedBoundingBox.fromPoints(Cesium.Cartesian3.fromDegreesArray([
+			-72.0, 40.0,
+			-70.0, 35.0,
+			-75.0, 30.0,
+			-70.0, 30.0,
+			-68.0, 40.0
+ 		]));
+		var deskGeometry = Cesium.BoxGeometry.fromAxisAlignedBoundingBox(aabb);
+		var deskMesh = new Mesh(deskGeometry, createMaterial());
+		var deskShape = new Ammo.btSphereShape(1);
+		deskShape.setMargin(0.05);
+
+		if (!mass) mass = 0;
+		if (!friction) friction = 1;
+
+		deskMesh.position = pos;
+		var localInertia = new Ammo.btVector3(0, 0, 0);
+		deskShape.calculateLocalInertia(mass, localInertia);
+
+		var transform = new Ammo.btTransform();
+		transform.setIdentity();
+		transform.setOrigin(new Ammo.btVector3(pos.x, pos..y, pos.z));
+		var motionState = new Ammo.btDefaultMotionState(transform);
+
+		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, deskShape, localInertia);
+		var body = new Ammo.btRigidBody(rbInfo);
+
+		meshVisualizer.add(deskMesh);
+		physicWorld.addRigidBody(body);
+
+		if (mass > 0) {
+			body.setActivationState(DISABLE_DEACTIVATION);
+			function sync(dt) {
+				var ms = body.getMotionState();
+				if (ms) {
+					ms.getWorldTransform(TRANSFORM_AUX);
+					var p = TRANSFORM_AUX.getOrigin();
+					deskMesh.position.set(p.x(), p.y(), p.z());
+					deskMesh.modelMatrixNeedsUpdate = true;
+				}
+			}
 			syncList.push(sync);
 		}
 	}
