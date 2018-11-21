@@ -1,7 +1,7 @@
-var appConfig = {  
-    BaseURL: "../../../" 
-}
-window.CESIUM_BASE_URL = appConfig.BaseURL + "./Build/Cesium/";
+// var appConfig = {  
+//     BaseURL: "../../../" 
+// }
+// window.CESIUM_BASE_URL = appConfig.BaseURL + "./Build/Cesium/";
 //准备
 var homePosition = [114.29, 30.56, 300000];//初始位置
 var viewer = null;
@@ -13,9 +13,27 @@ function init() {
 		return;
 	}
 	viewer = new Cesium.Viewer("cesiumContainer", {
-		animation: false,
-		timeline: false,
-		creditContainer: "creditContainer"
+    animation: false,             // 是否显示动画小部件（左下角仪表盘）
+    baseLayerPicker: true,        // 是否显示图层选择器
+    fullscreenButton: false,      // 是否显示全屏按钮
+    geocoder: true,               // 是否显示 geocoder 小部件（右上角查询按钮）
+    vrButton: false,              // 是否显示 VR 按钮
+    homeButton: true,             // 是否显示 Home 按钮
+    infoBox: true,                // 是否显示信息框
+    scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
+    sceneModePicker: true,        // 是否显示 3D/2D 选择器
+    selectionIndicator: false,    // 是否显示指示器组件
+    shadows : true,               // 是否显示阴影
+    shouldAnimate : true,         // 是否显示动画
+    navigationHelpButton: false,  // 是否显示右上角的帮助按钮
+    timeline: false,              // 是否显示时间轴
+		creditContainer: "creditContainer",
+		imageryProvider: new Cesium.BingMapsImageryProvider({
+			url: 'https://dev.virtualearth.net',
+			key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+			mapStyle: Cesium.BingMapsStyle.AERIAL
+			}),
+		baseLayerPicker: false
 	});
 	// 添加天地图注记
 	viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
@@ -46,21 +64,21 @@ function init() {
 
 	look(homePosition[0], homePosition[1], homePosition[2]);
 
-	var imageryProviderViewModels = viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
-	viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
-	viewer.extend(Cesium.viewerCesiumInspectorMixin);
-	viewer.cesiumInspector.container.style.display = "none";
-	viewer.scene.debugShowFramesPerSecond = true;
-	document.addEventListener('keydown', function (event) {
+	// var imageryProviderViewModels = viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
+	// viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
+	// viewer.extend(Cesium.viewerCesiumInspectorMixin);
+	// viewer.cesiumInspector.container.style.display = "none";	// 
+	viewer.scene.debugShowFramesPerSecond = true;							// 显示帧率
+	document.addEventListener('keydown', function (event) {		// 监测键盘事件
 		var e = event || window.event || arguments.callee.caller.arguments[0];
 		if (e) {
 			switch (e.keyCode) {
-				case 82: //R键查看地形三角网
+				case 82: // R键查看地形三角网
 					if (viewer.cesiumInspector) {
 						viewer.cesiumInspector.viewModel.wireframe = !viewer.cesiumInspector.viewModel.wireframe;
 					}
 					break;
-				case 70: //F键查看帧率
+				case 70: // F键查看帧率
 					viewer.scene.debugShowFramesPerSecond = !viewer.scene.debugShowFramesPerSecond;
 					break;
 				default:

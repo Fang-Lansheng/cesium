@@ -14,13 +14,13 @@ function initCesium() {
     vrButton: false,              // 是否显示 VR 按钮
     homeButton: true,             // 是否显示 Home 按钮
     infoBox: true,                // 是否显示信息框
+    scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     sceneModePicker: true,        // 是否显示 3D/2D 选择器
     selectionIndicator: false,    // 是否显示指示器组件
-    timeline: false,              // 是否显示时间轴
-    navigationHelpButton: false,  // 是否显示右上角的帮助按钮
-    scene3DOnly: false,           // 如果设置为 true，则所有几何图形以 3D 模式绘制以节约GPU资源
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
+    navigationHelpButton: false,  // 是否显示右上角的帮助按钮
+    timeline: false,              // 是否显示时间轴
     imageryProvider: new Cesium.BingMapsImageryProvider({
     url: 'https://dev.virtualearth.net',
     key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
