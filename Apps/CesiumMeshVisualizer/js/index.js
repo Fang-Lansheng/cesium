@@ -1,11 +1,11 @@
 ﻿/// <reference path="../js/common.js" />
 
-//requirejs([
+// requirejs([
 //       "../../../requirejs.config.js",
 //       "../../../appconfig.js",
 //       '../../../Source/Main',
 //       '../common.js'
-//], function (
+// ], function (
 //       config,
 //       appconfig,
 //       Cesium,
@@ -22,6 +22,8 @@ var CSG = Cesium.CSG;
 homePosition[2] = 100;
 
 init();
+
+Sandcastle.finishedLoading();
 
 var center = Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 20);
 var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
@@ -451,7 +453,7 @@ Ammo().then(function() {
 			var speed = vehicle.getCurrentSpeedKmHour();
 			speedmeter = (speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1) + 'km/h';
 			document.getElementById("speed_show").innerHTML = speedmeter;
-			console.log(speedmeter);
+			// console.log(speedmeter);
 
 			breakingForce = 0;
 			engineForce = 0;

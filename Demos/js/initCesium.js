@@ -1,14 +1,11 @@
-// var appConfig = {  
-//     BaseURL: "../../../" 
-// }
-// window.CESIUM_BASE_URL = appConfig.BaseURL + "./Build/Cesium/";
+// window.CESIUM_BASE_URL = '../../Build/Cesium/';
 //准备
-var homePosition = [114.29, 30.56, 300000];//初始位置
+var homePosition = [114.29, 30.56, 300000]; //初始位置【武汉】
 var viewer = null;
 var home = Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], homePosition[2]);
 
 //初始化
-function init() {
+function initCesium() {
 	if (viewer) {
 		return;
 	}
@@ -171,27 +168,8 @@ function init() {
 	scene.terrainProviderChanged.addEventListener(function() {
 		console.log("terrainProviderChanged!");
 		showElevation(changed);
-	});
-
-	// 加载模型
-	// var modelPosition = Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 0);
-	// var hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
-	// var orientation = Cesium.Transforms.headingPitchRollQuaternion(modelPosition, hpr);
-
-	// var entity = viewer.entities.add({
-	// 	id: 'Class Room',
-	// 	name: 'Class Room',
-	// 	position: modelPosition,
-	// 	model: {
-	// 		uri: '../SampleData/models/classroom_dae.gltf',
-	// 		minimumPixelSize: 128,
-	// 		maximumScale: 200000
-	// 	}
-	// });
-	// viewer.trackedEntity = entity;
-	// entity.description = '\
-	// <h1>教室模型</h1>\
-	// <p>这是一个教室模型！</p>'
+  });
+  
 	// Sandcastle.finishedLoading();
 }
 
