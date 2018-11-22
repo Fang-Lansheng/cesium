@@ -1,4 +1,3 @@
-// window.CESIUM_BASE_URL = '../../Build/Cesium/';
 //准备
 var homePosition = [114.29, 30.56, 300000]; //初始位置【武汉】
 var viewer = null;
@@ -29,7 +28,7 @@ function initCesium() {
 			url: 'https://dev.virtualearth.net',
 			key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
 			mapStyle: Cesium.BingMapsStyle.AERIAL
-			}),
+		}),
 		baseLayerPicker: false
 	});
 	// 添加天地图注记
