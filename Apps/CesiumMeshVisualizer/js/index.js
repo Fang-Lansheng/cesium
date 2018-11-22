@@ -1,16 +1,5 @@
 ﻿/// <reference path="../js/common.js" />
 
-// requirejs([
-//       "../../../requirejs.config.js",
-//       "../../../appconfig.js",
-//       '../../../Source/Main',
-//       '../common.js'
-// ], function (
-//       config,
-//       appconfig,
-//       Cesium,
-//       common
-//       ) {
 var MeshVisualizer = Cesium.MeshVisualizer;
 var Mesh = Cesium.Mesh;
 var MeshMaterial = Cesium.MeshMaterial;
