@@ -12,6 +12,37 @@ homePosition[2] = 100;
 
 init();
 
+// 加载模型
+var  roomModelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+	Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 0)
+);
+var roomModel = viewer.scene.primitives.add(Cesium.Model.fromGltf({
+	url: 'source/room.gltf',
+	modelMatrix: roomModelMatrix,
+	scale: 200.0
+}));
+// viewer.scene.primitives.add(roomModel);
+roomModel.show = false;
+
+
+Sandcastle.addToolbarButton('加载教室模型', function() {
+	roomModel.show = true;
+});
+Sandcastle.addToolbarButton('清除教室模型', function() {
+	roomModel.show = false;
+});
+Sandcastle.addToolbarButton('加载教室Mesh', function() {
+	var roomGeometry = roomModel.geometryInstances;
+	var roomGeometry = roomGeometry.geometry;
+	var roomMaterial = new MeshMaterial({
+		defaultColor: 'rgb(125, 125, 125)',
+		wireframe: true,
+		side: MeshMaterial.Sides.DOUBLE
+	});
+	var roomMesh = new Mesh(roomGeometry, roomMaterial);
+	roomMesh.position.z = -10;
+	meshVisualizer.add(roomMesh);
+});
 Sandcastle.finishedLoading();
 
 var center = Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 20);
@@ -254,36 +285,37 @@ Ammo().then(function() {
 		}
 	}
 
-	// 函数：创建桌子
-	function createDesk(pos, mass, friction) {
-		var aabb = Cesium.AxisAlignedBoundingBox.fromPoints(Cesium.Cartesian3.fromDegreesArray([
-			-72.0, 40.0,
-			-70.0, 35.0,
-			-75.0, 30.0,
-			-70.0, 30.0,
-			-68.0, 40.0
- 		]));
-		var deskGeometry = Cesium.BoxGeometry.fromAxisAlignedBoundingBox(aabb);
-		var deskMesh = new Mesh(deskGeometry, createMaterial());
-		var deskShape = new Ammo.btSphereShape(1);
-		deskShape.setMargin(0.05);
+	// 函数：创建房子
+	function createRoom(pos, mass, friction) {
+		// var aabb = Cesium.AxisAlignedBoundingBox.fromPoints(Cesium.Cartesian3.fromDegreesArray([
+		// 	-72.0, 40.0,
+		// 	-70.0, 35.0,
+		// 	-75.0, 30.0,
+		// 	-70.0, 30.0,
+		// 	-68.0, 40.0
+ 		// ]));
+		// var roomGeometry = Cesium.BoxGeometry.fromAxisAlignedBoundingBox(aabb);
+		var roomGeometry = roomMesh.geometryInstances;
+		var roomMesh = new Mesh(roomGeometry, createMaterial());
+		var roomShape = new Ammo.btSphereShape(1);
+		roomShape.setMargin(0.05);
 
 		if (!mass) mass = 0;
 		if (!friction) friction = 1;
 
-		deskMesh.position = pos;
+		roomMesh.position = pos;
 		var localInertia = new Ammo.btVector3(0, 0, 0);
-		deskShape.calculateLocalInertia(mass, localInertia);
+		roomShape.calculateLocalInertia(mass, localInertia);
 
 		var transform = new Ammo.btTransform();
 		transform.setIdentity();
 		transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
 		var motionState = new Ammo.btDefaultMotionState(transform);
 
-		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, deskShape, localInertia);
+		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, roomShape, localInertia);
 		var body = new Ammo.btRigidBody(rbInfo);
 
-		meshVisualizer.add(deskMesh);
+		meshVisualizer.add(roomMesh);
 		physicWorld.addRigidBody(body);
 
 		if (mass > 0) {
@@ -293,8 +325,8 @@ Ammo().then(function() {
 				if (ms) {
 					ms.getWorldTransform(TRANSFORM_AUX);
 					var p = TRANSFORM_AUX.getOrigin();
-					deskMesh.position.set(p.x(), p.y(), p.z());
-					deskMesh.modelMatrixNeedsUpdate = true;
+					roomMesh.position.set(p.x(), p.y(), p.z());
+					roomMesh.modelMatrixNeedsUpdate = true;
 				}
 			}
 			syncList.push(sync);

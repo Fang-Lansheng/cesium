@@ -25,15 +25,15 @@ function init() {
     selectionIndicator: false,    // 是否显示指示器组件
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
-    navigationHelpButton: false,  // 是否显示右上角的帮助按钮
+    navigationHelpButton: true,  	// 是否显示右上角的帮助按钮
     timeline: false,              // 是否显示时间轴
 		creditContainer: "creditContainer",
-		imageryProvider: new Cesium.BingMapsImageryProvider({
-			url: 'https://dev.virtualearth.net',
-			key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
-			mapStyle: Cesium.BingMapsStyle.AERIAL
-			}),
-		baseLayerPicker: false
+		// imageryProvider: new Cesium.BingMapsImageryProvider({
+		// 	url: 'https://dev.virtualearth.net',
+		// 	key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
+		// 	mapStyle: Cesium.BingMapsStyle.AERIAL
+		// 	}),
+		// baseLayerPicker: false
 	});
 	// 添加天地图注记
 	viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
@@ -70,10 +70,10 @@ function init() {
 
 	look(homePosition[0], homePosition[1], homePosition[2]);
 
-	// var imageryProviderViewModels = viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
-	// viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
-	// viewer.extend(Cesium.viewerCesiumInspectorMixin);
-	// viewer.cesiumInspector.container.style.display = "none";	// 
+	var imageryProviderViewModels = viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
+	viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
+	viewer.extend(Cesium.viewerCesiumInspectorMixin);
+	viewer.cesiumInspector.container.style.display = "none";	// 
 	// viewer.scene.globe.depthTestAgainstTerrain = true; 			// 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
 	viewer.scene.debugShowFramesPerSecond = true;							// 显示帧率
 	document.addEventListener('keydown', function (event) {		// 监测键盘事件
@@ -173,25 +173,7 @@ function init() {
 		showElevation(changed);
 	});
 
-	// 加载模型
-	// var modelPosition = Cesium.Cartesian3.fromDegrees(114.3557895996096, 30.52703615981503, 0);
-	// var hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
-	// var orientation = Cesium.Transforms.headingPitchRollQuaternion(modelPosition, hpr);
 
-	// var entity = viewer.entities.add({
-	// 	id: 'Class Room',
-	// 	name: 'Class Room',
-	// 	position: modelPosition,
-	// 	model: {
-	// 		uri: '../SampleData/models/classroom_dae.gltf',
-	// 		minimumPixelSize: 128,
-	// 		maximumScale: 200000
-	// 	}
-	// });
-	// viewer.trackedEntity = entity;
-	// entity.description = '\
-	// <h1>教室模型</h1>\
-	// <p>这是一个教室模型！</p>'
 	// Sandcastle.finishedLoading();
 }
 
