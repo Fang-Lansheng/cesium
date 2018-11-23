@@ -13,6 +13,7 @@ homePosition[2] = 100;
 init();
 
 // 加载模型
+// 模型位置矩阵
 var  roomModelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
 	Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 0)
 );
@@ -285,53 +286,56 @@ Ammo().then(function() {
 		}
 	}
 
-	// 函数：创建房子
-	function createRoom(pos, mass, friction) {
-		// var aabb = Cesium.AxisAlignedBoundingBox.fromPoints(Cesium.Cartesian3.fromDegreesArray([
-		// 	-72.0, 40.0,
-		// 	-70.0, 35.0,
-		// 	-75.0, 30.0,
-		// 	-70.0, 30.0,
-		// 	-68.0, 40.0
- 		// ]));
-		// var roomGeometry = Cesium.BoxGeometry.fromAxisAlignedBoundingBox(aabb);
-		var roomGeometry = roomMesh.geometryInstances;
-		var roomMesh = new Mesh(roomGeometry, createMaterial());
-		var roomShape = new Ammo.btSphereShape(1);
-		roomShape.setMargin(0.05);
+	// // 函数：创建房子
+	// function createRoom(pos, mass, friction) {
+	// 	var aabb_Room = Cesium.AxisAlignedBoundingBox.fromPoints(Cesium.Cartesian3.fromDegreesArray([
+	// 		-72.0, 40.0,
+	// 		-70.0, 35.0,
+	// 		-75.0, 30.0,
+	// 		-70.0, 30.0,
+	// 		-68.0, 40.0
+ 	// 	]));
+	// 	var roomGeometry = Cesium.BoxGeometry.fromAxisAlignedBoundingBox(aabb_Room);
+	// 	// var roomGeometry = roomMesh.geometryInstances;
+	// 	var roomMesh = new Mesh(roomGeometry, createMaterial());
+	// 	var roomShape = new Ammo.btSphereShape(1);
+	// 	roomShape.setMargin(0.05);
 
-		if (!mass) mass = 0;
-		if (!friction) friction = 1;
+	// 	if (!mass) mass = 0;
+	// 	if (!friction) friction = 1;
 
-		roomMesh.position = pos;
-		var localInertia = new Ammo.btVector3(0, 0, 0);
-		roomShape.calculateLocalInertia(mass, localInertia);
+	// 	roomMesh.position = pos;
+	// 	var localInertia = new Ammo.btVector3(0, 0, 0);
+	// 	roomShape.calculateLocalInertia(mass, localInertia);
 
-		var transform = new Ammo.btTransform();
-		transform.setIdentity();
-		transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-		var motionState = new Ammo.btDefaultMotionState(transform);
+	// 	var transform = new Ammo.btTransform();
+	// 	transform.setIdentity();
+	// 	transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+	// 	var motionState = new Ammo.btDefaultMotionState(transform);
 
-		var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, roomShape, localInertia);
-		var body = new Ammo.btRigidBody(rbInfo);
+	// 	var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, roomShape, localInertia);
+	// 	var body = new Ammo.btRigidBody(rbInfo);
 
-		meshVisualizer.add(roomMesh);
-		physicWorld.addRigidBody(body);
+	// 	meshVisualizer.add(roomMesh);
+	// 	physicWorld.addRigidBody(body);
 
-		if (mass > 0) {
-			body.setActivationState(DISABLE_DEACTIVATION);
-			function sync(dt) {
-				var ms = body.getMotionState();
-				if (ms) {
-					ms.getWorldTransform(TRANSFORM_AUX);
-					var p = TRANSFORM_AUX.getOrigin();
-					roomMesh.position.set(p.x(), p.y(), p.z());
-					roomMesh.modelMatrixNeedsUpdate = true;
-				}
-			}
-			syncList.push(sync);
-		}
-	}
+	// 	if (mass > 0) {
+	// 		body.setActivationState(DISABLE_DEACTIVATION);
+	// 		function sync(dt) {
+	// 			var ms = body.getMotionState();
+	// 			if (ms) {
+	// 				ms.getWorldTransform(TRANSFORM_AUX);
+	// 				var p = TRANSFORM_AUX.getOrigin();
+	// 				roomMesh.position.set(p.x(), p.y(), p.z());
+	// 				roomMesh.modelMatrixNeedsUpdate = true;
+	// 			}
+	// 		}
+	// 		syncList.push(sync);
+	// 	}
+	// }
+	// Sandcastle.addToolbarButton('RoomGeometry', function() {
+	// 	createRoom(new Cesium.Cartesian3(0, 5, 20), 10, 0.1);
+	// })
 
 	// 创建小车车轮
 	function createWheelMesh(radius, width) {
