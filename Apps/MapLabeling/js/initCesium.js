@@ -28,7 +28,7 @@ function initCesium() {
 		// 	url: 'https://dev.virtualearth.net',
 		// 	key: 'Au3ucURiaXsmmeNnBwafUWXupkCAvHe9ipzq6kOGYe5Xlthtf3MGRxiNURDN2FG2',
 		// 	mapStyle: Cesium.BingMapsStyle.AERIAL
-		// 	}),
+    // }),
 		// baseLayerPicker: false
 	});
 	// 添加天地图注记
