@@ -87,7 +87,7 @@ function createNewPin() {
  * 气泡窗口（左键单击确定位置，右键结束）
  * 实现参考：
  * Cesium 中加入可更随地球移动的气泡 消息框 弹出框 - 山路十八弯，走过多少遍！ - CSDN博客 https://blog.csdn.net/u012539364/article/details/80292605
- *  
+ * 基于Cesium的通视分析的实现 - cr196的博客 - CSDN博客 https://blog.csdn.net/cr196/article/details/77072814 
  */
 
 function showPopup() {
@@ -159,7 +159,7 @@ function showPopup() {
   })
 
   var popupIsSeen = true;
-  
+
   if (!popupIsSeen) {     // 判断弹窗是否可见
     window.document.getElementById('trackPopUp').style.display = 'none';
   }
