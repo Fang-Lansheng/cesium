@@ -41,13 +41,19 @@ var cartesian;              // 世界坐标（三维坐标 x, y, z）
 var cartographic;           // 地理坐标（弧度）
 var cursorPointLongitude;   // 鼠标指针当前经度
 var cursorPointLatitude;    // 鼠标指针当前纬度
-var cameraPosition;         // 摄像机位置
+var cameraCartesian;        // 摄像机位置（三维坐标）
+var cameraCartographic;     // 摄像机位置（地理坐标）
 var cameraPosLongitude;     // 摄像机位置经度
 var cameraPosLatitude;      // 摄像机位置纬度
 var cameraPosHeight;        // 摄像机位置高度
 handler.setInputAction(function(movement) {
   cartesian = scene.camera.pickEllipsoid(movement.endPosition, scene.globe.ellipsoid);
   pick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, cartesian);
+  cameraCartesian = viewer.camera.position;
+  cameraCartographic = Cesium.Cartographic.fromCartesian(cameraCartesian);
+  cameraPosLongitude = Cesium.Math.toDegrees(cameraCartographic.longitude);
+  cameraPosLatitude = Cesium.Math.toDegrees(cameraCartographic.latitude);
+  cameraPosHeight = Cesium.Math.toDegrees(cameraCartographic.height);
   if (cartesian) {
     cartographic = Cesium.Cartographic.fromCartesian(cartesian);
     cursorPointLongitude = Cesium.Math.toDegrees(cartographic.longitude);
@@ -153,6 +159,7 @@ function showPopup() {
   })
 
   var popupIsSeen = true;
+  
   if (!popupIsSeen) {     // 判断弹窗是否可见
     window.document.getElementById('trackPopUp').style.display = 'none';
   }
