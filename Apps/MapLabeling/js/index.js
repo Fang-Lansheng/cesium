@@ -42,18 +42,14 @@ var cartographic;           // 地理坐标（弧度）
 var cursorPointLongitude;   // 鼠标指针当前经度
 var cursorPointLatitude;    // 鼠标指针当前纬度
 var cameraCartesian;        // 摄像机位置（三维坐标）
-var cameraCartographic;     // 摄像机位置（地理坐标）
-var cameraPosLongitude;     // 摄像机位置经度
-var cameraPosLatitude;      // 摄像机位置纬度
-var cameraPosHeight;        // 摄像机位置高度
+var cameraCartographic;     // 摄像机位置（地理坐标：{经，纬，高}）
 handler.setInputAction(function(movement) {
   cartesian = scene.camera.pickEllipsoid(movement.endPosition, scene.globe.ellipsoid);
   pick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, cartesian);
   cameraCartesian = viewer.camera.position;
   cameraCartographic = Cesium.Cartographic.fromCartesian(cameraCartesian);
-  cameraPosLongitude = Cesium.Math.toDegrees(cameraCartographic.longitude);
-  cameraPosLatitude = Cesium.Math.toDegrees(cameraCartographic.latitude);
-  cameraPosHeight = Cesium.Math.toDegrees(cameraCartographic.height);
+  cameraCartographic.longitude = Cesium.Math.toDegrees(cameraCartographic.longitude);
+  cameraCartographic.latitude = Cesium.Math.toDegrees(cameraCartographic.latitude);
   if (cartesian) {
     cartographic = Cesium.Cartographic.fromCartesian(cartesian);
     cursorPointLongitude = Cesium.Math.toDegrees(cartographic.longitude);
@@ -89,20 +85,20 @@ function createNewPin() {
  * Cesium 中加入可更随地球移动的气泡 消息框 弹出框 - 山路十八弯，走过多少遍！ - CSDN博客 https://blog.csdn.net/u012539364/article/details/80292605
  * 基于Cesium的通视分析的实现 - cr196的博客 - CSDN博客 https://blog.csdn.net/cr196/article/details/77072814 
  */
-
 function showPopup() {
-  var popupPosition, popupPick, popupCartesian, popupCartographic, popupLongitude, popupLatitude;
+  var popupPick, popupCartesian, popupCartographic, popupLongitude, popupLatitude;
   var infoDiv;
   var popupHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
   popupHandler.setInputAction(function(movement) {
-    if (cursorPointLatitude != undefined) {   // 存在经纬度
+    if (cursorPointLatitude != undefined) {   // 存在经纬度（鼠标指针在地球上）
+      // 世界坐标（x, y, z）
       popupCartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
+      // 屏幕坐标
       popupPick = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, popupCartesian);
-      if (popupCartesian) {
-        popupCartographic = Cesium.Cartographic.fromCartesian(popupCartesian);
-        popupLongitude = Cesium.Math.toDegrees(popupCartographic.longitude);
-        popupLatitude = Cesium.Math.toDegrees(popupCartographic.latitude);
-      }
+      // 地理坐标（弧度）
+      popupCartographic = Cesium.Cartographic.fromCartesian(popupCartesian);
+      popupLongitude = Cesium.Math.toDegrees(popupCartographic.longitude);
+      popupLatitude = Cesium.Math.toDegrees(popupCartographic.latitude);
 
       if (infoDiv) {
         console.warn('气泡尚未关闭');
@@ -119,58 +115,50 @@ function showPopup() {
             '<a class="leaflet-popup-close-button" href="javascript:closePopup()">×</a>' +
             '<div class="leaflet-popup-content-wrapper">' +
               '<div id="trackPopUpLink" class="leaflet-popup-content" style="max-width:300px; max-height:500px;">' +
-                '<h2>经度：<span id="popupLongitude"></span> 纬度：<span id="popupLatitude"></span></h2>' +
+                '<h2>经度：<span id="popupLongitude"></span>° 纬度：<span id="popupLatitude"></span>°</h2>' +
               '</div>' +
             '</div>' +
             '<div class="leaflet-popup-tip-container">' +
               '<div class="leaflet-popup-tip"></div>' +
             '</div>' +
           '</div>';
+        
         window.document.getElementById('cesiumContainer').appendChild(infoDiv);
         window.document.getElementById('popupLongitude').innerHTML = popupLongitude.toFixed(4);
         window.document.getElementById('popupLatitude').innerHTML = popupLatitude.toFixed(4);
         window.document.getElementById('trackPopUp').style.display = 'block';
       }
-      popupPosition = {
-        x: popupPick.x,
-        y: popupPick.y
-      }
-
-    }
-    else {                                    // 鼠标在地图外
-      // popupOverlay.style.display = 'none';
-      window.document.getElementById('trackPopUp').style.display = 'block';
     }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-  var popupPosition_new;
+  
+  // 使弹窗保持相对位置不变
+  var popupPick_new;    // 新的屏幕坐标
   viewer.scene.postRender.addEventListener(function() {
-    if (popupPick != undefined) {
-      if (popupPosition_new != popupPosition) {
-        popupPosition_new = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, popupCartesian);
+    if (popupPick !== undefined) {
+      if (popupPick_new !== popupPick) {
+        popupPick_new = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, popupCartesian);
         var popupWidth = document.getElementById('trackPopUpContent').offsetWidth;
         var popupHeight = document.getElementById('trackPopUpContent').offsetHeight;
   
         var trackPopUpContent = window.document.getElementById('trackPopUpContent');
-        trackPopUpContent.style.left = popupPosition_new.x - (popupWidth / 2) + 'px';
-        trackPopUpContent.style.top = popupPosition_new.y - (popupHeight - 3) + 'px';
+        trackPopUpContent.style.left = popupPick_new.x - (popupWidth / 2) + 'px';
+        trackPopUpContent.style.top = popupPick_new.y - (popupHeight - 3) + 'px';
       }
     }
   })
 
-  var popupIsSeen = true;
-
-  if (!popupIsSeen) {     // 判断弹窗是否可见
-    window.document.getElementById('trackPopUp').style.display = 'none';
-  }
-
   // 右键单击结束
   popupHandler.setInputAction(function(movement) {
-    // popupOverlay.style.display = 'none';
     popupHandler.destroy();
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
 
+function closePopup() {
+  var trackPopUp = window.document.getElementById('trackPopUp');
+  if (trackPopUp) {
+    trackPopUp.style.display = 'none';
+  }
+}
 
 Sandcastle.addToolbarButton('New Pin', function() {
   return createNewPin();
@@ -181,10 +169,3 @@ Sandcastle.addToolbarButton('Popup', function() {
 Sandcastle.addToolbarButton('Clear All', function() {
   viewer.entities.removeAll();
 })
-
-// 自定义 letflet风格 气泡窗口: https://blog.csdn.net/zlx312/article/details/79824940
-// 使用cesium创建icon+text类型的标注: https://blog.csdn.net/u014529917/article/details/79523231
-
-function closePopup() {
-  window.document.getElementById('trackPopUp').style.display = 'none';
-}
