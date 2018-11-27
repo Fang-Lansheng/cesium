@@ -28,7 +28,7 @@ roomModel.show = false;
 
 Sandcastle.addToolbarButton('加载教室模型', function() {
 	roomModel.show = true;
-	alert('未节省内存占用，演示只加载基本教室模型（不包括桌椅）');
+	alert('为了节省内存占用，演示只加载基本教室模型（不包括桌椅）');
 });
 Sandcastle.addToolbarButton('清除教室模型', function() {
 	roomModel.show = false;
