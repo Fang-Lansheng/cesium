@@ -61,8 +61,21 @@ handler.setInputAction(function(movement) {
   }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
+
+
 // 添加新的大头针
 function createNewPin() {
+  var $button = $('#button-new-pin').find('.cesium-button');
+  var $modal = $('#button-new-pin').find('.modal');
+
+  $button.on('click', function(event) {
+    if ($(event.target).is($button)) {
+      $modal.show(300);
+    } else {
+      $modal.hide(300);
+    }
+  });
+
   var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
   pinHandler.setInputAction(function(movement) {
     var newPin = viewer.entities.add({
@@ -153,6 +166,9 @@ function showPopup() {
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
 
+/**
+ * 关闭气泡窗口
+ */
 function closePopup() {
   var trackPopUp = window.document.getElementById('trackPopUp');
   if (trackPopUp) {
@@ -160,12 +176,79 @@ function closePopup() {
   }
 }
 
-Sandcastle.addToolbarButton('New Pin', function() {
-  return createNewPin();
+/**
+ * 添加新的 Label
+ */
+function NewLabel() {
+
+  viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 100),
+    label: {
+      text: 'A new label',
+      font: '24px Helvetica',
+      fillColor: Cesium.Color.SKYBLUE,
+      // outlineColor: Cesium.Color.BLACK,
+      // outlineWidth: 2,
+      // style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
+    }
+  });
+}
+
+$(function() {
+  var content_0 = $('.label-text').val(); // 文本框内容
+  var count_0 = content_0.length;           // 字符长度
+  $('.label-text-num').text(count_0);
+  $('.label-text').on('blur keyup input', function() {
+    var content = $('.label-text').val();
+    var count = content.length;
+    $('.label-text-num').text(count);
+  })
 })
-Sandcastle.addToolbarButton('Popup', function() {
-  return showPopup();
+
+var $pin_button = $('#button-new-pin').find('.toolbar-button');
+var $pin_modal = $('#button-new-pin').find('.modal');
+
+$pin_button.click(
+  function(event) {
+    if ($(event.target).is($pin_button)) {
+      $pin_modal.show(300);
+    } else {
+      $pin_modal.hide(300);
+    }
+  }
+  // ,
+  // function(event) {
+  //   if ($(event.target).is($pin_button)) {
+  //     $pin_modal.hide(300);
+  //   }
+  // }
+)
+
+var pin_content;
+$pin_modal.click(function(event) {
+  if ($(event.target).is($('.button-cancel'))) {
+    $pin_modal.hide(300);
+  }
+  if ($(event.target).is($('.button-commit'))) {
+    $pin_modal.hide(300);
+    pin_content = $('.label-text').val(); // 文本框内容
+  }
 })
-Sandcastle.addToolbarButton('Clear All', function() {
-  viewer.entities.removeAll();
-})
+
+Sandcastle.addToggleButton('天地图注记', viewer.imageryLayers.get(1).show = true, function(checked) {
+  viewer.imageryLayers.get(1).show = checked;
+}, 'button-tianditu');
+// Sandcastle.addToolbarButton('New Pin', function() {
+//   // return createNewPin();
+// }, 'button-new-pin')
+// Sandcastle.addToolbarButton('Popup', function() {
+//   return showPopup();
+// }, 'button-popup')
+// Sandcastle.addToolbarButton('☥', function() {
+//   return NewLabel();
+// }, 'button-new-label')
+// Sandcastle.addToolbarButton('Clear All', function() {
+//   viewer.entities.removeAll();
+// }, 'button-clear-all')

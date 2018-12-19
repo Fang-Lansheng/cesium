@@ -22,7 +22,7 @@ function initCesium() {
     shadows : true,               // 是否显示阴影
     shouldAnimate : true,         // 是否显示动画
     navigationHelpButton: true,  	// 是否显示右上角的帮助按钮
-    timeline: false,              // 是否显示时间轴
+		timeline: false,              // 是否显示时间轴
 		creditContainer: "creditContainer",
 		// imageryProvider: new Cesium.BingMapsImageryProvider({
 		// 	url: 'https://dev.virtualearth.net',

@@ -5,6 +5,7 @@
   <title>Map Labeling</title>
   <meta charset="utf-8" />
   <link href="../../Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <style>
     @import url(../../Build/Cesium/Widgets/widgets.css);
     @import url(css/index.css);
@@ -24,7 +25,50 @@
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="creditContainer" style="display: none;"></div>
   <div id="loadingOverlay"><h1>Loading...</h1></div>
-  <div id="toolbar"></div>
+  <div id="toolbar">
+    <div id="button-tianditu" style="float: left;"></div>
+    <div id="button-new-pin">
+      <button type="button" class="toolbar-button fa fa-map-marker fa-2x">
+        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
+      </button>
+      <div id="pin-modal" class="modal">
+        <div class="modal-header">
+          <h2>
+            <img src="./source/pin.svg" alt="pin.svg" width="20px" height="20px">
+            New Pin
+          </h2>
+          <!-- <a id="closeBtn" class="close-modal">×</a> -->
+        </div>
+        <div class="modal-body">
+          <p>
+            <!-- Text&nbsp;:&nbsp; -->
+            <input type="text" class="label-text" placeholder="Input Your Text Here." maxlength="5">
+            <a class="num-count"><span class="label-text-num">0</span>/5</a>
+          </p>
+          <p>Color&nbsp;:
+            <select class="color-select">
+              <option class="color-value" value ="red">Red</option>
+              <option class="color-value" value ="green">Green</option>
+              <option class="color-value" value="blue">Blue</option>
+              <option class="color-value" value="white">White</option>
+            </select>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="button button-commit">
+            <img class="button-commit" src="source/commit.svg" alt="commit" width="20px" height="20px">
+            <span class="button-commit"></span>
+          </button>
+          <button class="button button-cancel">
+            <img class="button-cancel" src="source/cancel.svg" alt="cancel" width="20px" height="20px">
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="button-popup"></div>
+    <div id="button-new-label"></div>
+    <div id='button-clear-all'></div>
+  </div>
   <div id="widget" style="display: none;">
     <div id="ladata_show">
       <div style="height: 25px">

@@ -72,3 +72,192 @@
 .add-button {
   background-color: crimson;
 }
+/* 弹出框 */
+.modal {
+  display: none;
+  background-color: rgba(50, 50, 50, 0.7);
+  position: fixed;
+  top: 45px;
+  left: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cesium-button {
+  width: 115px;
+  height: 32px;
+}
+.modal-header {
+  text-align: center;
+  margin: 5px 12px;
+}
+.modal-footer {
+  text-align: center;
+}
+.modal-body {
+  font-size: 1.4em;
+  margin: 5px 12px;
+}
+input[type="text"] {
+  box-sizing: border-box;
+  font-size: 1em;
+  height: 2em;
+  border-radius: 10px;
+  border: 1px solid #E1E1E1;
+  color: rgb(200, 200, 200);
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: block;
+  outline: 0;
+  padding: 0 1em;
+  text-decoration: none;
+  width: 100%;
+}
+input[type="text"]:focus {
+  border: 1px solid #E1E1E1;
+  box-shadow: 0 0 15px;
+}
+/* 设置 select 下拉菜单样式 */
+select {
+  box-sizing: border-box;
+  border-radius: 10px;
+  text-decoration: none;
+  outline: none;  /* 消除 select 聚焦时候的边框颜色 */
+  width: 100px;
+  height: 1.5em;
+  line-height: 40px;
+  appearance: none; /* 隐藏 select 的下拉图标 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-left: 20px;
+  background-color: transparent;
+  border: 1px solid #E1E1E1;
+  color: rgb(200, 200, 200);
+  font-size: 1.4em;
+}
+
+/**/
+/* .toolbar-button-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 32px;
+  width: 32px;
+  overflow: hidden;
+  margin: 0 0 0 0;
+  outline: none;
+  background-color: rgba(50, 50, 50, 0.7);
+} */
+.toolbar-button {
+  position: absolute;
+  top: 4px;
+  margin-left: 6px;
+  height: 32px;
+  width: 32px;
+  background-color: rgba(50, 50, 50, 0.7);
+  border: none;
+  color: #edffff;
+  fill: #edffff;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align: center;
+  padding: 2px;
+  /* padding: 0 0 0 0;
+  border: 0;
+  margin: 0 0 0 0; */
+}
+.toolbar-button:focus {
+  color: #fff; /* For text buttons */
+  fill: #fff; /* For SVG buttons */
+  border-color: #ea4;
+  outline: none;
+}
+.toolbar-button:hover {
+  color: #fff; /* For text buttons */
+  fill: #fff; /* For SVG buttons */
+  background: #48b;
+  border-color: #aef;
+  box-shadow: 0 0 8px #fff;
+}
+.toolbar-button:active {
+  color: #000; /* For text buttons */
+  fill: #000; /* For SVG buttons */
+  background: #adf;
+  border-color: #fff;
+  box-shadow: 0 0 8px #fff;
+}
+.toolbar-button:disabled,
+.toolbar-button-disabled,
+.toolbar-button-disabled:focus,
+.toolbar-button-disabled:hover,
+.toolbar-button-disabled:active {
+  background: #303336;
+  border-color: #444;
+  color: #646464; /* For text buttons */
+  fill: #646464; /* For SVG buttons */
+  box-shadow: none;
+  cursor: default;
+}
+
+
+.num-count {
+  position: absolute;
+  top: 62px;
+  right: 20px;
+  color: #999999;
+}
+.button {
+  width: 50%;
+  height: 36px;
+  background: transparent;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  float: left;
+  padding: 0 0 0 0;
+}
+.button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.4), 0 17px 50px 0 rgba(0,0,0,0.4);
+}
+.button-commit span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  font-size: 30px;
+  color: #0061b0;
+  transition: 0.5s;
+  bottom: 29px;
+}
+.button-commit span:after {
+  content: " »";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+.button-commit:hover span {
+  padding-right: 25px;
+}
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+.button-cancel:hover {
+  background: #d1282a;
+  transition: all 0.5s ease-out;
+  opacity: 0.8;
+}
+.button-cancel:hover img {
+  text-shadow: 0 0 15px;
+}
+.button:focus {
+  outline: 0;
+}
