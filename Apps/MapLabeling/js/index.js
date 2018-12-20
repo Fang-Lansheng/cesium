@@ -179,21 +179,24 @@ function closePopup() {
 /**
  * 添加新的 Label
  */
-function NewLabel() {
-
-  viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(homePosition[0], homePosition[1], 100),
-    label: {
-      text: 'A new label',
-      font: '24px Helvetica',
-      fillColor: Cesium.Color.SKYBLUE,
-      // outlineColor: Cesium.Color.BLACK,
-      // outlineWidth: 2,
-      // style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-      translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
-    }
-  });
+function createNewLabel(text) {
+  var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+  pinHandler.setInputAction(function(movement) {
+    var cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
+    viewer.entities.add({
+      position: cartesian,
+      label: {
+        text: text,
+        font: '24px Helvetica',
+        fillColor: Cesium.Color.SKYBLUE,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
+      }
+    });
+  }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+  pinHandler.setInputAction(function(movement) {
+    pinHandler.destroy();
+  }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
 
 $(function() {
@@ -205,8 +208,6 @@ $(function() {
     var count = content.length;
     $('.label-text-num').text(count);
   })
-  var $labeluaty = $('.color-select').find(':input');
-  $($labeluaty).labelauty();
 })
 
 
@@ -215,12 +216,14 @@ var $label_modal = $('#button-new-label').find('.modal');
 
 $label_button.click(
   function(event) {
-    if ($(event.target).is($label_button)) {
+    if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
       $label_modal.show(300);
-    } else {
+    } 
+    else if ($(event.target).is($label_button) && !$label_modal.is(':hidden')) {
       $label_modal.hide(300);
     }
-})
+  }
+)
 
 var label_content;
 $label_modal.click(function(event) {
@@ -230,6 +233,7 @@ $label_modal.click(function(event) {
   if ($(event.target).is($('.button-commit'))) {
     $label_modal.hide(300);
     label_content = $('.label-text').val(); // 文本框内容
+    createNewLabel(label_content);
   }
 })
 
