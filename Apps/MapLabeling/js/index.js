@@ -205,35 +205,31 @@ $(function() {
     var count = content.length;
     $('.label-text-num').text(count);
   })
+  var $labeluaty = $('.color-select').find(':input');
+  $($labeluaty).labelauty();
 })
 
-var $pin_button = $('#button-new-pin').find('.toolbar-button');
-var $pin_modal = $('#button-new-pin').find('.modal');
 
-$pin_button.click(
+var $label_button = $('#button-new-label').find('.toolbar-button');
+var $label_modal = $('#button-new-label').find('.modal');
+
+$label_button.click(
   function(event) {
-    if ($(event.target).is($pin_button)) {
-      $pin_modal.show(300);
+    if ($(event.target).is($label_button)) {
+      $label_modal.show(300);
     } else {
-      $pin_modal.hide(300);
+      $label_modal.hide(300);
     }
-  }
-  // ,
-  // function(event) {
-  //   if ($(event.target).is($pin_button)) {
-  //     $pin_modal.hide(300);
-  //   }
-  // }
-)
+})
 
-var pin_content;
-$pin_modal.click(function(event) {
+var label_content;
+$label_modal.click(function(event) {
   if ($(event.target).is($('.button-cancel'))) {
-    $pin_modal.hide(300);
+    $label_modal.hide(300);
   }
   if ($(event.target).is($('.button-commit'))) {
-    $pin_modal.hide(300);
-    pin_content = $('.label-text').val(); // 文本框内容
+    $label_modal.hide(300);
+    label_content = $('.label-text').val(); // 文本框内容
   }
 })
 
