@@ -97,6 +97,31 @@ input.labelauty:checked + label
 	background-color: #3498db;
 	color: #ffffff;
 }
+input#color-white:checked + label
+{
+	background-color: white;
+	color: #000000;
+}
+input#color-red:checked + label
+{
+	background-color: red;
+	color: #ffffff;
+}
+input#color-green:checked + label
+{
+	background-color: green;
+	color: #ffffff;
+}
+input#color-blue:checked + label
+{
+	background-color: blue;
+	color: #ffffff;
+}
+input#color-black:checked + label
+{
+	background-color: black;
+	color: #ffffff;
+}
 
 input.labelauty:checked:not([disabled]) + label:hover
 {
@@ -137,4 +162,8 @@ input.labelauty + label > span.labelauty-unchecked-image
 input.labelauty + label > span.labelauty-checked-image
 {
 	background-image: url(../source/input-checked.png);
+}
+input#color-white + label > span.labelauty-checked-image
+{
+	background-image: url(../source/input-checked-black.png);
 }

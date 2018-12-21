@@ -199,6 +199,7 @@ function createNewLabel(text) {
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
 
+// New Label
 $(function() {
   var content_0 = $('.label-text').val(); // 文本框内容
   var count_0 = content_0.length;           // 字符长度
@@ -208,34 +209,46 @@ $(function() {
     var count = content.length;
     $('.label-text-num').text(count);
   })
-})
 
+  var $color_radio = $('.color-select').find(':input');
+  $color_radio.labelauty();
 
-var $label_button = $('#button-new-label').find('.toolbar-button');
-var $label_modal = $('#button-new-label').find('.modal');
-
-$label_button.click(
-  function(event) {
-    if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
-      $label_modal.show(300);
-    } 
-    else if ($(event.target).is($label_button) && !$label_modal.is(':hidden')) {
+  var $label_button = $('#button-new-label').find('.toolbar-button');
+  var $label_modal = $('#button-new-label').find('.modal');
+  $label_button.click(
+    function(event) {
+      if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
+        $label_modal.show(300);
+        $('.label-text').focus();
+        $('.label-text').select();  // 输入框文本被选中
+      } 
+      else if ($(event.target).is($label_button) && !$label_modal.is(':hidden')) {
+        $label_modal.hide(300);
+      }
+    }
+  )
+  
+  var $color_label = $('.color-select').find('label');
+  var $color, label_content, label_color;
+  $($color_label).click(function() {
+    $color = $('.color-select').find('input:checked');
+    label_color = $color.val();
+    console.log('label color = ' + label_color);
+  })
+  $label_modal.click(function(event) {
+    if ($(event.target).is($('.button-cancel'))) {
       $label_modal.hide(300);
     }
-  }
-)
-
-var label_content;
-$label_modal.click(function(event) {
-  if ($(event.target).is($('.button-cancel'))) {
-    $label_modal.hide(300);
-  }
-  if ($(event.target).is($('.button-commit'))) {
-    $label_modal.hide(300);
-    label_content = $('.label-text').val(); // 文本框内容
-    createNewLabel(label_content);
-  }
+    if ($(event.target).is($('.button-commit'))) {
+      $label_modal.hide(300);
+      label_content = $('.label-text').val(); // 文本框内容
+      createNewLabel(label_content);
+    }
+  })
 })
+
+
+
 
 Sandcastle.addToggleButton('天地图注记', viewer.imageryLayers.get(1).show = true, function(checked) {
   viewer.imageryLayers.get(1).show = checked;
