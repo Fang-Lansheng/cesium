@@ -50,11 +50,86 @@
           <div>
             <h3 style="margin: 10px 0px 0px;">Color</h3>
             <ul class="color-select">
-              <li><input type="radio" name="radio" id="color-white" value="White" checked data-labelauty="White"></li>
-              <li><input type="radio" name="radio" id="color-red" value="Red" data-labelauty="Red"></li>
-              <li><input type="radio" name="radio" id="color-green" value="Green" data-labelauty="Green"></li>
-              <li><input type="radio" name="radio" id="color-blue" value="Blue" data-labelauty="Blue"></li>
-              <li><input type="radio" name="radio" id="color-black" value="Black" data-labelauty="Black"></li>
+              <li><input type="radio" name="label-radio" id="color-white" value="white" checked data-labelauty="White"></li>
+              <li><input type="radio" name="label-radio" id="color-red" value="red" data-labelauty="Red"></li>
+              <li><input type="radio" name="label-radio" id="color-green" value="green" data-labelauty="Green"></li>
+              <li><input type="radio" name="label-radio" id="color-blue" value="blue" data-labelauty="Blue"></li>
+              <li><input type="radio" name="label-radio" id="color-black" value="black" data-labelauty="Black"></li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button button-commit">
+            <span class="button-commit fa fa-check" style="top: 0px;" ></span>
+          </button>
+          <button class="button button-cancel fa fa-close"style="top: 0px; font-size: 25px; color: white">
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id='button-list-label' style="float: left; margin-left: 163px;">
+      <button type="button" class="toolbar-button fa fa-list-ul fa-2x">
+        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
+      </button>
+      <div id="label-list-modal" class="modal" style="left: 179px;">
+        <div class="modal-header">
+          <h1>
+            <span class="fa fa-list-ul" style="color: rgb(18, 150, 251)"></span>
+            Label List
+          </h1>
+        </div>
+        <div class="modal-body">
+          <div>
+            <h3 style="margin: 10px 0px;">Text</h3>
+            <input type="text" class="label-text" placeholder="Input Your Text Here." maxlength="15">
+            <a class="num-count"><span class="label-text-num">0</span>/15</a>
+          </div>
+          <div>
+            <h3 style="margin: 10px 0px 0px;">Color</h3>
+            <ul class="color-select">
+              <li><input type="radio" name="label-radio" id="color-white" value="white" checked data-labelauty="White"></li>
+              <li><input type="radio" name="label-radio" id="color-red" value="red" data-labelauty="Red"></li>
+              <li><input type="radio" name="label-radio" id="color-green" value="green" data-labelauty="Green"></li>
+              <li><input type="radio" name="label-radio" id="color-blue" value="blue" data-labelauty="Blue"></li>
+              <li><input type="radio" name="label-radio" id="color-black" value="black" data-labelauty="Black"></li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button button-commit">
+            <span class="button-commit fa fa-check" style="top: 0px;" ></span>
+          </button>
+          <button class="button button-cancel fa fa-close"style="top: 0px; font-size: 25px; color: white">
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="button-new-pin" style="display: none">
+      <button type="button" class="toolbar-button fa fa-map-marker fa-2x" style="float: left; margin-left: 48px;">
+        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
+      </button>
+      <div id="pin-modal" class="modal" style="left: 179px;">
+        <div class="modal-header">
+          <h1>
+            <span class="fa fa-map-marker" style="color: rgb(18, 150, 251)"></span>
+            New pin
+          </h1>
+          <!-- <a id="closeBtn" class="close-modal">×</a> -->
+        </div>
+        <div class="modal-body">
+          <div>
+            <h3 style="margin: 10px 0px;">Text</h3>
+            <input type="text" class="pin-text" placeholder="Input Your Text Here." maxlength="5">
+            <a class="num-count"><span class="label-text-num">0</span>/15</a>
+          </div>
+          <div>
+            <h3 style="margin: 10px 0px 0px;">Color</h3>
+            <ul class="color-select">
+              <li><input type="radio" name="pin-radio" id="color-white" value="white" checked data-labelauty="White"></li>
+              <li><input type="radio" name="pin-radio" id="color-red" value="red" data-labelauty="Red"></li>
+              <li><input type="radio" name="pin-radio" id="color-green" value="green" data-labelauty="Green"></li>
+              <li><input type="radio" name="pin-radio" id="color-blue" value="blue" data-labelauty="Blue"></li>
+              <li><input type="radio" name="pin-radio" id="color-black" value="black" data-labelauty="Black"></li>
             </ul>
           </div>
         </div>
@@ -69,9 +144,6 @@
         </div>
       </div>
     </div>
-    <div id="button-popup"></div>
-    <div id="button-new-pin"></div>
-    <div id='button-clear-all'></div>
   </div>
   <div id="widget" style="display: none;">
     <div id="ladata_show">

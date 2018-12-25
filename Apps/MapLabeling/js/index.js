@@ -33,8 +33,6 @@ Sandcastle.finishedLoading();
 
 var scene = viewer.scene;
 
-var pinBuilder = new Cesium.PinBuilder();
-
 const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 var pick;                   // 三维坐标转屏幕坐标
 var cartesian;              // 世界坐标（三维坐标 x, y, z）
@@ -64,25 +62,15 @@ handler.setInputAction(function(movement) {
 
 
 // 添加新的大头针
-function createNewPin() {
-  var $button = $('#button-new-pin').find('.cesium-button');
-  var $modal = $('#button-new-pin').find('.modal');
-
-  $button.on('click', function(event) {
-    if ($(event.target).is($button)) {
-      $modal.show(300);
-    } else {
-      $modal.hide(300);
-    }
-  });
-
+function createNewPin(text, color) {
+  var pinBuilder = new Cesium.PinBuilder();
   var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
   pinHandler.setInputAction(function(movement) {
     var newPin = viewer.entities.add({
       name: 'newPin',
       position: Cesium.Cartesian3.fromDegrees(cursorPointLongitude, cursorPointLatitude),
       billboard: {
-        image: pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
+        image: pinBuilder.fromText(text, setColor(color), 48).toDataURL(),
         verticalOrigin: Cesium.VerticalOrigin.BOTTOM
       }
     });
@@ -91,6 +79,31 @@ function createNewPin() {
     pinHandler.destroy();
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
+$(function() {
+  var $pin_button = $('#button-new-pin').find('.toolbar-button');
+  var $pin_modal = $('#button-new-pin').find('.modal');
+
+  // 点击 New Pin 图标时
+  $pin_button.click(function(event) {
+    if ($(event.target).is($pin_button) && $pin_modal.is(':hidden')) {
+      $('.modal').hide(300);
+      $pin_modal.show(300);
+    }
+    else if ($(event.target).is($pin_button) && !$pin_modal.is(':hidden')) {
+      $pin_modal.hide(300);
+    }
+  })
+
+  // 点击 √ or × 按钮时
+  $pin_modal.click(function(event) {
+    if ($(event.target).is($('.button-cancel'))) {
+      $pin_modal.hide(300);
+    }
+    if ($(event.target).is($('.button-commit'))) {
+      $pin_modal.hide(300);
+    }
+  })
+})
 
 /**
  * 气泡窗口（左键单击确定位置，右键结束）
@@ -176,29 +189,76 @@ function closePopup() {
   }
 }
 
+function setColor(color) {
+  switch(color) {
+    case "white":
+      color = Cesium.Color.WHITE;
+      break;
+    case "black":
+      color = Cesium.Color.BLACK;
+      break;
+    case "red":
+      color = Cesium.Color.RED;
+      break;
+    case "green":
+      color = Cesium.Color.GREEN;
+      break;
+    case "blue":
+      color = Cesium.Color.BLUE;
+      break;
+    default:
+      color = Cesium.Color.BLACK;
+  }
+  return color;
+}
+
+var guideOverlay = document.createElement('div');
+viewer.container.appendChild(guideOverlay);
+guideOverlay.className = 'backdrop';
+guideOverlay.style.display = 'none';
+guideOverlay.style.position = 'absolute';
+guideOverlay.style.bottom = '0';
+guideOverlay.style.left = '0';
+guideOverlay.style['pointer-events'] = 'none';
+guideOverlay.style.padding = '4px';
+guideOverlay.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
+
+var labels = scene.primitives.add(new Cesium.LabelCollection());
 /**
  * 添加新的 Label
  */
-function createNewLabel(text) {
+function createNewLabel(text, color) {
   var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+  pinHandler.setInputAction(function(movement) {  
+    guideOverlay.style.display = 'block';
+    guideOverlay.style.bottom = viewer.canvas.clientHeight - movement.endPosition.y + 'px';
+    guideOverlay.style.left = movement.endPosition.x + 'px';
+    guideOverlay.innerHTML = '左键双击确定位置</br>' + '右键单击退出编辑';
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   pinHandler.setInputAction(function(movement) {
     var cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
-    viewer.entities.add({
+    // viewer.entities.add({
+    //   position: cartesian,
+    //   label: {
+    //     text: text,
+    //     font: '24px Helvetica',
+    //     fillColor: setColor(color),
+    //     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+    //     translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
+    //   }
+    // });
+    labels.add({
       position: cartesian,
-      label: {
-        text: text,
-        font: '24px Helvetica',
-        fillColor: Cesium.Color.SKYBLUE,
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
-      }
-    });
+      text: text,
+      fillColor: setColor(color),
+      translucencyByDistance: new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
+    })
   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   pinHandler.setInputAction(function(movement) {
+    guideOverlay.style.display = 'none';
     pinHandler.destroy();
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
-
 // New Label
 $(function() {
   var content_0 = $('.label-text').val(); // 文本框内容
@@ -215,9 +275,11 @@ $(function() {
 
   var $label_button = $('#button-new-label').find('.toolbar-button');
   var $label_modal = $('#button-new-label').find('.modal');
+
   $label_button.click(
     function(event) {
       if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
+        $('.modal').hide(300);
         $label_modal.show(300);
         $('.label-text').focus();
         $('.label-text').select();  // 输入框文本被选中
@@ -228,26 +290,50 @@ $(function() {
     }
   )
   
-  var $color_label = $('.color-select').find('label');
-  var $color, label_content, label_color;
-  $($color_label).click(function() {
-    $color = $('.color-select').find('input:checked');
-    label_color = $color.val();
-    console.log('label color = ' + label_color);
-  })
+  var label_content = null, label_color;
   $label_modal.click(function(event) {
     if ($(event.target).is($('.button-cancel'))) {
       $label_modal.hide(300);
     }
     if ($(event.target).is($('.button-commit'))) {
-      $label_modal.hide(300);
       label_content = $('.label-text').val(); // 文本框内容
-      createNewLabel(label_content);
+      label_color = $('.color-select').find('input:checked').val(); // 选择的颜色
+      if (label_content == '' || label_content == null) {
+        alert('请输入标签 Text ！');
+        return;
+      }
+      $label_modal.hide(300);
+      createNewLabel(label_content, label_color);
     }
   })
 })
 
+// Label List
+$(function() {
+  var $label_list_button = $('#button-list-label').find('.toolbar-button');
+  var $label_lsit_modal = $('#button-list-label').find('.modal');
 
+  // 点击 New Pin 图标时
+  $label_list_button.click(function(event) {
+    if ($(event.target).is($label_list_button) && $label_lsit_modal.is(':hidden')) {
+      $('.modal').hide(300);
+      $label_lsit_modal.show(300);
+    }
+    else if ($(event.target).is($label_list_button) && !$label_lsit_modal.is(':hidden')) {
+      $label_lsit_modal.hide(300);
+    }
+  })
+
+  // 点击 √ or × 按钮时
+  $label_lsit_modal.click(function(event) {
+    if ($(event.target).is($('.button-cancel'))) {
+      $label_lsit_modal.hide(300);
+    }
+    if ($(event.target).is($('.button-commit'))) {
+      $label_lsit_modal.hide(300);
+    }
+  })
+})
 
 
 Sandcastle.addToggleButton('天地图注记', viewer.imageryLayers.get(1).show = true, function(checked) {
