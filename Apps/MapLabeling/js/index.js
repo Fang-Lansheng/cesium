@@ -257,6 +257,7 @@ function CreateNewLabel(text, color) {
       '</tr>';
     $labels_list.append(labels_node);
     labels_num++;
+    CheckList();
   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   pinHandler.setInputAction(function(movement) {
     guideOverlay.style.display = 'none';
@@ -274,6 +275,15 @@ function DeleteLabel(node, label) {
   for (let i = 0; i < tabels.length; i++) {
     tabels[i].firstChild.id = i + '';
     tabels[i].firstChild.innerHTML = i + 1 + '.'
+  }
+}
+// 检查 Label List 是否为空
+function CheckList() {
+  if ($('.label-list-tr').length > 0) {
+    $('.label-list-guide').hide(300);
+  }
+  else if ($('.label-list-tr').length == 0) {
+    $('.label-list-guide').show(300);
   }
 }
 
@@ -318,7 +328,6 @@ $(function() {
       label_color = $('.color-select').find('input:checked').val(); // 选择的颜色
       if (label_content == '' || label_content == null) {
         confirm('Text is empty!')
-        // alert('请输入标签 Text ！');
         return;
       }
       $label_modal.hide(300);
@@ -337,12 +346,7 @@ $(function() {
     if ($(event.target).is($label_list_button) && $label_list_modal.is(':hidden')) {
       $('.modal').hide(300);
       $label_list_modal.show(300);
-      if ($('.label-list-tr').length > 0) {
-        $('.label-list-guide').hide(300);
-      }
-      else if ($('.label-list-tr').length == 0) {
-        $('.label-list-guide').show(300);
-      }
+      CheckList();
     }
     else if ($(event.target).is($label_list_button) && !$label_list_modal.is(':hidden')) {
       $label_list_modal.hide(300);
@@ -375,14 +379,7 @@ $(function() {
       var index_1 = $(event.target).parent().parent().find('.label_index').attr('id');
       var label_1 = labels.get(index_1);
       DeleteLabel($(event.target).parent().parent(), label_1);
-      // labels.remove(label_1);
-      // labels_num--;
-      if ($('.label-list-tr').length > 0) {
-        $('.label-list-guide').hide(300);
-      }
-      else if ($('.label-list-tr').length == 0) {
-        $('.label-list-guide').show(300);
-      }
+      CheckList();
     }
     // 点击 √ 按钮时
     if ($(event.target).is($('.button-commit'))) {

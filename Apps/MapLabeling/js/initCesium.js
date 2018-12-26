@@ -70,7 +70,7 @@ function initCesium() {
 	viewer.baseLayerPicker.viewModel.selectedImagery = imageryProviderViewModels[3];
 	viewer.extend(Cesium.viewerCesiumInspectorMixin);
 	viewer.cesiumInspector.container.style.display = "none";	// 
-	// viewer.scene.globe.depthTestAgainstTerrain = true; 			// 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
+	viewer.scene.globe.depthTestAgainstTerrain = true; 			// 控制视角不转到地下（确保在地形后面的物体被正确地遮挡，只有最前端的对象可见）
 	viewer.scene.debugShowFramesPerSecond = true;							// 显示帧率
 	document.addEventListener('keydown', function (event) {		// 监测键盘事件
 		var e = event || window.event || arguments.callee.caller.arguments[0];
