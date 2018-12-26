@@ -29,54 +29,42 @@
   <div id="loadingOverlay"><h1>Loading...</h1></div>
   <div id="toolbar">
     <div id="button-tianditu" style="float: left;"></div>
-    <div id="button-new-label">
-      <button type="button" class="toolbar-button fa fa-tags fa-2x">
-        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
+    <div id='button-list-label'>
+      <button type="button" class="toolbar-button fa fa-list-ul fa-2x" style="margin-left: 6px">
       </button>
-      <div id="label-modal" class="modal">
+      <div id="label-list-modal" class="modal" style="left: 137px; height: 314px;">
+        <div class="modal-header">
+          <h1>
+            <span class="fa fa-list-ul" style="color: rgb(18, 150, 251)"></span>
+            Label List
+          </h1>
+        </div>
+        <div class="modal-body" style="overflow: auto; height: 200px; width: 300px">
+          <div class="label-list-guide">
+            <h2 style="padding-top: 30px; text-align: center; font-size: 40px; color: dimgray;">No Label</h2>
+          </div>
+          <table class="label-list">
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer" style="padding-top: 10px">
+          <button class="button button-commit" style="width: 100%">
+            <span class="button-commit fa fa-check" style="top: 0px;" ></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="button-new-label">
+      <button type="button" class="toolbar-button fa fa-tags fa-2x" style="margin-left: 48px">
+      </button>
+      <div id="label-modal" class="modal" style="left: 179px;">
         <div class="modal-header">
           <h1>
             <span class="fa fa-tags" style="color: rgb(18, 150, 251)"></span>
             New Label
           </h1>
           <!-- <a id="closeBtn" class="close-modal">×</a> -->
-        </div>
-        <div class="modal-body">
-          <div>
-            <h3 style="margin: 10px 0px;">Text</h3>
-            <input type="text" class="label-text" placeholder="Input Your Text Here." maxlength="15">
-            <a class="num-count"><span class="label-text-num">0</span>/15</a>
-          </div>
-          <div>
-            <h3 style="margin: 10px 0px 0px;">Color</h3>
-            <ul class="color-select">
-              <li><input type="radio" name="label-radio" id="color-white" value="white" checked data-labelauty="White"></li>
-              <li><input type="radio" name="label-radio" id="color-red" value="red" data-labelauty="Red"></li>
-              <li><input type="radio" name="label-radio" id="color-green" value="green" data-labelauty="Green"></li>
-              <li><input type="radio" name="label-radio" id="color-blue" value="blue" data-labelauty="Blue"></li>
-              <li><input type="radio" name="label-radio" id="color-black" value="black" data-labelauty="Black"></li>
-            </ul>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="button button-commit">
-            <span class="button-commit fa fa-check" style="top: 0px;" ></span>
-          </button>
-          <button class="button button-cancel fa fa-close"style="top: 0px; font-size: 25px; color: white">
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id='button-list-label' style="float: left; margin-left: 163px;">
-      <button type="button" class="toolbar-button fa fa-list-ul fa-2x">
-        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
-      </button>
-      <div id="label-list-modal" class="modal" style="left: 179px;">
-        <div class="modal-header">
-          <h1>
-            <span class="fa fa-list-ul" style="color: rgb(18, 150, 251)"></span>
-            Label List
-          </h1>
         </div>
         <div class="modal-body">
           <div>

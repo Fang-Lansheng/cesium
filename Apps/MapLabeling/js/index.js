@@ -32,6 +32,7 @@ Sandcastle.finishedLoading();
 // });
 
 var scene = viewer.scene;
+var camera = viewer.camera;
 
 const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 var pick;                   // 三维坐标转屏幕坐标
@@ -70,7 +71,7 @@ function createNewPin(text, color) {
       name: 'newPin',
       position: Cesium.Cartesian3.fromDegrees(cursorPointLongitude, cursorPointLatitude),
       billboard: {
-        image: pinBuilder.fromText(text, setColor(color), 48).toDataURL(),
+        image: pinBuilder.fromText(text, SetColor(color), 48).toDataURL(),
         verticalOrigin: Cesium.VerticalOrigin.BOTTOM
       }
     });
@@ -189,7 +190,8 @@ function closePopup() {
   }
 }
 
-function setColor(color) {
+// 将 color（string）与 Cesium.Color 一一对应
+function SetColor(color) {
   switch(color) {
     case "white":
       color = Cesium.Color.WHITE;
@@ -224,10 +226,12 @@ guideOverlay.style.padding = '4px';
 guideOverlay.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
 
 var labels = scene.primitives.add(new Cesium.LabelCollection());
-/**
- * 添加新的 Label
- */
-function createNewLabel(text, color) {
+var labels_num = 0;
+var $labels_list = $('.label-list').find('tbody');
+
+
+// 添加新的 Label
+function CreateNewLabel(text, color) {
   var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
   pinHandler.setInputAction(function(movement) {  
     guideOverlay.style.display = 'block';
@@ -237,28 +241,42 @@ function createNewLabel(text, color) {
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   pinHandler.setInputAction(function(movement) {
     var cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
-    // viewer.entities.add({
-    //   position: cartesian,
-    //   label: {
-    //     text: text,
-    //     font: '24px Helvetica',
-    //     fillColor: setColor(color),
-    //     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-    //     translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
-    //   }
-    // });
     labels.add({
       position: cartesian,
       text: text,
-      fillColor: setColor(color),
-      translucencyByDistance: new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e8, 0.0)
+      fillColor: SetColor(color),
+      translucencyByDistance: new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.0),
+      scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5)
     })
+    var labels_node = 
+      '<tr class="label-list-tr">' +
+        '<th class="label_index" id="' + labels_num + '">' + (labels_num + 1) + '.</th>' +
+        '<th class="label_text" style="color: ' + color + ';">' + labels.get(labels_num).text + '</th>' +
+        '<th class="label_locate"><button type="button" class="button button-locate fa fa-search"></button></th>' +
+        '<th class="label_delete"><button type="button" class="button button-delete fa fa-trash"></button></th>' + 
+      '</tr>';
+    $labels_list.append(labels_node);
+    labels_num++;
   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   pinHandler.setInputAction(function(movement) {
     guideOverlay.style.display = 'none';
     pinHandler.destroy();
   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
+
+// 删除 Label
+function DeleteLabel(node, label) {
+  node.remove();
+  labels.remove(label);
+  labels_num--;
+
+  var tabels = $('.label-list-tr');
+  for (let i = 0; i < tabels.length; i++) {
+    tabels[i].firstChild.id = i + '';
+    tabels[i].firstChild.innerHTML = i + 1 + '.'
+  }
+}
+
 // New Label
 $(function() {
   var content_0 = $('.label-text').val(); // 文本框内容
@@ -299,11 +317,12 @@ $(function() {
       label_content = $('.label-text').val(); // 文本框内容
       label_color = $('.color-select').find('input:checked').val(); // 选择的颜色
       if (label_content == '' || label_content == null) {
-        alert('请输入标签 Text ！');
+        confirm('Text is empty!')
+        // alert('请输入标签 Text ！');
         return;
       }
       $label_modal.hide(300);
-      createNewLabel(label_content, label_color);
+      CreateNewLabel(label_content, label_color);
     }
   })
 })
@@ -311,26 +330,63 @@ $(function() {
 // Label List
 $(function() {
   var $label_list_button = $('#button-list-label').find('.toolbar-button');
-  var $label_lsit_modal = $('#button-list-label').find('.modal');
+  var $label_list_modal = $('#button-list-label').find('.modal');
 
-  // 点击 New Pin 图标时
+  // 点击 Label List 图标时
   $label_list_button.click(function(event) {
-    if ($(event.target).is($label_list_button) && $label_lsit_modal.is(':hidden')) {
+    if ($(event.target).is($label_list_button) && $label_list_modal.is(':hidden')) {
       $('.modal').hide(300);
-      $label_lsit_modal.show(300);
+      $label_list_modal.show(300);
+      if ($('.label-list-tr').length > 0) {
+        $('.label-list-guide').hide(300);
+      }
+      else if ($('.label-list-tr').length == 0) {
+        $('.label-list-guide').show(300);
+      }
     }
-    else if ($(event.target).is($label_list_button) && !$label_lsit_modal.is(':hidden')) {
-      $label_lsit_modal.hide(300);
+    else if ($(event.target).is($label_list_button) && !$label_list_modal.is(':hidden')) {
+      $label_list_modal.hide(300);
     }
   })
 
-  // 点击 √ or × 按钮时
-  $label_lsit_modal.click(function(event) {
-    if ($(event.target).is($('.button-cancel'))) {
-      $label_lsit_modal.hide(300);
+  $label_list_modal.click(function(event) {
+    // 点击 🔍 按钮时
+    if ($(event.target).is($('.button-locate'))) {
+      // // 先通过表格第一列获取该 Label 的序号
+      var index_0 = $(event.target).parent().parent().find('.label_index').attr('id');
+      // 根据序号得到这个 Label 的实例
+      var label_0 = labels.get(index_0);
+      var label_cartographic = scene.globe.ellipsoid.cartesianToCartographic(label_0.position)
+      var label_longitude = label_cartographic.longitude / Math.PI * 180;
+      var label_latitude = label_cartographic.latitude / Math.PI * 180;
+      // look(label_cartographic.longitude, label_cartographic.latitude, 30000);
+      camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(label_longitude, label_latitude, 30000),
+        orientation: {
+          heading: 0.0,
+          pitch: Cesium.Math.toRadians(-85.0),
+          roll: 0.0
+        }
+      });
+    }    
+    // 点击 🗑️ 按钮时
+    if ($(event.target).is($('.button-delete'))) {
+      // 同理
+      var index_1 = $(event.target).parent().parent().find('.label_index').attr('id');
+      var label_1 = labels.get(index_1);
+      DeleteLabel($(event.target).parent().parent(), label_1);
+      // labels.remove(label_1);
+      // labels_num--;
+      if ($('.label-list-tr').length > 0) {
+        $('.label-list-guide').hide(300);
+      }
+      else if ($('.label-list-tr').length == 0) {
+        $('.label-list-guide').show(300);
+      }
     }
+    // 点击 √ 按钮时
     if ($(event.target).is($('.button-commit'))) {
-      $label_lsit_modal.hide(300);
+      $label_list_modal.hide(300);
     }
   })
 })
@@ -339,15 +395,3 @@ $(function() {
 Sandcastle.addToggleButton('天地图注记', viewer.imageryLayers.get(1).show = true, function(checked) {
   viewer.imageryLayers.get(1).show = checked;
 }, 'button-tianditu');
-// Sandcastle.addToolbarButton('New Pin', function() {
-//   // return createNewPin();
-// }, 'button-new-pin')
-// Sandcastle.addToolbarButton('Popup', function() {
-//   return showPopup();
-// }, 'button-popup')
-// Sandcastle.addToolbarButton('☥', function() {
-//   return NewLabel();
-// }, 'button-new-label')
-// Sandcastle.addToolbarButton('Clear All', function() {
-//   viewer.entities.removeAll();
-// }, 'button-clear-all')

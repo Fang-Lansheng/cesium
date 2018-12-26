@@ -128,8 +128,10 @@ ul {
   padding-left: 0px;
   margin: 0 0 0 0;
 }
-li { display: inline-block;}
-li { margin: 10px 0;}
+li { 
+  display: inline-block;
+  margin: 10px 0;
+}
 /* .toolbar-button-svg {
   position: absolute;
   top: 0;
@@ -252,4 +254,23 @@ li { margin: 10px 0;}
 }
 .button:focus {
   outline: 0;
+}
+
+/* Label List 样式 */
+.label_text {
+  width: 100%;
+}
+.label_locate {
+  width: 100%;
+}
+.label_locate button {
+  width: 50px;
+  color: white;
+}
+.label_delete {
+  width: 100%;
+}
+.label_delete button {
+  width: 50px;
+  color: white;
 }
