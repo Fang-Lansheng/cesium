@@ -4,7 +4,8 @@ homePosition[2] = 40000;
 
 initCesium();
 Sandcastle.finishedLoading();
-
+// 为 ture 时，球体会有高程遮挡效果
+viewer.scene.globe.depthTestAgainstTerrain = false;
 var scene = viewer.scene;
 var camera = viewer.camera;
 

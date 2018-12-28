@@ -373,6 +373,7 @@ $(function(){
 //   })
 // })
 
+
 // Plotting
 $(function() {
   /**
@@ -416,10 +417,33 @@ $(function() {
   })
 
   $plotting_options_modal.click(function(event) {
-    // 点击 √ 按钮时
-    if ($(event.target).is($('.button-commit'))) {
-      $plotting_options_modal.hide(300);
+
+    // 点击 保存文件 按钮时
+    if ($(event.target).is('#file-save')) {
+
     }
+
+    // 点击 打开文件 按钮时
+    if ($(event.target).is('#file-open') ||
+        $(event.target).is($('#file-open').find('span'))) {
+      $('#file-plot-input').click();
+    }
+    $('#file-plot-input').change(function() {
+      var file = this.files[0];
+      var filename = file.name;
+      if ('json' != filename.substring(filename.lastIndexOf('.') + 1, filename.length).toLowerCase()) {
+        return;
+      }
+      if (window.FileReader) {
+        var fileReader = new FileReader;
+        fileReader.readAsText(file, 'UTF-8');
+        fileReader.onloadend = function(o) {
+          // jsonToLayer(this.result); clearSelectFile();
+        }
+      }
+
+    })
+
     // 点击 【地形开启】CheckBox 时
     $('#checkHasterrain').change(function() {
       var checked = $(this).is(':checked');
@@ -433,12 +457,19 @@ $(function() {
         scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();  // 默认，无地形
       }
     })
+
     // 点击 【深度检测】CheckBox 时
     $('#checkTestterrain').change(function() {
       var checked = $(this).is(':checked');
       // 为 ture 时，球体会有高程遮挡效果
       viewer.scene.globe.depthTestAgainstTerrain = checked;
     })
+
+    // 点击 √ 按钮时
+    if ($(event.target).is($('.button-commit'))) {
+      $plotting_options_modal.hide(300);
+    }
+
   })
 })
 
