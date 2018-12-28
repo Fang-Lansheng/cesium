@@ -78,10 +78,12 @@
   background-color: rgba(50, 50, 50, 0.7);
   position: fixed;
   top: 50px;
-  height: 270px;
-  left: 137px;
+  left: 16px;
+  height: 400px;
+  width: 400px;
   border-radius: 10px;
   overflow: hidden;
+  letter-spacing: 1px;
 }
 .cesium-button {
   width: 115px;
@@ -90,10 +92,22 @@
 .modal-header {
   text-align: center;
   margin: 5px 12px;
+  border: 0;
+}
+.modal-header h1 {
+  padding: 0;
+  margin: 0;
+  font: bold;
+  font-size: 28px;
+  text-transform: uppercase;
 }
 .modal-footer {
   text-align: center;
-  padding-top: 76px;
+  bottom: 0;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  position: absolute;
 }
 .modal-body {
   height: 90px;
@@ -132,19 +146,9 @@ li {
   display: inline-block;
   margin: 10px 0;
 }
-/* .toolbar-button-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 32px;
-  width: 32px;
-  overflow: hidden;
-  margin: 0 0 0 0;
-  outline: none;
-  background-color: rgba(50, 50, 50, 0.7);
-} */
 .toolbar-button {
-  position: absolute;
+  /* position: absolute; */
+  float: left;
   top: 4px;
   margin-left: 6px;
   height: 32px;
@@ -162,9 +166,6 @@ li {
   user-select: none;
   text-align: center;
   padding: 2px;
-  /* padding: 0 0 0 0;
-  border: 0;
-  margin: 0 0 0 0; */
 }
 .toolbar-button:focus {
   color: #fff; /* For text buttons */
@@ -198,7 +199,16 @@ li {
   box-shadow: none;
   cursor: default;
 }
-
+#button-plotting-new {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+#button-plotting-options {
+  margin-left: 0px;
+  width: 16px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 
 .num-count {
   position: absolute;
@@ -209,7 +219,7 @@ li {
 }
 .button {
   width: 50%;
-  height: 36px;
+  height: 40px;
   background: transparent;
   border: none;
   text-align: center;
@@ -229,7 +239,6 @@ li {
   font-size: 25px;
   color: rgb(18, 150, 251);
   transition: 0.5s;
-  bottom: 29px;
 }
 .button-commit span:after {
   content: " »";
@@ -257,7 +266,12 @@ li {
 }
 
 /* Label List 样式 */
+.label_index {
+  text-align: center;
+  padding-left: 15px;
+}
 .label_text {
+  text-align: center;
   width: 100%;
 }
 .label_locate {
@@ -273,4 +287,48 @@ li {
 .label_delete button {
   width: 50px;
   color: white;
+}
+
+.terrain-check label {
+  float: left;
+  padding: 0 10px;
+  margin: 0 5px 0;
+}
+.button-box button, .file-operations button {
+  background-color: rgba(100, 100, 100, 0.3);
+  color: #b3b3b3;
+  border-radius: 4px;
+  border: 0;
+  outline: none;
+  height: 37px;
+  width: 40px;
+  font-size: 12px;
+  margin: 0 5px 0;
+  /* box-shadow: 0 6px rgb(50, 50, 50); */
+
+  transition: background-color 0.25s;
+	-moz-transition: background-color 0.25s;
+	-webkit-transition: background-color 0.25s;
+	-o-transition: background-color 0.25s;
+
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
+.button-box {
+  margin: 10px 0;
+}
+.button-box button {
+  margin: 0 2px;
+}
+.button-box button:hover, .file-operations button:hover {
+  background-color: #eaeaea;
+  color: #b3b3b3;
+}
+.button-box button:active, .file-operations button:active {
+  background-color: #eaeaea;
+  color: #ffffff;
+  /* box-shadow: 0 3px rgb(50, 50, 50); */
+  transform: translateY(3px);
 }

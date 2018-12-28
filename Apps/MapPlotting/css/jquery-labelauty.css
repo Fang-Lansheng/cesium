@@ -21,13 +21,13 @@ input.labelauty { display: none !important; }
 input.labelauty + label
 {
 	display: table;
-	font-size: 11px;
+	font-size: 12px;
 	padding: 10px;
-	background-color: transparent;
+	background-color: rgba(100, 100, 100, 0.3);
 	color: #b3b3b3;
 	cursor: pointer;
-	border: 1px solid #e1e1e1;
-	border-radius: 10px;
+	/* border: 1px solid #e1e1e1; */
+	border-radius: 4px;
 
 	transition: background-color 0.25s;
 	-moz-transition: background-color 0.25s;

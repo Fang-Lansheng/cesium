@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Map Labeling</title>
+  <title>Map Plotting</title>
   <meta charset="utf-8" />
   <link href="../../Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/jquery-labelauty.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/index.css" rel="stylesheet">
   <style>
     @import url(../../Build/Cesium/Widgets/widgets.css);
@@ -19,6 +21,7 @@
     }
   </style>
 </head>
+
 <body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
   <style>
     @import url(../Sandcastle/templates/bucket.css);
@@ -26,35 +29,165 @@
   <!-- 在 HTML 主体中，为 viewer 创建一个 div -->
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="creditContainer" style="display: none;"></div>
-  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="loadingOverlay">
+    <h1>Loading...</h1>
+  </div>
   <div id="toolbar">
-    <div id="button-tianditu" style="float: left;"></div>
-    <div id='button-list-label'>
-      <button type="button" class="toolbar-button fa fa-list-ul fa-2x" style="margin-left: 6px">
-      </button>
-      <div id="label-list-modal" class="modal" style="left: 137px; height: 314px;">
+    <div class="button-plotting">
+      <button type="button" id="button-plotting-new" class="toolbar-button fa fa-pencil fa-2x"></button>
+      <button type="button" id="button-plotting-options" class="toolbar-button fa fa-caret-down"></button>
+      <div id="plotting-modal" class="modal">
         <div class="modal-header">
-          <h1>
-            <span class="fa fa-list-ul" style="color: rgb(18, 150, 251)"></span>
-            Label List
-          </h1>
+          <h1><span class="fa fa-pencil" style="color: rgb(18, 150, 251)"></span> Map Plotting</h1>
         </div>
-        <div class="modal-body" style="overflow: auto; height: 200px; width: 300px">
-          <div class="label-list-guide">
-            <h2 style="padding-top: 30px; text-align: center; font-size: 40px; color: dimgray;">No Label</h2>
+        <div class="modal-body">
+          <div class="button-box" style="display: grid;">
+            <div class="button-box button-box-1" style="display: flex;">
+              <h4>单个点类：</h4>
+              <button id="plotting-point" class="fa fa-circle" style="font-size: 20px; flex: 1;"></button>
+              <button id="plotting-icon" class="fa fa-map-marker" style="font-size: 25px; flex: 1;"></button>
+              <button id="plotting-text" class="fa fa-font" style="font-size: 20px; flex: 1;"></button>
+              <button id="plotting-modal" style="flex: 1;"><img src="source/tower.svg" style="width: 23px;"></button>
+            </div>
+            <div class="button-box button-box-2" style="display: flex">
+              <h4>二维空间：</h4>
+              <button id="plotting-line" style="flex: 1;"><img src="source/line.svg" style="width: 30px;"></button>
+              <button id="plotting-curve" style="flex: 1;"><img src="source/curve.svg" style="width: 30px;"></button>
+              <button id="plotting-plane" style="flex: 1;"><img src="source/plane.svg" style="width: 35px"></button>
+              <button id="plotting-circle" class="fa fa-circle-o" style="font-size: 23px; flex: 1;"></button>
+              <button id="plotting-rectangle" style="flex: 1;"><img src="source/rectangle.svg" style="width: 25px;"></button>
+            </div>
+            <div class="button-box button-box-3" style="display: flex">
+              <h4>二维贴地：</h4>
+              <button id="plotting-line-clamp" style="flex: 1;"><img src="source/line.svg" style="width: 30px;"></button>
+              <button id="plotting-curve-clamp" style="flex: 1;"><img src="source/curve.svg" style="width: 30px;"></button>
+              <button id="plotting-plane-clamp" style="flex: 1;"><img src="source/plane.svg" style="width: 35px"></button>
+              <button id="plotting-circle-clamp" class="fa fa-circle-o" style="font-size: 23px; flex: 1;"></button>
+              <button id="plotting-rectangle-clamp" style="flex: 1;"><img src="source/rectangle.svg" style="width: 25px;"></button>
+            </div>
+            <div class="button-box button-box-2" style="display: flex">
+              <h4>三维空间：</h4>
+              <button id="plotting-wall" style="flex: 1;"><img src="source/wall.svg" style="width: 20px;"></button>
+              <button id="plotting-cube" style="flex: 1;"><img src="source/polygon.svg" style="width: 30px;"></button>
+              <button id="plotting-plane" style="flex: 1;"><img src="source/cylinder.svg" style="width: 25px"></button>
+              <button id="plotting-cube" class="fa fa-cube" style="font-size: 25px; flex: 1;"></button>
+            </div>
           </div>
-          <table class="label-list">
-            <tbody>
-            </tbody>
-          </table>
         </div>
-        <div class="modal-footer" style="padding-top: 10px">
-          <button class="button button-commit" style="width: 100%">
-            <span class="button-commit fa fa-check" style="top: 0px;" ></span>
+        <div class="modal-footer">
+          <button class="button button-commit" style="width: 100%;">
+            <span class="button-commit fa fa-check"></span>
+          </button>
+        </div>
+      </div>
+      <div id="plotting-options-modal" class="modal">
+        <div class="modal-header">
+          <h1><span class="fa fa-check-square-o" style="color: rgb(18, 150, 251)"></span> Options</h1>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+          <div id="operations-button" style="display: flex;">
+            <div class="file-operations" style="float: left; flex: 1; display: flex;">
+              <button id="file-save" style="flex: 1;">
+                <span class="fa fa-save fa-2x" style="height: 16px;"></span>
+              </button>
+              <button id="file-open" style="flex: 1;">
+                <span class="fa fa-folder-open fa-2x" style="height: 16px;"></span>
+                <input type="file" id="file-save" style="display: none;">
+              </button>
+            </div>
+            <div class="terrain-check" style="float: left;">
+              <input id="checkHasterrain" type="checkbox" checked data-labelauty="地形关闭|地形开启">
+              <input id="checkTestterrain" type="checkbox" data-labelauty="深度检测">
+            </div>
+          </div>
+          <div id="geometry-list" style="margin: 20px 0;">
+            <!-- <h4 style="margin-top: 20px; letter-spacing: 1px; font-weight: bolder;">List</h4> -->
+            <div id="gemetry-list-table" style="overflow: auto; height: 230px;">
+              <table class="label-list">
+                <tbody>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="0">1.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="1">2.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="2">3.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="3">4.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="3">5.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="3">6.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                  <tr class="label-list-tr">
+                    <th class="label_index" id="3">7.</th>
+                    <th class="label_text" style="color: white;">312312312323</th>
+                    <th class="label_locate">
+                      <button type="button" class="button button-locate fa fa-search"></button>
+                    </th>
+                    <th class="label_delete">
+                      <button type="button" class="button button-delete fa fa-trash"></button>
+                    </th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button button-commit" style="width: 100%;">
+            <span class="button-commit fa fa-check"></span>
           </button>
         </div>
       </div>
     </div>
+    <!-- <div id="button-tianditu" style="float: left;"></div>
     <div id="button-new-label">
       <button type="button" class="toolbar-button btn btn-default fa fa-tags fa-2x" style="margin-left: 48px">
       </button>
@@ -64,7 +197,6 @@
             <span class="fa fa-tags" style="color: rgb(18, 150, 251)"></span>
             New Label
           </h1>
-          <!-- <a id="closeBtn" class="close-modal">×</a> -->
         </div>
         <div class="modal-body">
           <div>
@@ -94,7 +226,6 @@
     </div>
     <div id="button-new-pin" style="display: none">
       <button type="button" class="toolbar-button fa fa-map-marker fa-2x" style="float: left; margin-left: 48px;">
-        <!-- <img class="toolbar-button toolbar-button-svg" src="./source/pin.svg" alt="pin.svg" width="32px" height="32px"> -->
       </button>
       <div id="pin-modal" class="modal" style="left: 179px;">
         <div class="modal-header">
@@ -102,7 +233,6 @@
             <span class="fa fa-map-marker" style="color: rgb(18, 150, 251)"></span>
             New pin
           </h1>
-          <!-- <a id="closeBtn" class="close-modal">×</a> -->
         </div>
         <div class="modal-body">
           <div>
@@ -123,15 +253,13 @@
         </div>
         <div class="modal-footer">
           <button class="button button-commit">
-            <!-- <img class="button-commit" src="source/commit.svg" alt="commit" width="20px" height="20px"> -->
             <span class="button-commit fa fa-check" style="top: 0px;" ></span>
           </button>
           <button class="button button-cancel fa fa-close"style="top: 0px; font-size: 25px; color: white">
-            <!-- <img class="button-cancel" src="source/cancel.svg" alt="cancel" width="20px" height="20px"> -->
           </button>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
   <div id="widget" style="display: none;">
     <div id="ladata_show">
@@ -159,4 +287,5 @@
   <script src="js/initCesium.js"></script>
   <script src="js/index.js"></script>
 </body>
+
 </html>

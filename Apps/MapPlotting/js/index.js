@@ -34,7 +34,18 @@ handler.setInputAction(function(movement) {
   }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
+// 为 ture 时，球体会有高程遮挡效果
+viewer.scene.globe.depthTestAgainstTerrain = false;
+// 设置地形
+scene.terrainProvider = new Cesium.CesiumTerrainProvider({
+  url: Cesium.IonResource.fromAssetId(3956),
+  requestVertexNormals: true
+});
 
+$(function(){
+  // 设置 input label 样式
+  $('.terrain-check').find(':input').labelauty();
+});
 
 // // 添加新的大头针
 // function createNewPin(text, color) {
@@ -164,207 +175,273 @@ handler.setInputAction(function(movement) {
 //   }
 // }
 
-// 将 color（string）与 Cesium.Color 一一对应
-function SetColor(color) {
-  switch(color) {
-    case "white":
-      color = Cesium.Color.WHITE;
-      break;
-    case "black":
-      color = Cesium.Color.BLACK;
-      break;
-    case "red":
-      color = Cesium.Color.RED;
-      break;
-    case "green":
-      color = Cesium.Color.GREEN;
-      break;
-    case "blue":
-      color = Cesium.Color.BLUE;
-      break;
-    default:
-      color = Cesium.Color.BLACK;
-  }
-  return color;
-}
+// // 将 color（string）与 Cesium.Color 一一对应
+// function SetColor(color) {
+//   switch(color) {
+//     case "white":
+//       color = Cesium.Color.WHITE;
+//       break;
+//     case "black":
+//       color = Cesium.Color.BLACK;
+//       break;
+//     case "red":
+//       color = Cesium.Color.RED;
+//       break;
+//     case "green":
+//       color = Cesium.Color.GREEN;
+//       break;
+//     case "blue":
+//       color = Cesium.Color.BLUE;
+//       break;
+//     default:
+//       color = Cesium.Color.BLACK;
+//   }
+//   return color;
+// }
 
-var guideOverlay = document.createElement('div');
-viewer.container.appendChild(guideOverlay);
-guideOverlay.className = 'backdrop';
-guideOverlay.style.display = 'none';
-guideOverlay.style.position = 'absolute';
-guideOverlay.style.bottom = '0';
-guideOverlay.style.left = '0';
-guideOverlay.style['pointer-events'] = 'none';
-guideOverlay.style.padding = '4px';
-guideOverlay.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
+// var guideOverlay = document.createElement('div');
+// viewer.container.appendChild(guideOverlay);
+// guideOverlay.className = 'backdrop';
+// guideOverlay.style.display = 'none';
+// guideOverlay.style.position = 'absolute';
+// guideOverlay.style.bottom = '0';
+// guideOverlay.style.left = '0';
+// guideOverlay.style['pointer-events'] = 'none';
+// guideOverlay.style.padding = '4px';
+// guideOverlay.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
 
-var labels = scene.primitives.add(new Cesium.LabelCollection());
-var labels_num = 0;
-var $labels_list = $('.label-list').find('tbody');
+// var labels = scene.primitives.add(new Cesium.LabelCollection());
+// var labels_num = 0;
+// var $labels_list = $('.label-list').find('tbody');
 
 
-// 添加新的 Label
-function CreateNewLabel(text, color) {
-  var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-  pinHandler.setInputAction(function(movement) {  
-    guideOverlay.style.display = 'block';
-    guideOverlay.style.bottom = viewer.canvas.clientHeight - movement.endPosition.y + 'px';
-    guideOverlay.style.left = movement.endPosition.x + 'px';
-    guideOverlay.innerHTML = '左键双击确定位置</br>' + '右键单击退出编辑';
-  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-  pinHandler.setInputAction(function(movement) {
-    var cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
-    labels.add({
-      position: cartesian,
-      text: text,
-      fillColor: SetColor(color),
-      translucencyByDistance: new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.0),
-      scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5)
-    })
-    var labels_node = 
-      '<tr class="label-list-tr">' +
-        '<th class="label_index" id="' + labels_num + '">' + (labels_num + 1) + '.</th>' +
-        '<th class="label_text" style="color: ' + color + ';">' + labels.get(labels_num).text + '</th>' +
-        '<th class="label_locate"><button type="button" class="button button-locate fa fa-search"></button></th>' +
-        '<th class="label_delete"><button type="button" class="button button-delete fa fa-trash"></button></th>' + 
-      '</tr>';
-    $labels_list.append(labels_node);
-    labels_num++;
-    CheckList();
-  }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-  pinHandler.setInputAction(function(movement) {
-    guideOverlay.style.display = 'none';
-    pinHandler.destroy();
-  }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-}
+// // 添加新的 Label
+// function CreateNewLabel(text, color) {
+//   var pinHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+//   pinHandler.setInputAction(function(movement) {  
+//     guideOverlay.style.display = 'block';
+//     guideOverlay.style.bottom = viewer.canvas.clientHeight - movement.endPosition.y + 'px';
+//     guideOverlay.style.left = movement.endPosition.x + 'px';
+//     guideOverlay.innerHTML = '左键双击确定位置</br>' + '右键单击退出编辑';
+//   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+//   pinHandler.setInputAction(function(movement) {
+//     var cartesian = scene.camera.pickEllipsoid(movement.position, scene.globe.ellipsoid);
+//     labels.add({
+//       position: cartesian,
+//       text: text,
+//       fillColor: SetColor(color),
+//       translucencyByDistance: new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.0),
+//       scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5)
+//     })
+//     var labels_node = 
+//       '<tr class="label-list-tr">' +
+//         '<th class="label_index" id="' + labels_num + '">' + (labels_num + 1) + '.</th>' +
+//         '<th class="label_text" style="color: ' + color + ';">' + labels.get(labels_num).text + '</th>' +
+//         '<th class="label_locate"><button type="button" class="button button-locate fa fa-search"></button></th>' +
+//         '<th class="label_delete"><button type="button" class="button button-delete fa fa-trash"></button></th>' + 
+//       '</tr>';
+//     $labels_list.append(labels_node);
+//     labels_num++;
+//     CheckList();
+//   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+//   pinHandler.setInputAction(function(movement) {
+//     guideOverlay.style.display = 'none';
+//     pinHandler.destroy();
+//   }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+// }
 
-// 删除 Label
-function DeleteLabel(node, label) {
-  node.remove();
-  labels.remove(label);
-  labels_num--;
+// // 删除 Label
+// function DeleteLabel(node, label) {
+//   node.remove();
+//   labels.remove(label);
+//   labels_num--;
 
-  var tabels = $('.label-list-tr');
-  for (let i = 0; i < tabels.length; i++) {
-    tabels[i].firstChild.id = i + '';
-    tabels[i].firstChild.innerHTML = i + 1 + '.'
-  }
-}
-// 检查 Label List 是否为空
-function CheckList() {
-  if ($('.label-list-tr').length > 0) {
-    $('.label-list-guide').hide(300);
-  }
-  else if ($('.label-list-tr').length == 0) {
-    $('.label-list-guide').show(300);
-  }
-}
+//   var tabels = $('.label-list-tr');
+//   for (let i = 0; i < tabels.length; i++) {
+//     tabels[i].firstChild.id = i + '';
+//     tabels[i].firstChild.innerHTML = i + 1 + '.'
+//   }
+// }
+// // 检查 Label List 是否为空
+// function CheckList() {
+//   if ($('.label-list-tr').length > 0) {
+//     $('.label-list-guide').hide(300);
+//   }
+//   else if ($('.label-list-tr').length == 0) {
+//     $('.label-list-guide').show(300);
+//   }
+// }
 
-// New Label
-$(function() {
-  var content_0 = $('.label-text').val(); // 文本框内容
-  var count_0 = content_0.length;           // 字符长度
-  $('.label-text-num').text(count_0);
-  $('.label-text').on('blur keyup input', function() {
-    var content = $('.label-text').val();
-    var count = content.length;
-    $('.label-text-num').text(count);
-  })
+// // New Label
+// $(function() {
+//   var content_0 = $('.label-text').val(); // 文本框内容
+//   var count_0 = content_0.length;           // 字符长度
+//   $('.label-text-num').text(count_0);
+//   $('.label-text').on('blur keyup input', function() {
+//     var content = $('.label-text').val();
+//     var count = content.length;
+//     $('.label-text-num').text(count);
+//   })
 
-  var $color_radio = $('.color-select').find(':input');
-  $color_radio.labelauty();
+//   var $color_radio = $('.color-select').find(':input');
+//   $color_radio.labelauty();
 
-  var $label_button = $('#button-new-label').find('.toolbar-button');
-  var $label_modal = $('#button-new-label').find('.modal');
+//   var $label_button = $('#button-new-label').find('.toolbar-button');
+//   var $label_modal = $('#button-new-label').find('.modal');
 
-  $label_button.click(
-    function(event) {
-      if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
-        $('.modal').hide(300);
-        $label_modal.show(300);
-        $('.label-text').focus();
-        $('.label-text').select();  // 输入框文本被选中
-      } 
-      else if ($(event.target).is($label_button) && !$label_modal.is(':hidden')) {
-        $label_modal.hide(300);
-      }
-    }
-  )
+//   $label_button.click(
+//     function(event) {
+//       if ($(event.target).is($label_button) && $label_modal.is(':hidden')) {
+//         $('.modal').hide(300);
+//         $label_modal.show(300);
+//         $('.label-text').focus();
+//         $('.label-text').select();  // 输入框文本被选中
+//       } 
+//       else if ($(event.target).is($label_button) && !$label_modal.is(':hidden')) {
+//         $label_modal.hide(300);
+//       }
+//     }
+//   )
   
-  var label_content = null, label_color;
-  $label_modal.click(function(event) {
-    if ($(event.target).is($('.button-cancel'))) {
-      $label_modal.hide(300);
-    }
-    if ($(event.target).is($('.button-commit'))) {
-      label_content = $('.label-text').val(); // 文本框内容
-      label_color = $('.color-select').find('input:checked').val(); // 选择的颜色
-      if (label_content == '' || label_content == null) {
-        confirm('Text is empty!')
-        return;
-      }
-      $label_modal.hide(300);
-      CreateNewLabel(label_content, label_color);
-    }
-  })
-})
+//   var label_content = null, label_color;
+//   $label_modal.click(function(event) {
+//     if ($(event.target).is($('.button-cancel'))) {
+//       $label_modal.hide(300);
+//     }
+//     if ($(event.target).is($('.button-commit'))) {
+//       label_content = $('.label-text').val(); // 文本框内容
+//       label_color = $('.color-select').find('input:checked').val(); // 选择的颜色
+//       if (label_content == '' || label_content == null) {
+//         confirm('Text is empty!')
+//         return;
+//       }
+//       $label_modal.hide(300);
+//       CreateNewLabel(label_content, label_color);
+//     }
+//   })
+// })
 
-// Label List
+// // Label List
+// $(function() {
+//   var $label_list_button = $('#button-list-label').find('.toolbar-button');
+//   var $label_list_modal = $('#button-list-label').find('.modal');
+
+//   // 点击 Label List 图标时
+//   $label_list_button.click(function(event) {
+//     if ($(event.target).is($label_list_button) && $label_list_modal.is(':hidden')) {
+//       $('.modal').hide(300);
+//       $label_list_modal.show(300);
+//       CheckList();
+//     }
+//     else if ($(event.target).is($label_list_button) && !$label_list_modal.is(':hidden')) {
+//       $label_list_modal.hide(300);
+//     }
+//   })
+
+//   $label_list_modal.click(function(event) {
+//     // 点击 🔍 按钮时
+//     if ($(event.target).is($('.button-locate'))) {
+//       // // 先通过表格第一列获取该 Label 的序号
+//       var index_0 = $(event.target).parent().parent().find('.label_index').attr('id');
+//       // 根据序号得到这个 Label 的实例
+//       var label_0 = labels.get(index_0);
+//       var label_cartographic = scene.globe.ellipsoid.cartesianToCartographic(label_0.position)
+//       var label_longitude = label_cartographic.longitude / Math.PI * 180;
+//       var label_latitude = label_cartographic.latitude / Math.PI * 180;
+//       // look(label_cartographic.longitude, label_cartographic.latitude, 30000);
+//       camera.flyTo({
+//         destination: Cesium.Cartesian3.fromDegrees(label_longitude, label_latitude, 30000),
+//         orientation: {
+//           heading: 0.0,
+//           pitch: Cesium.Math.toRadians(-85.0),
+//           roll: 0.0
+//         }
+//       });
+//     }    
+//     // 点击 🗑️ 按钮时
+//     if ($(event.target).is($('.button-delete'))) {
+//       // 同理
+//       var index_1 = $(event.target).parent().parent().find('.label_index').attr('id');
+//       var label_1 = labels.get(index_1);
+//       DeleteLabel($(event.target).parent().parent(), label_1);
+//       CheckList();
+//     }
+//     // 点击 √ 按钮时
+//     if ($(event.target).is($('.button-commit'))) {
+//       $label_list_modal.hide(300);
+//     }
+//   })
+// })
+
+// Plotting
 $(function() {
-  var $label_list_button = $('#button-list-label').find('.toolbar-button');
-  var $label_list_modal = $('#button-list-label').find('.modal');
+  /**
+   * Plotting
+   */
+  var $plotting_button = $('#button-plotting-new');
+  var $plotting_modal = $('#plotting-modal')
 
-  // 点击 Label List 图标时
-  $label_list_button.click(function(event) {
-    if ($(event.target).is($label_list_button) && $label_list_modal.is(':hidden')) {
-      $('.modal').hide(300);
-      $label_list_modal.show(300);
-      CheckList();
-    }
-    else if ($(event.target).is($label_list_button) && !$label_list_modal.is(':hidden')) {
-      $label_list_modal.hide(300);
+  // 点击 ✎ 按钮时
+  $plotting_button.click(function(event) {
+    if ($(event.target).is($plotting_button) && $plotting_modal.is(':hidden')) {
+      $('.modal').hide(300);  // 关闭所有其他模态窗
+      $plotting_modal.show(300);
+    } else {
+      $plotting_modal.hide(300);
     }
   })
 
-  $label_list_modal.click(function(event) {
-    // 点击 🔍 按钮时
-    if ($(event.target).is($('.button-locate'))) {
-      // // 先通过表格第一列获取该 Label 的序号
-      var index_0 = $(event.target).parent().parent().find('.label_index').attr('id');
-      // 根据序号得到这个 Label 的实例
-      var label_0 = labels.get(index_0);
-      var label_cartographic = scene.globe.ellipsoid.cartesianToCartographic(label_0.position)
-      var label_longitude = label_cartographic.longitude / Math.PI * 180;
-      var label_latitude = label_cartographic.latitude / Math.PI * 180;
-      // look(label_cartographic.longitude, label_cartographic.latitude, 30000);
-      camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(label_longitude, label_latitude, 30000),
-        orientation: {
-          heading: 0.0,
-          pitch: Cesium.Math.toRadians(-85.0),
-          roll: 0.0
-        }
-      });
-    }    
-    // 点击 🗑️ 按钮时
-    if ($(event.target).is($('.button-delete'))) {
-      // 同理
-      var index_1 = $(event.target).parent().parent().find('.label_index').attr('id');
-      var label_1 = labels.get(index_1);
-      DeleteLabel($(event.target).parent().parent(), label_1);
-      CheckList();
-    }
+  $plotting_modal.click(function(event) {
     // 点击 √ 按钮时
     if ($(event.target).is($('.button-commit'))) {
-      $label_list_modal.hide(300);
+      $plotting_modal.hide(300);
     }
+  })
+
+
+  /**
+   * Plotting Options
+   */
+  var $plotting_options_button = $('#button-plotting-options');
+  var $plotting_options_modal = $('#plotting-options-modal');
+
+  // 点击 ▼ 按钮时
+  $plotting_options_button.click(function(event) {
+    if ($(event.target).is($plotting_options_button) && $plotting_options_modal.is(':hidden')) {
+      $('.modal').hide(300);
+      $plotting_options_modal.show(300);
+    } else {
+      $plotting_options_modal.hide(300);
+    }
+  })
+
+  $plotting_options_modal.click(function(event) {
+    // 点击 √ 按钮时
+    if ($(event.target).is($('.button-commit'))) {
+      $plotting_options_modal.hide(300);
+    }
+    // 点击 【地形开启】CheckBox 时
+    $('#checkHasterrain').change(function() {
+      var checked = $(this).is(':checked');
+      var $label_content = $(this).next();
+      if (checked) {
+        scene.terrainProvider = new Cesium.CesiumTerrainProvider({
+          url: Cesium.IonResource.fromAssetId(3956),
+          requestVertexNormals: true
+        });
+      } else {
+        scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();  // 默认，无地形
+      }
+    })
+    // 点击 【深度检测】CheckBox 时
+    $('#checkTestterrain').change(function() {
+      var checked = $(this).is(':checked');
+      // 为 ture 时，球体会有高程遮挡效果
+      viewer.scene.globe.depthTestAgainstTerrain = checked;
+    })
   })
 })
 
-Sandcastle.addToggleButton('天地图注记', viewer.imageryLayers.get(1).show = true, function(checked) {
-  viewer.imageryLayers.get(1).show = checked;
-}, 'button-tianditu');
 
 /**
  * 
