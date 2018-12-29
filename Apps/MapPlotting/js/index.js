@@ -392,8 +392,8 @@ $(function() {
     }
   })
 
+  // 点击 √ 按钮时
   $plotting_modal.click(function(event) {
-    // 点击 √ 按钮时
     if ($(event.target).is($('.button-commit'))) {
       $plotting_modal.hide(300);
     }
@@ -441,13 +441,11 @@ $(function() {
           // jsonToLayer(this.result); clearSelectFile();
         }
       }
-
     })
 
     // 点击 【地形开启】CheckBox 时
     $('#checkHasterrain').change(function() {
       var checked = $(this).is(':checked');
-      var $label_content = $(this).next();
       if (checked) {
         scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(3956),
